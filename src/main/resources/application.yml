@@ -1,0 +1,48 @@
+bpm:
+  datasource:    
+    unique-resource-name: projectDataSource
+    pool-size: 3
+    max-pool-size: 5
+    min-pool-size: 2
+    max-life-time: 120
+    max-idle-time: 60
+    borrow-connection-timeout: 60
+    xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+    xa-properties:
+      user: flowable
+      password: flowable@23
+      URL: jdbc:mysql://34.80.82.226:3306/flowable?useSSL=false
+
+### 人員資料庫連線設定 ###
+app:
+  datasource:
+    unique-resource-name: bpmDataSource
+    pool-size: 3
+    max-pool-size: 5
+    min-pool-size: 2
+    max-life-time: 120
+    max-idle-time: 60
+    borrow-connection-timeout: 60
+    xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
+    xa-properties:
+      user: sa
+      password: password
+      URL: jdbc:h2:file:d:\\h2\\flowable;DB_CLOSE_ON_EXIT=FALSE
+
+### Hibernate 屬性設定 ###
+  hibernate:
+    dialect: org.hibernate.dialect.H2Dialect
+    format_sql: true
+    show_sql: true
+    
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console.enabled: true
+  datasource:
+    schema:
+    - classpath:conf/sit/schema.sql
+    data:
+    - classpath:conf/sit/data.sql
+    initialization-mode: ALWAYS    
