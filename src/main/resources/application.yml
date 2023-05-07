@@ -37,12 +37,13 @@ app:
     
 spring:
   jpa:
+    open-in-view: false
     database-platform: org.hibernate.dialect.H2Dialect
   h2:
     console.enabled: true
   datasource:
     schema:
-    - classpath:conf/sit/schema.sql
+    - classpath:sql/schema-test.sql
     data:
-    - classpath:conf/sit/data.sql
+    # - classpath:sql/data.sql
     initialization-mode: ALWAYS    

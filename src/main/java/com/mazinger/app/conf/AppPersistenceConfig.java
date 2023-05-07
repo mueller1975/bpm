@@ -63,7 +63,7 @@ public class AppPersistenceConfig {
         return userTransactionManager;
     }
 
-//    @Primary
+   @Primary
     @Bean
     JtaTransactionManager jtaTransactionManager() throws SystemException {
         JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
