@@ -22,7 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class BpmPersistenceConfig {
 
-    @Primary
+    // @Primary
     @DependsOn({ "jtaTransactionManager" })
     @Bean(initMethod = "init", destroyMethod = "close")
     @ConfigurationProperties("bpm.datasource")

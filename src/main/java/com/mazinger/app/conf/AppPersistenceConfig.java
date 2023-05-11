@@ -27,21 +27,21 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 
 @Configuration
 @EnableJpaRepositories(basePackages = { "com.mazinger.app.model.dao"
-}, entityManagerFactoryRef = "prjEntityManagerFactory", transactionManagerRef = "jtaTransactionManager")
+}, entityManagerFactoryRef = "appEntityManagerFactory", transactionManagerRef = "jtaTransactionManager")
 public class AppPersistenceConfig {
 
     @Primary
     @DependsOn({ "jtaTransactionManager" })
     @Bean(initMethod = "init", destroyMethod = "close")
     @ConfigurationProperties("app.datasource")
-    DataSource prjDataSource() {
+    DataSource appDataSource() {
         return new AtomikosDataSourceBean();
     }
 
     @Bean
-    LocalContainerEntityManagerFactoryBean prjEntityManagerFactory(
-            @Qualifier("prjDataSource") DataSource dataSource,
-            @Qualifier("prjHibernateProperties") Properties hibernateProperties) {
+    LocalContainerEntityManagerFactoryBean appEntityManagerFactory(
+            @Qualifier("appDataSource") DataSource dataSource,
+            @Qualifier("appHibernateProperties") Properties hibernateProperties) {
 
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
@@ -63,23 +63,24 @@ public class AppPersistenceConfig {
         return userTransactionManager;
     }
 
-   @Primary
+    // @Primary
     @Bean
     JtaTransactionManager jtaTransactionManager() throws SystemException {
         JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
         jtaTransactionManager.setTransactionManager(userTransactionManager());
 
         UserTransactionImp userTransaction = new UserTransactionImp();
-//        userTransaction.setTransactionTimeout(60);
-        
+        // userTransaction.setTransactionTimeout(60);
+
         jtaTransactionManager.setUserTransaction(userTransaction);
         jtaTransactionManager.setDefaultTimeout(120); // 設定 default transaction timeout, 未設定則為 30 秒
         return jtaTransactionManager;
     }
 
+    // @Primary
     @Bean
-    PlatformTransactionManager prjTransactionManager(
-            @Qualifier("prjEntityManagerFactory") EntityManagerFactory emf) {
+    PlatformTransactionManager appTransactionManager(
+            @Qualifier("appEntityManagerFactory") EntityManagerFactory emf) {
 
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(emf);
@@ -87,7 +88,7 @@ public class AppPersistenceConfig {
     }
 
     @Bean
-    Properties prjHibernateProperties(@Value("${app.hibernate.dialect}") String dialect,
+    Properties appHibernateProperties(@Value("${app.hibernate.dialect}") String dialect,
             @Value("${app.hibernate.show_sql}") String showSQL,
             @Value("${app.hibernate.format_sql}") String formatSQL) {
 
@@ -95,7 +96,7 @@ public class AppPersistenceConfig {
         properties.setProperty("hibernate.dialect", dialect);
         properties.setProperty("hibernate.show_sql", showSQL);
         properties.setProperty("hibernate.format_sql", formatSQL);
-        properties.setProperty("javax.persistence.transactionType", "JTA"); // *** 一定要加這屬性, 否則無法寫入 DB
+        // properties.setProperty("javax.persistence.transactionType", "JTA"); // *** 一定要加這屬性, 否則無法寫入 DB
 
         return properties;
     }

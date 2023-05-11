@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * @author ur04192
  */
 @Configuration
-@ComponentScan("com.walsin")
+@ComponentScan("com.mazinger")
 public class AppContext {
 
 }

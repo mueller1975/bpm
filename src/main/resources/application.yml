@@ -1,22 +1,29 @@
 bpm:
   datasource:    
-    unique-resource-name: projectDataSource
+    unique-resource-name: bpmDataSource
     pool-size: 3
     max-pool-size: 5
     min-pool-size: 2
     max-life-time: 120
     max-idle-time: 60
     borrow-connection-timeout: 60
-    xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+    # xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+    xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
     xa-properties:
-      user: flowable
-      password: flowable@23
-      URL: jdbc:mysql://34.80.82.226:3306/flowable?useSSL=false
-
+      user: sa
+      password: password
+      URL: jdbc:h2:file:d:\\h2\\home\\flowable;DB_CLOSE_ON_EXIT=FALSE
+      # user: flowable
+      # password: flowable@23
+      # URL: jdbc:mysql://34.80.82.226:3306/flowable?useSSL=false
+  hibernate:
+    dialect: org.hibernate.dialect.H2Dialect
+    format_sql: true
+    show_sql: true
 ### 人員資料庫連線設定 ###
 app:
   datasource:
-    unique-resource-name: bpmDataSource
+    unique-resource-name: appDataSource
     pool-size: 3
     max-pool-size: 5
     min-pool-size: 2
@@ -27,7 +34,7 @@ app:
     xa-properties:
       user: sa
       password: password
-      URL: jdbc:h2:file:d:\\h2\\flowable;DB_CLOSE_ON_EXIT=FALSE
+      URL: jdbc:h2:file:d:\\h2\\home\\app;DB_CLOSE_ON_EXIT=FALSE
 
 ### Hibernate 屬性設定 ###
   hibernate:
@@ -46,4 +53,12 @@ spring:
     - classpath:sql/schema-test.sql
     data:
     # - classpath:sql/data.sql
-    initialization-mode: ALWAYS    
+    initialization-mode: ALWAYS
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+    - org.activiti.spring.boot.SecurityAutoConfiguration
+    - org.flowable.spring.boot.idm.IdmEngineAutoConfiguration
+    - org.flowable.spring.boot.idm.IdmEngineServicesAutoConfiguration
