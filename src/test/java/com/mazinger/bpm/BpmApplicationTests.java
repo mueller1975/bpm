@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.mazinger.app.conf.AppContext;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @SpringBootTest(classes = { AppContext.class })
 class BpmApplicationTests {
 
@@ -20,8 +23,9 @@ class BpmApplicationTests {
 
 	@Test
 	void contextLoads() {
+		ProcessInstance pInstance = runtimeService.startProcessInstanceByKey("leave", null, null);
 
-		ProcessInstance pInstance = runtimeService.startProcessInstanceByKey("test", null, null);
+		log.info("Process instance id: {}", pInstance.getId());
 	}
 
 }
