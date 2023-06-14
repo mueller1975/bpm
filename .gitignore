@@ -3,6 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+node_modules/
 
 ### STS ###
 .apt_generated
@@ -36,3 +37,4 @@ tmlog*
 .mvn/wrapper/maven-wrapper.properties
 mvnw
 mvnw.cmd
+package-lock.json
