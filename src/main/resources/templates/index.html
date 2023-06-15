@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-Hant-TW">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="Cache-control" content="no-store">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<meta name="appCode" th:content="${appCode}" />
+	<meta name="ctx" th:content="${#servletContext.contextPath}" />
+	<meta name="path" th:content="${path}" />
+	<meta name="user" th:content="${#request.userPrincipal != null ? #request.userPrincipal.name : ''}" />
+	<meta name="referer" th:content="${referer}" />
+	<meta name="ytenantId" th:content="${ytenantId}" />
+
+	<!-- Spring CSRF-->
+	<meta name="_csrf" th:content="${_csrf} ? ${_csrf.token} : 'NOT_ENABLED'" />
+	<meta name="_csrf_header" th:content="${_csrf} ? ${_csrf.headerName} : 'NOT_ENABLED'" />
+
+	<link rel="stylesheet" th:href="@{/css/index.css}">
+	<link rel="icon" type="image/svg+xml" th:href="@{/css/svg/tab-icon.svg}">
+	<title>BPM or whatever</title>
+</head>
+
+<body>
+	<div id="bkg"></div>
+	<div id="root"></div>
+
+	<!-- 必須放在最後 -->
+	<script type="text/javascript" th:src="@{/dist/index.js?ts={ts}(ts=${timestamp})}"></script>
+</body>
+
+</html>

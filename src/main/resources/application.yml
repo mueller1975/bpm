@@ -1,3 +1,19 @@
+server:
+  port: 85
+  servlet:
+    context-path: /bpm
+    session:
+      timeout: 480m
+
+logging:
+  file:
+    path: d:/logs/bpm
+    name: d:/logs/bpm/bpm.log
+  level:
+    root: INFO
+    com:
+      walsin: TRACE
+    
 bpm:
   datasource:    
     unique-resource-name: bpmDataSource

@@ -64,12 +64,7 @@ module.exports = (env = {
         },
 
         entry: {
-            error: `${JSX}/error.jsx`,
-            index: `${JSX}/index.jsx`,
-            test: `${JSX}/test.jsx`,
-            form: `${JSX}/form.jsx`,
-            sso: `${JSX}/sso.jsx`,
-            redirect: `${JSX}/redirect.jsx`,
+            index: `${JSX}/page/index.jsx`,
         },
 
         output: {

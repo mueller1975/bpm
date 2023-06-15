@@ -1,0 +1,494 @@
+{
+    "id": "productOrder",
+    "title": "產品訂單",
+    "editableWhen": "ctxState.flowUserTask?.formPrivileges?.includes('EDIT')",
+    "components": [
+        {
+            "type": "fieldset",
+            "cols": {
+                "xs": 12,
+                "sm": 6,
+                "md": 4,
+                "lg": 3
+            },
+            "fields": [
+                {
+                    "name": "mpbName",
+                    "label": "MPB 名稱",
+                    "l4ParamRequired": false,
+                    "cols": {
+                        "sm": 12,
+                        "md": 8,
+                        "lg": 6
+                    }
+                },
+                {
+                    "name": "salesNoticeNo",
+                    "label": "業務通知單號",
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "salesNoticeLineNo",
+                    "label": "行號",
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "salesArea",
+                    "label": "銷售區域",
+                    "type": "tableSelect",
+                    "source": "salesArea",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "salesArea": "name",
+                        "salesAreaCode": "code"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "salesAreaCode",
+                    "label": "銷售區域代碼",
+                    "disabled": true,
+                    "hidden": true,
+                    "isMappedStateProp": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "salesmanName",
+                    "label": "銷售業務",
+                    "isMappedStateProp": true,
+                    "type": "employeeSelect",
+                    "mappedStateProps": {
+                        "salesman": "empId",
+                        "salesmanName": "name",
+                        "salesmanDeptName": "costName"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "salesman",
+                    "label": "銷售業務工號",
+                    "disabled": true,
+                    "hidden": true,
+                    "isMappedStateProp": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "salesmanDeptName",
+                    "label": "部門",
+                    "disabled": true,
+                    "isMappedStateProp": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "productNo",
+                    "label": "澄清前料號",
+                    "type": "tableSelect",
+                    "source": "product",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "productNo": "code",
+                        "productName": "name",
+                        "micNo": "description"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "productName",
+                    "label": "料號名稱",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "micNo",
+                    "label": "MIC No.",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "micLineNo",
+                    "label": "MIC Line No.",
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "clientNo",
+                    "label": "客戶編號",
+                    "type": "tableSelect",
+                    "source": "merchant",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "clientNo": "code",
+                        "clientName": "name"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "clientName",
+                    "label": "客戶簡稱",
+                    "isMappedStateProp": true,
+                    "required": true,
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "clientIndustry",
+                    "label": "下單客戶的產業別",
+                    "type": "tableSelect",
+                    "source": "primaryUsageCategory",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "clientIndustryId": "id",
+                        "clientIndustry": "description"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "clientIndustryId",
+                    "label": "下單客戶產業別 ID",
+                    "disabled": true,
+                    "hidden": true,
+                    "isMappedStateProp": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "productAppliedArea",
+                    "label": "客戶產品應用",
+                    "type": "tableSelect",
+                    "source": "secondaryUsageCategory",
+                    "filterBy": "{ dr: 0, primaryCategoryId: formState?.clientIndustryId || '無' }",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "productAppliedAreaId": "id",
+                        "productAppliedArea": "description"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "productAppliedAreaId",
+                    "label": "客戶產品應用 ID",
+                    "disabled": true,
+                    "hidden": true,
+                    "isMappedStateProp": true,
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "productUsage",
+                    "label": "產品用途",
+                    "type": "tableSelect",
+                    "source": "minorUsageCategory",
+                    "filterBy": "{ dr: 0, primaryCategoryId: formState?.clientIndustryId || '無', secondaryCategoryId: formState?.productAppliedAreaId || '無' }",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "productUsageId": "id",
+                        "productUsage": "description"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "productUsageId",
+                    "label": "產品用途 ID",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "hidden": true,
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "inventoryOrg",
+                    "label": "庫存組織",
+                    "type": "tableSelect",
+                    "source": "inventoryOrg",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "inventoryOrgCode": "code",
+                        "inventoryOrg": "name"
+                    },
+                    "required": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "inventoryOrgCode",
+                    "label": "庫存組織代碼",
+                    "isMappedStateProp": true,
+                    "required": true,
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "clientProductType",
+                    "label": "客戶產品型態",
+                    "type": "autocomplete",
+                    "configCode": "CLIENT_PRODUCT_TYPE"
+                },
+                {
+                    "name": "clientProductStatus",
+                    "label": "客戶產品狀態",
+                    "type": "autocomplete",
+                    "configCode": "CLIENT_PRODUCT_STATE"
+                },
+                {
+                    "name": "processingMethod",
+                    "label": "加工方式",
+                    "type": "tableSelect",
+                    "source": "processingMethod",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "processingMethod": "procWay",
+                        "processingMethodId": "id"
+                    },
+                    "required": true,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "processingMethodId",
+                    "label": "加工方式 ID",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "hidden": true
+                },
+                {
+                    "name": "en10204",
+                    "label": "EN10204品證格式",
+                    "type": "autocomplete",
+                    "configCode": "EN10204_VERSION",
+                    "required": true,
+                    "isContextStateProp": true,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "specification",
+                    "label": "品證格式依據規範",
+                    "requiredWhen": "Boolean(formState?.en10204) && ['3.1', '3.2'].includes(U.option_value(formState?.en10204))",
+                    "triggersClarification": true
+                },
+                {
+                    "name": "specificationNo",
+                    "label": "品證格式依據規範編號"
+                },
+                {
+                    "name": "clientSteelGrade",
+                    "label": "客戶鋼種",
+                    "required": true,
+                    "isContextStateProp": true
+                },
+                {
+                    "name": "size1",
+                    "label": "尺寸一(mm)",
+                    "type": "number",
+                    "required": true,
+                    "isContextStateProp": true,
+                    "l4ParamRequired": false,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "size1_description",
+                    "label": "尺寸一說明",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "size2",
+                    "label": "尺寸二(mm)",
+                    "type": "number",
+                    "isContextStateProp": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "size2_description",
+                    "label": "尺寸二說明",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "size3",
+                    "label": "尺寸三(mm)",
+                    "type": "number",
+                    "isContextStateProp": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "size3_description",
+                    "label": "尺寸三說明",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "length",
+                    "label": "長度(mm)",
+                    "type": "number",
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "monthlyDemand",
+                    "label": "月需求量(公噸)",
+                    "type": "numberRange",
+                    "validator": "U.validate_number_range(value, [0,], [0,])"
+                },
+                {
+                    "name": "weight",
+                    "label": "銷售數量(MT)(公噸)",
+                    "type": "number",
+                    "isContextStateProp": true,
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "count",
+                    "label": "支數",
+                    "type": "number",
+                    "availableWhen": "U.product_category_in(ctxState, '胚', '棒')",
+                    "requiredWhen": "Boolean(formState?.weight)"
+                },
+                {
+                    "name": "itemName",
+                    "label": "項目名稱"
+                },
+                {
+                    "name": "assignedProcess",
+                    "label": "指定製程",
+                    "type": "autocomplete",
+                    "configCode": "ASSIGNED_PROCESS",
+                    "availableWhen": "U.product_category_in(ctxState, '條 (盤元)', '棒')"
+                },
+                {
+                    "name": "techAgreementNo",
+                    "label": "技術協議號",
+                    "isContextStateProp": true,
+                    "triggersClarification": true
+                },
+                {
+                    "name": "一張訂單+項次不可超過幾個爐號",
+                    "label": "一張訂單+項次不可超過幾個爐號",
+                    "type": "number",
+                    "defaultValue": 3
+                },
+                {
+                    "name": "bonded",
+                    "label": "保稅",
+                    "type": "checkbox",
+                    "defaultValue": "N",
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "jsClientNo",
+                    "label": "江陰下游客戶編號",
+                    "type": "tableSelect",
+                    "source": "merchant",
+                    "isMappedStateProp": true,
+                    "mappedStateProps": {
+                        "jsClientNo": "code",
+                        "jsClientName": "name"
+                    },
+                    "requiredWhen": "formState?.clientNo=='10000026'",
+                    "validator": "value == formState?.clientNo ? '不得與【客戶編號】值相同' : ''",
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "jsClientName",
+                    "label": "江陰下游客戶簡稱",
+                    "isMappedStateProp": true,
+                    "disabled": true,
+                    "requiredWhen": "formState?.clientNo=='10000026'",
+                    "l4ParamRequired": false
+                },
+                {
+                    "name": "客戶規範文檔",
+                    "label": "客戶規範文檔",
+                    "type": "fileUploader",
+                    "cols": {
+                        "xs": 12
+                    },
+                    "uploaderOptions": {
+                        "noBorder": false,
+                        "columns": [
+                            {
+                                "name": "description",
+                                "label": "檔案說明",
+                                "width": 500
+                            }
+                        ]
+                    },
+                    "requiredWhen": "Boolean(formState?.techAgreementNo)",
+                    "triggersClarification": true
+                },
+                {
+                    "name": "圖紙",
+                    "label": "圖紙",
+                    "type": "fileUploader",
+                    "cols": {
+                        "xs": 12
+                    },
+                    "uploaderOptions": {
+                        "noBorder": false,
+                        "columns": [
+                            {
+                                "name": "description",
+                                "label": "檔案說明",
+                                "width": 500
+                            }
+                        ]
+                    },
+                    "triggersClarification": true
+                },
+                {
+                    "name": "下游客戶",
+                    "label": "下游客戶",
+                    "type": "inlineEditor",
+                    "cols": {
+                        "xs": 12
+                    },
+                    "editorOptions": {
+                        "noBorder": false,
+                        "columns": [
+                            {
+                                "name": "clientIndustry",
+                                "label": "下游客戶產業別",
+                                "width": 250,
+                                "type": "tableSelect",
+                                "source": "primaryUsageCategory",
+                                "filterBy": "{ dr: 0 }",
+                                "mappedRowProps": {
+                                    "clientIndustry": "description"
+                                }
+                            },
+                            {
+                                "name": "clientName",
+                                "label": "下游客戶名稱",
+                                "width": 300
+                            },
+                            {
+                                "name": "clientEndProduct",
+                                "label": "下游客戶最終產品",
+                                "width": 250,
+                                "type": "tableSelect",
+                                "source": "secondaryUsageCategory",
+                                "filterBy": "{ dr: 0 }",
+                                "mappedRowProps": {
+                                    "clientEndProduct": "description"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

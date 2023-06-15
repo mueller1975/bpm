@@ -1,0 +1,275 @@
+{
+    "id": "testsAndTrials",
+    "title": "測試與試驗",
+    "editableWhen": "ctxState.flowUserTask?.formPrivileges?.includes('EDIT')",
+    "components": [
+        {
+            "type": "fieldset",
+            "cols": {
+                "xs": 12,
+                "sm": 6,
+                "md": 4,
+                "lg": 3
+            },
+            "fields": [
+                {
+                    "name": "productSpec",
+                    "label": "規範依據",
+                    "type": "dropdown",
+                    "configCode": "PRODUCT_SPEC",
+                    "required": true,
+                    "isContextStateProp": true
+                },
+                {
+                    "name": "internationalSpec",
+                    "label": "國際規範",
+                    "type": "dropdown",
+                    "configCode": "INTERNATIONAL_SPEC",
+                    "showItemCode": true,
+                    "availableWhen": "formState?.productSpec == '國際規範'",
+                    "requiredWhen": "formState?.productSpec == '國際規範'"
+                },
+                {
+                    "name": "internationalSpecNo",
+                    "label": "規範編號",
+                    "availableWhen": "formState?.productSpec == '國際規範'",
+                    "requiredWhen": "formState?.productSpec == '國際規範'"
+                }
+            ]
+        },
+        {
+            "type": "componentGroup",
+            "availableWhen": "formState?.productSpec == '客戶需求'",
+            "components": [
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "fieldset",
+                    "title": "熱處理試驗",
+                    "cols": {
+                        "xs": 12,
+                        "sm": 6,
+                        "md": 4,
+                        "lg": 3
+                    },
+                    "fields": [
+                        {
+                            "name": "熱處理依據規範",
+                            "label": "依據規範",
+                            "type": "autocomplete",
+                            "configCode": "HEAT_TREATMENT_SPEC",
+                            "isContextStateProp": true,
+                            "triggersClarification": true
+                        },
+                        {
+                            "name": "熱處理方法",
+                            "label": "熱處理方法",
+                            "type": "autocomplete",
+                            "configCode": "HEAT_TREATMENT_METHOD",
+                            "requiredWhen": "Boolean(formState?.['熱處理依據規範'])",
+                            "triggersClarification": true
+                        },
+                        {
+                            "name": "熱處理溫度",
+                            "label": "熱處理溫度",
+                            "type": "numberRange",
+                            "requiredWhen": "Boolean(formState?.['熱處理依據規範'])",
+                            "triggersClarification": true
+                        },
+                        {
+                            "name": "熱處理時間",
+                            "label": "熱處理時間",
+                            "tpye": "number",
+                            "requiredWhen": "Boolean(formState?.['熱處理依據規範'])",
+                            "triggersClarification": true
+                        },
+                        {
+                            "name": "冷卻方式",
+                            "label": "冷卻方式",
+                            "type": "autocomplete",
+                            "configCode": "COOLING_METHOD",
+                            "requiredWhen": "Boolean(formState?.['熱處理依據規範'])",
+                            "triggersClarification": true
+                        }
+                    ]
+                },
+                {
+                    "type": "fieldset",
+                    "title": "拉伸試驗",
+                    "cols": {
+                        "xs": 12,
+                        "sm": 6,
+                        "md": 4,
+                        "lg": 3
+                    },
+                    "availableWhen": "U.product_category_in(ctxState, '條 (盤元)', '棒', '板')",
+                    "fields": [
+                        {
+                            "name": "拉伸試驗材料規範依據",
+                            "label": "材料規範依據"
+                        },
+                        {
+                            "name": "拉伸試驗規範編號",
+                            "label": "規範編號"
+                        },
+                        {
+                            "name": "拉伸試驗條件",
+                            "label": "條件"
+                        },
+                        {
+                            "type": "divider",
+                            "cols": {
+                                "xs": 12
+                            }
+                        },
+                        {
+                            "name": "頭尾拉伸",
+                            "label": "頭尾拉伸",
+                            "type": "checkbox",
+                            "availableWhen": "U.product_category_in(ctxState, '板')",
+                            "triggersQAReview": true
+                        }
+                    ]
+                },
+                {
+                    "type": "fieldset",
+                    "title": "硬度試驗",
+                    "cols": {
+                        "xs": 12,
+                        "sm": 6,
+                        "md": 4,
+                        "lg": 3
+                    },
+                    "availableWhen": "U.product_category_in(ctxState, '條 (盤元)', '棒', '板')",
+                    "fields": [
+                        {
+                            "name": "硬度試驗材料規範依據",
+                            "label": "材料規範依據"
+                        },
+                        {
+                            "name": "硬度試驗材料規範編號",
+                            "label": "規範編號"
+                        },
+                        {
+                            "type": "divider",
+                            "cols": {
+                                "xs": 12
+                            }
+                        },
+                        {
+                            "name": "頭尾硬度",
+                            "label": "頭尾硬度",
+                            "type": "checkbox",
+                            "availableWhen": "U.product_category_in(ctxState, '板')",
+                            "triggersClarification": true
+                        }
+                    ]
+                },
+                {
+                    "type": "fieldset",
+                    "title": "衝擊功試驗",
+                    "cols": {
+                        "xs": 12,
+                        "sm": 6,
+                        "md": 4,
+                        "lg": 3
+                    },
+                    "availableWhen": "U.product_category_in(ctxState, '棒', '板')",
+                    "fields": [
+                        {
+                            "name": "衝擊功試驗材料規範依據",
+                            "label": "材料規範依據"
+                        },
+                        {
+                            "name": "衝擊功試驗材料規範編號",
+                            "label": "規範編號"
+                        }
+                    ]
+                },
+                {
+                    "type": "fieldset",
+                    "cols": {
+                        "xs": 12
+                    },
+                    "fields": [
+                        {
+                            "name": "檢測要求",
+                            "label": "檢測要求",
+                            "type": "inlineEditor",
+                            "editorOptions": {
+                                "noBorder": false,
+                                "columns": [
+                                    {
+                                        "name": "試驗分類",
+                                        "label": "試驗分類",
+                                        "type": "dropdown",
+                                        "configCode": "TEST_AND_TRIALS_CATEGORIES",
+                                        "width": 200
+                                    },
+                                    {
+                                        "name": "依據規範",
+                                        "label": "依據規範",
+                                        "type": "autocomplete",
+                                        "configCode": "TEST_AND_TRIALS_STANDARDS",
+                                        "menuDependsOn": "試驗分類",
+                                        "width": 180
+                                    },
+                                    {
+                                        "name": "檢測項目",
+                                        "label": "檢測項目",
+                                        "type": "tableSelect",
+                                        "source": "testItem",
+                                        "filterBy": "{ category: row['試驗分類'] || '無' }",
+                                        "freeSolo": true,
+                                        "_source": "config",
+                                        "_configCode": "TEST_AND_TRIALS_ITEMS",
+                                        "_filterBy": {
+                                            "category": "試驗分類"
+                                        },
+                                        "mappedRowProps": {
+                                            "檢測項目": "item",
+                                            "說明": "description",
+                                            "單位": "unit"
+                                        },
+                                        "width": 180
+                                    },
+                                    {
+                                        "name": "說明",
+                                        "label": "說明",
+                                        "disabled": true,
+                                        "hidden": false,
+                                        "width": 300
+                                    },
+                                    {
+                                        "name": "標準值",
+                                        "label": "標準值",
+                                        "type": "numberRange",
+                                        "width": 250
+                                    },
+                                    {
+                                        "name": "單位",
+                                        "label": "單位",
+                                        "disabled": true,
+                                        "width": 80
+                                    },
+                                    {
+                                        "name": "其他欄位",
+                                        "label": "其他欄位",
+                                        "type": "ui",
+                                        "source": "config",
+                                        "configCode": "TEST_AND_TRIALS_EXTRAS",
+                                        "uiDependsOn": "試驗分類",
+                                        "width": 400
+                                    }
+                                ]
+                            },
+                            "requiredWhen": "formState?.productSpec == '客戶需求'",
+                            "triggersClarification": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
