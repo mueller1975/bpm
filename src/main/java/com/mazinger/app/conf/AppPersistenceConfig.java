@@ -9,7 +9,7 @@ import javax.transaction.SystemException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -24,7 +24,6 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 
 import com.atomikos.icatch.jta.UserTransactionImp;
 import com.atomikos.icatch.jta.UserTransactionManager;
-import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableJpaRepositories(basePackages = { "com.mazinger.app.model.dao"
@@ -33,12 +32,12 @@ public class AppPersistenceConfig {
 
     // @Primary
     @DependsOn({ "jtaTransactionManager" })
-    // @Bean(initMethod = "init", destroyMethod = "close")
-    @Bean
+    @Bean(initMethod = "init", destroyMethod = "close")
+    // @Bean
     @ConfigurationProperties("app.datasource")
     DataSource appDataSource() {
-        // return new AtomikosDataSourceBean();
-        return DataSourceBuilder.create().type(HikariDataSource.class).build();
+        return new AtomikosDataSourceBean();
+        // return DataSourceBuilder.create().type(HikariDataSource.class).build();
     }
 
     @Bean

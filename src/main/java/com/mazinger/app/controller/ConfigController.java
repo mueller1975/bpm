@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mazinger.app.model.dto.ResponseVO;
 import com.mazinger.app.model.service.ConfigService;
 
 @RestController
@@ -20,6 +21,6 @@ public class ConfigController {
 	@GetMapping("/mpbForms4Lab")
 	public Object getMpbFormsForLab() throws ServiceException {
 		Collection<?> voList = configService.findConfigsByCategory("MPB_FORM_LAB");
-		return voList;
+		return ResponseVO.succeed(voList);
 	}
 }

@@ -8,12 +8,10 @@ CREATE TABLE IF NOT EXISTS app.leave (
 	primary key(id)
 );
 
-CREATE TABLE IF NOT EXISTS app.form_config (
+CREATE TABLE IF NOT EXISTS app.config (
 	code varchar(60) NOT NULL,
 	category varchar(60),
-	`value` text, -- value 是保留字, 須置於 `` 中
+	value_ text, -- value 是 h2 保留字, 不可使用為欄位名稱
 	description varchar(200),
-	creator varchar(60),
-	modifier varchar(60),
 	primary key(code)
 );

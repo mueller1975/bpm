@@ -9,4 +9,6 @@ import com.mazinger.app.model.entity.Config;
 public interface ConfigRepository extends CrudRepository<Config, String> {
 
     public List<Config> findByCategory(String category);
+
+    // public List<Config> saveAll(List<Config> entities);
 }

@@ -1,16 +1,20 @@
-import React, { useEffect, useCallback } from 'react';
-import { Typography } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
-import FormBuilder from '../component/ExcelFormImporter.jsx';
+import { createAppTheme, DARK, NORMAL } from 'Themes';
+import FormBuilder from '../component/formBuilder/FormBuilder.jsx';
+import { FormContextProvider } from 'Component/formBuilder/context/FormContext.jsx';
+
+const theme = createAppTheme(DARK, NORMAL, NORMAL);
 
 const Index = props => {
 
     return (
-        <div>
-            <Typography color="secondary">Congratulations!</Typography>
-
-            <FormBuilder />
-        </div>
+        <ThemeProvider theme={theme}>
+            <FormContextProvider>
+                <FormBuilder />
+            </FormContextProvider>
+        </ThemeProvider>
     );
 };
 

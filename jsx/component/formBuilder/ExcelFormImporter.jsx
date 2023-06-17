@@ -1,14 +1,24 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { IconButton, Typography } from '@mui/material';
+import { IconButton, Typography, Paper } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import readXlsxFile from 'read-excel-file';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { styled } from '@mui/material/styles';
-import { readSpecLines, organizeSpecForms } from '../lib/excelForm';
+import { readSpecLines, organizeSpecForms } from './lib/excelForm';
+import { useResponseVO } from 'Hook/useTools.jsx';
+
+// 資料儲存 fetch api 建構者
+const saveForms = forms => fetch('service/config/saveForms', {
+    method: 'POST', redirect: 'manual', body: JSON.stringify(forms),
+    headers: {
+        'Content-Type': 'application/json',
+    }
+});
 
 export default styled(({ className }) => {
     const [excelFileInfo, setExcelFileInfo] = useState();
     const fileInputRef = useRef();
+    const { execute: saveFormConfigs, pending: saving, value, error } = useResponseVO(saveForms);
 
     const openFileDialog = () => {
         fileInputRef.current.click();
@@ -38,12 +48,20 @@ export default styled(({ className }) => {
         const formRows = await readSpecLines(file, formSpecSheets);
         const forms = organizeSpecForms(formRows);
 
-        console.log({ forms })
+        const formConfigs = forms.map(form => ({
+            category: "MPB_FORM_LAB",
+            code: `MPB_FORM_LAB_${form.id}`,
+            description: `MPB FORM (LAB) - ${form.title}`,
+            value: JSON.stringify(form)
+        }));
 
+        saveFormConfigs({ params: formConfigs })
+
+        console.log(formConfigs)
     }, [excelFileInfo]);
 
     return (
-        <div className={className}>
+        <Paper className={className}>
             <input type="file" accept="" hidden ref={fileInputRef} onChange={importFile}></input>
             <IconButton color="warning" onClick={openFileDialog}><UploadFileIcon /></IconButton>
 
@@ -66,9 +84,12 @@ export default styled(({ className }) => {
                 excelFileInfo?.formSpecSheets.length > 0 && <IconButton color="success" onClick={readFormSpec}><NoteAddIcon /></IconButton>
             }
 
-        </div>
+        </Paper>
     );
 })`
+
+    width: 100%;
+    height: 100%;
 
     .excelInfo {
         display: flex;

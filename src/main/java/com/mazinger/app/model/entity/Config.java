@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "form_config", schema = "app")
+@Table(name = "config", schema = "app")
 public class Config {
 
 	@Id
@@ -18,7 +18,7 @@ public class Config {
 	@Column
 	private String category;
 
-	@Column
+	@Column(name = "value_")
 	private String value;
 
 	@Column

@@ -38,25 +38,24 @@ bpm:
     show_sql: true
 ### 人員資料庫連線設定 ###
 app:
-  # datasource:
-    # unique-resource-name: appDataSource
-    # pool-size: 3
-    # max-pool-size: 5
-    # min-pool-size: 2
-    # max-life-time: 120
-    # max-idle-time: 60
-    # borrow-connection-timeout: 60
-    # xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
-    # xa-properties:
-    #   user: sa
-    #   password: password
-    #   URL: jdbc:h2:file:d:\\h2\\home\\app;DB_CLOSE_ON_EXIT=FALSE
   datasource:
-    username: sa
-    password: password
-#    jdbc-url: jdbc:h2:mem:testdb
-    jdbc-url: jdbc:h2:file:d:\\h2\\home\\app;INIT=RUNSCRIPT FROM 'src/main/resources/sql/db-init.sql';
-    driver-class-name: org.h2.Driver
+    unique-resource-name: appDataSource
+    pool-size: 3
+    max-pool-size: 5
+    min-pool-size: 2
+    max-life-time: 120
+    max-idle-time: 60
+    borrow-connection-timeout: 60
+    xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
+    xa-properties:
+      user: sa
+      password: password
+      URL: jdbc:h2:file:d:\\h2\\home\\app;INIT=RUNSCRIPT FROM 'src/main/resources/sql/db-init.sql';
+  # datasource:
+  #   username: sa
+  #   password: password
+  #   jdbc-url: jdbc:h2:file:d:\\h2\\home\\app;INIT=RUNSCRIPT FROM 'src/main/resources/sql/db-init.sql';
+  #   driver-class-name: org.h2.Driver
 
 ### Hibernate 屬性設定 ###
   hibernate:
