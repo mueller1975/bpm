@@ -22,7 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class BpmPersistenceConfig {
 
-    // @Primary
+    @Primary
     @DependsOn({ "jtaTransactionManager" })
     @Bean(initMethod = "init", destroyMethod = "close")
     @ConfigurationProperties("bpm.datasource")
@@ -47,7 +47,7 @@ public class BpmPersistenceConfig {
         return em;
     }
 
-    @Primary // for injection into ProcessEngineAutoConfiguration
+    // @Primary // for injection into ProcessEngineAutoConfiguration
     @Bean
     PlatformTransactionManager bpmTransactionManager(@Qualifier("bpmEntityManagerFactory") EntityManagerFactory emf) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();

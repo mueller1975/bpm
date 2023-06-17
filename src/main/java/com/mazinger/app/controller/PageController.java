@@ -8,6 +8,16 @@ public class PageController {
 
     @GetMapping("/")
     public String index() {
+        return "redirect:/importer";
+    }
+
+    @GetMapping("/builder")
+    public String builder() {
+        return "formBuilder";
+    }
+
+    @GetMapping("/importer")
+    public String formImporter() {
         return "index";
     }
 }

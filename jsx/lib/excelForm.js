@@ -28,6 +28,7 @@ const asInlineEditor = field => {
     field.cols = {
         xs: 12
     };
+
     field.options = {
         noBorder: false,
         columns: []
@@ -39,6 +40,7 @@ const asFileUploader = field => {
     field.cols = {
         xs: 12
     };
+
     field.options = {
         noBorder: false,
         columns: [
@@ -52,10 +54,10 @@ const asFileUploader = field => {
 };
 
 const createField = row => {
-    let [name, label, type, defaultValue, menuOrTableCode, unit, globalVar] = [
-        row['欄位變數'], row['欄位名稱'], row['欄位型態'], row['預設值'], row['選單/表格代碼'],
-        row['單位'], row['全域變數'], row[''],
-    ]
+    let [name, label, type, defaultValue, menuOrTableCode,
+        unit, globalVar, requiredHaving, readOnly] = [
+            row['欄位變數'], row['欄位名稱'], row['欄位型態'], row['預設值'], row['選單/表格代碼'],
+            row['單位'], row['全域變數'], row['必填'], row['唯讀']];
 
     if (!(name && label && type)) {
         throw "欄位變數、名稱、型態皆不得為空值";
@@ -63,13 +65,28 @@ const createField = row => {
 
     const field = { name, label };
 
-    defaultValue !== null && (field.defaultValue = defaultValue);
+    defaultValue !== null && (field.defaultValue = defaultValue.toString());
     unit !== null && (field.unit = unit);
     globalVar === 'v' && (field.isContextStateProp = true);
 
+    // 何時必填
+    if (requiredHaving) {
+        if (requiredHaving === 'v') {
+            field.required = true;
+        } else {
+            let privs = requiredHaving.split(',').join('\',\'');
+            field.requiredWhen = `ctxState.flowUserTask?.formPrivileges?.includes('${privs}')`;
+        }
+    }
+
+    // 是否 disabled
+    if (readOnly === 'v') {
+        field.disabled = true;
+    }
+
     switch (type.toUpperCase()) {
         case '文字':
-            field.type = 'text';
+            // field.type = 'text';
             break;
         case '下拉':
             if (!menuOrTableCode) {
@@ -104,15 +121,16 @@ const createField = row => {
 
             field.type = 'tableSelect';
             field.source = menuOrTableCode;
-            field.mappedRowProps = {
-
-            };
+            field.isMappedStateProp = true;
+            field.mappedRowProps = {};
             break;
         case '映射':
             field.isMappedStateProp = true;
             break;
         case '員工選取':
-            field.type = 'employee';
+            field.type = 'employeeSelect';
+            field.isMappedStateProp = true;
+            field.mappedRowProps = {};
             break;
         case '附檔':
             asFileUploader(field);
@@ -161,8 +179,8 @@ export const organizeSpecForms = formRows => {
     let curCompositeField = null; // 目前【子表多筆】、【附檔】型態的欄位
 
     formRows.forEach(row => {
-        let [formTitle, formId, formOrder, formIcon] = [
-            row['分區'], row['分區代碼'], row['分區順序'], row['分區圖示'], row[''], row[''],];
+        let [formTitle, formId, formOrder, formIcon, rowColWidth] = [
+            row['分區'], row['分區代碼'], row['分區順序'], row['分區圖示'], row['子表欄寬'],];
 
         if (curForm?.title !== formTitle) {
             curForm = forms[formTitle] ?? createForm(formId, formTitle, formOrder, formIcon);
@@ -187,6 +205,8 @@ export const organizeSpecForms = formRows => {
 
             if (labels.length > 1 && labels[0] == curCompositeField.label) {
                 field.label = field.label.substring(field.label.indexOf('-') + 1); // 欄位名稱去掉 XXX-
+                rowColWidth && (field.width = rowColWidth);
+
                 curCompositeField.options.columns.push(field);
                 return;
             } else {

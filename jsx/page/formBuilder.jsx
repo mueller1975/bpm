@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { Typography } from '@mui/material';
 import { createRoot } from 'react-dom/client';
-import ExcelFormImporter from '../component/ExcelFormImporter.jsx';
+import FormBuilder from '../component/ExcelFormImporter.jsx';
 
 const Index = props => {
 
@@ -9,7 +9,7 @@ const Index = props => {
         <div>
             <Typography color="secondary">Congratulations!</Typography>
 
-            <ExcelFormImporter />
+            <FormBuilder />
         </div>
     );
 };

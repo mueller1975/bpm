@@ -65,6 +65,7 @@ module.exports = (env = {
 
         entry: {
             index: `${JSX}/page/index.jsx`,
+            formBuilder: `${JSX}/page/formBuilder.jsx`,
         },
 
         output: {
