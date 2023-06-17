@@ -57,12 +57,12 @@ export const useMousePosition = () => {
  * @param {*} delay 最少延遲時間 (ms)
  * @param {*} immediate 立即執行
  */
-export const useResponseVO = (asyncFunction, { delay = 0, immediate = false }) => {
+export const useResponseVO = (asyncFunction, { delay = 0, immediate = false } = {}) => {
     const [pending, setPending] = useState(false)
     const [value, setValue] = useState(null)
     const [error, setError] = useState(null)
 
-    useEffect(() => {        
+    useEffect(() => {
         if (immediate) {
             console.log('立即執行 =>', asyncFunction);
             execute();

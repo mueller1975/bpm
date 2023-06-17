@@ -38,3 +38,5 @@ tmlog*
 mvnw
 mvnw.cmd
 package-lock.json
+src/main/resources/static/dist/*
+src/main/resources/static/dist/formBuilder.js
