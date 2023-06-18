@@ -40,3 +40,9 @@ mvnw.cmd
 package-lock.json
 src/main/resources/static/dist/*
 src/main/resources/static/dist/formBuilder.js
+src/main/resources/static/dist/formBuilder.js
+src/main/resources/static/dist/index.js
+src/main/resources/static/dist/jsx_component_DataTable_DataTableX_jsx-chunk.js
+src/main/resources/static/dist/jsx_component_DataTable_LocalDataTable_jsx-chunk.js
+src/main/resources/static/dist/jsx_component_DataTable_RemoteDataTable_jsx-chunk.js
+src/main/resources/static/dist/vendors-node_modules_mui_icons-material_Close_js-node_modules_mui_icons-material_CloudDownloa-f6be50-chunk.js
