@@ -2,7 +2,7 @@ import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import SelectDialog from 'Component/SelectDialog.jsx';
 import { useResponseVO } from 'Hook/useTools.jsx';
 import React, { useCallback, useEffect, useState } from 'react';
-import LoadableTable from '../../component/LoadableTable.jsx';
+import { LoadableTable } from 'Components';
 import { styled } from '@mui/material/styles';
 
 export default React.memo(styled(props => {

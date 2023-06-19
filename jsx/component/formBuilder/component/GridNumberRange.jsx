@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import ComponentGrid from './ComponentGrid.jsx';
 import NumberRangeField from './NumberRangeField.jsx';
 
 export default React.memo(props => {
@@ -12,7 +12,7 @@ export default React.memo(props => {
     };
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
 
@@ -24,7 +24,7 @@ export default React.memo(props => {
                     }, [value]);
 
                     return (
-                        // 須以 <div> 包住, 因 <ConditionalGrid> 以 <Tooltip> 包住此元件 (Tooltip 的 child 不可為陣列)
+                        // 須以 <div> 包住, 因 <ComponentGrid> 以 <Tooltip> 包住此元件 (Tooltip 的 child 不可為陣列)
                         <div className="GridNumberRange">
                             <NumberRangeField fullWidth size="small" name={name} label={label} helper={helper}
                                 hidden={hidden}
@@ -45,6 +45,6 @@ export default React.memo(props => {
                     );
                 }
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 });

@@ -5,7 +5,6 @@ import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { generateRowField } from '../lib/formUI.jsx';
 import PreviewButton from './PreviewButton.jsx';
-import * as U from '../lib/formJsonUtils.js';
 
 export default React.memo(styled(props => {
     // parentValue 有值時, 此 EditorRow 是 InnerEditorRow
@@ -85,26 +84,13 @@ export default React.memo(styled(props => {
             {/* 設定的欄位 */
                 !columns ? null :
                     columns.map(({ name, label, type, configCode, source, filterBy, uiDependsOn, width, hidden = false,
-                        disabled: colDisabled = false, disabledWhen, disabledWhenMenuIsEmpty = false, freeSolo = true,
+                        disabled = false, disabledWhen, disabledWhenMenuIsEmpty = false, freeSolo = true,
                         menuDependsOn, menuDependsOnParent, mappedRowProps = [], availableWhen }) => {
 
-                        const availableWhenFunc = useMemo(() => availableWhen && new Function(['row', 'U'], `return ${availableWhen}`), []);
-                        const available = useMemo(() => (!availableWhenFunc || availableWhenFunc(value, U)), [value]);
-
-                        // not availabe 則不顯示
-                        if (!available) {
-                            return null;
-                        }
-
-                        const disabledWhenFunc = !disabledWhen ? undefined : new Function(["row"], `return ${disabledWhen}`);
-                        const disabledX = disabled || colDisabled || (disabledWhenFunc && disabledWhenFunc({ ...value, uploaded }));
-
-                        const variant = disabledX ? 'outlined' : 'filled';
-                        // console.log(name, { disabled, disabledX })
-
+                        const variant = disabled ? 'outlined' : 'filled';
 
                         let fieldComponent = generateRowField({
-                            name, label, type, configCode, source, filterBy, uiDependsOn, hidden, disabled: disabledX, disabledWhenMenuIsEmpty,
+                            name, label, type, configCode, source, filterBy, uiDependsOn, hidden, disabled, disabledWhenMenuIsEmpty,
                             menuDependsOn, mappedRowProps, variant, row: value, uploaded, menuDependsOnParent, parentValue, freeSolo,
                             eventHandlers: { valueChangeHandler, optionChangeHandler, fileSelectHandler }
                         });

@@ -1,4 +1,3 @@
-import { flattenDeep } from 'lodash';
 import readXlsxFile from 'read-excel-file';
 
 const DEFAULT_COLS = {

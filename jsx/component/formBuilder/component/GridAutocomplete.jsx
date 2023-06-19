@@ -1,8 +1,7 @@
 import { Autocomplete, TextField, Typography } from '@mui/material';
 import { ServiceContext } from 'Context/ServiceContext.jsx';
 import React, { useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { MPBFormContext } from '../context/MPBFormContext.jsx';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import ComponentGrid from './ComponentGrid.jsx';
 
 const ITEM_CODE_STYLE = { fontFamily: 'Monospace', lineHeight: 'normal', mr: 1 };
 const ITEM_NAME_STYLE = { lineHeight: 'normal' };
@@ -18,22 +17,7 @@ export default React.memo(React.forwardRef((props, ref) => {
     const inputRef = useRef();
 
     const { dropdowns, hierarchicalDropdowns } = useContext(ServiceContext);
-    const { state: ctxState } = useContext(MPBFormContext);
-
-    const formState = ctxState[formId];
-
-    let menuDependsOnValue;
-    let menuDependsOnFunc;
-
-    if (menuDependsOn) {
-        if (typeof menuDependsOn == 'object') {
-            menuDependsOnFunc = useMemo(() => new Function(['states'], `const {ctxState, formState} = states; return ${menuDependsOn.computedBy}`), []);
-            menuDependsOnValue = menuDependsOnFunc({ formState, ctxState });
-        } else {
-            menuDependsOnValue = formState?.[menuDependsOn];
-        }
-    }
-
+    
     // 處理【階層式】下拉清單
     useEffect(() => {
         let list = []; // 新 menu list
@@ -126,7 +110,7 @@ export default React.memo(React.forwardRef((props, ref) => {
     };
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
                     // 處理預設值與欄位型態不一致的情形
@@ -153,7 +137,7 @@ export default React.memo(React.forwardRef((props, ref) => {
                     const disabledX = disabled || (disabledWhenMenuIsEmpty && itemList.length == 0);
 
                     return (
-                        // 須以 <div> 包住, 因 <ConditionalGrid> 以 <Tooltip> 包住此元件 (Tooltip 的 child 不可為陣列)
+                        // 須以 <div> 包住, 因 <ComponentGrid> 以 <Tooltip> 包住此元件 (Tooltip 的 child 不可為陣列)
                         <div>
                             <Autocomplete
                                 ref={ref}
@@ -254,6 +238,6 @@ export default React.memo(React.forwardRef((props, ref) => {
                     )
                 }
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 }));

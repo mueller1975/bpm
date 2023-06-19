@@ -1,14 +1,14 @@
 import { Checkbox, FormControl, FormControlLabel, FilledInput } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import ComponentGrid from './ComponentGrid.jsx';
 import YesNoCheckbox from './YesNoCheckbox.jsx';
 
 export default React.memo(styled(props => {
     const { name, label, variant, hidden = false, className } = props;
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
 
@@ -54,7 +54,7 @@ export default React.memo(styled(props => {
                         </FormControl>);
                 }
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 })`
     color: rgb(125 139 230);

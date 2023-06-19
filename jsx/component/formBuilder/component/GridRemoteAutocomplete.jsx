@@ -1,10 +1,6 @@
 import { Autocomplete, TextField, Typography } from '@mui/material';
-import { CSRF_HEADER, CSRF_TOKEN } from 'Config';
-import { useResponseVO } from 'Hook/useTools.jsx';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import * as U from '../lib/formJsonUtils.js';
-import { MPBFormContext } from '../context/MPBFormContext.jsx';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import React, { useEffect, useMemo } from 'react';
+import ComponentGrid from './ComponentGrid.jsx';
 
 const ITEM_CODE_STYLE = { fontFamily: 'Monospace', lineHeight: 'normal', mr: 1 };
 const ITEM_NAME_STYLE = { lineHeight: 'normal' };
@@ -17,94 +13,9 @@ export default React.memo(React.forwardRef((props, ref) => {
         disabledItems, showItemCode, multiple = false,
         freeSolo = true, disabledWhenMenuIsEmpty = false, className, ...others } = props;
 
-    const { state: ctxState } = useContext(MPBFormContext);
-    const formState = ctxState[formId];
-
-    const prevFetchDataRef = useRef(); // 當查詢時發生在開啟下拉選單時, 須記錄 fetchData() 以判斷是否須重新 fetch data
-
-    const paramsFunc = useMemo(() => fetchParams?.computedBy &&
-        new Function(['states', 'U'], `const {ctxState, formState} = states; return ${fetchParams.computedBy}`), []);
-
-    const [contentType, bodyString] = useMemo(() => {
-        let contentType = 'x-www-form-urlencoded';
-        let bodyString = paramsFunc ? paramsFunc({ formState, ctxState }, U) : fetchParams;
-
-        if (typeof bodyString == 'object') {
-            contentType = 'application/json';
-            bodyString = JSON.stringify(bodyString);
-        }
-
-        return [contentType, bodyString];
-    }, [ctxState]);
-
-    const fetchFunc = useCallback(() =>
-        fetch(fetchUrl, {
-            method: fetchMethod, body: bodyString, redirect: 'manual',
-            headers: { 'Content-Type': contentType, [CSRF_HEADER]: CSRF_TOKEN }
-        }), [bodyString]);
-
-    const { execute: fetchData, pending: fetching, value: fetchResult, error: fetchError } = useResponseVO(fetchFunc, 1000);
-
-    const [itemList, setItemList] = useState([]);
-    const [inputValue, setInputValue] = useState(''); // 儲存真正資料的 input field
-
-    const inputRef = useRef();
-
-    useEffect(() => {
-        if (eagerFetch && fetchData) {
-            console.debug(`Fetching Autocomplete [${formId}.${name}] menu from [${fetchUrl}]...`);
-            fetchData();
-        }
-    }, [eagerFetch, fetchData]);
-
-    useEffect(() => {
-        if (fetchResult) {
-            console.log(`[${formId}.${name}] 下拉選單 [${fetchUrl}] 查詢結果:`, fetchResult);
-            setItemList(fetchResult); // 更新 menu
-        }
-
-        if (fetchError) {
-            console.warn(`[${formId}.${name}] 下拉選單 [${fetchUrl}]:`, fetchError.message);
-            setItemList([]); // 清空 menu
-        }
-    }, [fetchResult, fetchError]);
-
-    const menuOpenedHandler = e => {
-
-        if (!eagerFetch && fetchData != prevFetchDataRef.current) {
-            prevFetchDataRef.current = fetchData;
-            setItemList([]);
-            fetchData();
-        }
-    };
-
-    // 單選時
-    const inputChanged = useCallback(item => {
-        let value;
-
-        if (item?.target) { // 有 target 屬性, 代表由 TextField onChange 事件送出, 即此欄位可自由輸入
-            value = item.target.value;
-        } else {
-            const { code: itemCode, name: itemName } = item ?? {};
-
-            // 選項有 code 時儲存 code, 無則儲存 name 或 item
-            value = itemCode ?? itemName ?? item ?? '';
-        }
-
-        // console.log(`INPUT value STORED: [${name}] `, '=>', value);
-        setInputValue(value);
-    }, []);
-
-    // 多選時
-    const multipleInputsChanged = (items) => {
-        // 選項有 code 時儲存 code, 無則儲存 name 或 item
-        let values = items.map(item => item.code ? item.code : item.name ? item.name : item.toString());
-        // console.log(`多選 [${name}]:`, { values })
-        setInputValue(!Array.isArray(values) ? values : JSON.stringify(values));
-    };
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
                     // 處理預設值與欄位型態不一致的情形
@@ -224,6 +135,6 @@ export default React.memo(React.forwardRef((props, ref) => {
                     )
                 }
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 }));

@@ -1,12 +1,12 @@
 import React from 'react';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import ComponentGrid from './ComponentGrid.jsx';
 import Dropdown from './Dropdown.jsx';
 
 export default React.memo(React.forwardRef((props, ref) => {
     const { name, label, helper, hidden = false, configCode, menuDependsOn, disabledItems, showItemCode = false, className } = props;
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
                     // console.log({ name, defaultValue, value });
@@ -37,6 +37,6 @@ export default React.memo(React.forwardRef((props, ref) => {
                     />
                 }
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 }));

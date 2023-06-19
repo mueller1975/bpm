@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import ComponentGrid from './ComponentGrid.jsx';
 import InlineEditor from './InlineEditor.jsx';
 
 export default React.memo(props => {
@@ -12,7 +12,7 @@ export default React.memo(props => {
     }, []);
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
 
@@ -34,6 +34,6 @@ export default React.memo(props => {
                     );
                 }
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 });

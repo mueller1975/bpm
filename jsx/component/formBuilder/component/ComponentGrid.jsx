@@ -8,7 +8,9 @@ export default React.memo(styled(props => {
 
     return (
         <Grid item className={`MT-Component-Grid ${className}`} {...cols}>
-            {children}
+            {
+                children(props)
+            }
         </Grid>
     );
 })`

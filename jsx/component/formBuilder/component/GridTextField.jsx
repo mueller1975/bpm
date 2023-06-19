@@ -1,13 +1,13 @@
 import { TextField } from '@mui/material';
 import React from 'react';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import ComponentGrid from './ComponentGrid.jsx';
 
 export default React.memo(props => {
     const { name, label, type, helper, variant, hidden = false, readOnly = false,
         multiline = false, minRows = 3, maxRows = 5, className } = props;
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) =>
                     // uncontrolled component 一定要有 defaultValue 屬性
@@ -40,6 +40,6 @@ export default React.memo(props => {
                         className={className}
                     />
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 });

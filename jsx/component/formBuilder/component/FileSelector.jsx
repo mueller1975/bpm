@@ -4,10 +4,9 @@
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import { IconButton, InputAdornment, TextField, Tooltip, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useNotification } from 'Hook/useTools.jsx';
 import React, { useRef } from 'react';
 import DownloadButton from './DownloadButton.jsx';
-import { useNotification } from 'Hook/useTools.jsx';
-import { MAX_FILE_MB } from '../lib/formConsts';
 
 export default styled(props => {
     // const { onSelect, onDelete, attachments } = props
@@ -28,14 +27,7 @@ export default styled(props => {
             console.log(files[0])
             const { name: fileName, size: fileSize } = files[0];
 
-            if (fileSize > MAX_FILE_MB * 1024 * 1024) {
-                attachInputRef.current.value = ''; // 清除 input 選取的檔案
-                onSelect([]); // 清空欄位值
-
-                showError(`單一檔案大小不可超出 ${MAX_FILE_MB} MB（實際為 ${(fileSize / 1024 / 1024).toFixed(2)} MB）！`);
-            } else {
-                onSelect(files);
-            }
+            onSelect(files);
         } else { // *** 使用者按了取消, 必須清除 input 原先已選取的檔案
             attachInputRef.current.value = ''; // 清除 input 選取的檔案
             onSelect([]); // 清空欄位值

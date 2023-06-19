@@ -1,15 +1,15 @@
-import { merge } from 'lodash';
-import React, { useContext, useMemo, useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { formDataState } from '../context/FormStates.jsx';
 import * as U from '../lib/formJsonUtils.js';
-import { MPBFormContext, SET_FORM_STATE } from '../context/MPBFormContext.jsx';
-import ConditionalGrid from './ConditionalGrid.jsx';
+import ComponentGrid from './ComponentGrid.jsx';
 import TableSelect from './TableSelect.jsx';
 
 export default React.memo(props => {
     const { formId, name, label, helper, hidden = false, urlParams, configCode, source, filterBy,
         isContextStateProp = false, isMappedStateProp = false, freeSolo = false, mappedStateProps,
         className } = props;
-    const { state: ctxState, dispatch } = useContext(MPBFormContext);
+    const ctxState = useRecoilValue(formDataState);
 
     const formState = ctxState[formId];
 
@@ -47,59 +47,18 @@ export default React.memo(props => {
 
     // 選取後動作    
     const confirmSelectHandler = useCallback(row => {
-        let formData = {};
-
-        Object.entries(mappedStateProps).forEach(([stateProp, tableRowProp]) => {
-            let propValue;
-
-            if (typeof tableRowProp == 'object') {
-                let func = new Function(['row'], `return ${tableRowProp.computedBy}`);
-                propValue = func(row) ?? '';
-            } else {
-                propValue = row[tableRowProp] ?? '';
-            }
-
-            let pos = stateProp.indexOf('.');
-
-            if (pos > 0) { // 指定的欄位在其它 form 裡
-                let otherFormId = stateProp.substring(0, pos);
-                let prop = stateProp.substring(pos + 1);
-                merge(formData, { [otherFormId]: { [prop]: propValue } });
-            } else {
-                merge(formData, { [formId]: { [stateProp]: propValue } });
-            }
-        });
-
-        dispatch({ type: SET_FORM_STATE, payload: formData });
+        console.log('Selection confirmed...');
     }, []);
 
     // 手動輸入動作, 須清除輸入欄位以外 mapped 的欄位值
     const inputChangeHandler = useCallback(inputValue => {
-        let formData = {};
-
-        // 當 freeSolo=true (允許自由輸入), 值改變時, 須清空其它 mapped state props
-        Object.keys(mappedStateProps).forEach(stateProp => {
-            let propValue = stateProp == name ? inputValue : null; // 其它 mapped 的欄位值清除為 null
-
-            let pos = stateProp.indexOf('.');
-
-            if (pos > 0) { // 指定的欄位在其它 form 裡
-                let otherFormId = stateProp.substring(0, pos);
-                let prop = stateProp.substring(pos + 1);
-                merge(formData, { [otherFormId]: { [prop]: propValue } });
-            } else {
-                merge(formData, { [formId]: { [stateProp]: propValue } });
-            }
-        });
-
-        console.log('@TableSelect:', formData)
-        dispatch({ type: SET_FORM_STATE, payload: formData });
+        console.log('typing...');
     }, []);
 
     const clearHandler = useCallback(e => confirmSelectHandler({}), []);
 
     return (
-        <ConditionalGrid {...props}>
+        <ComponentGrid {...props}>
             {
                 ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
                     // console.log({ name, defaultValue, value });
@@ -135,6 +94,6 @@ export default React.memo(props => {
                         onConfirm={confirmSelectHandler} />
                 }
             }
-        </ConditionalGrid>
+        </ComponentGrid>
     );
 });

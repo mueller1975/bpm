@@ -16,7 +16,7 @@ const AnimatedAvatar = animated(Avatar);
 const AnimatedListItemText = animated(ListItemText);
 const springConfig = { friction: 8, tension: 120 };
 
-export default React.memo(styled(({ forms, checkedForms, onItemCheck, onItemClick, onAllCheck, onLoadData, ...others }) => {
+export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others }) => {
     const [collapsed, setCollapsed] = useState(true);
     const [firstExpanded, setFirstExpanded] = useState(false);
 
@@ -67,12 +67,7 @@ export default React.memo(styled(({ forms, checkedForms, onItemCheck, onItemClic
         <AnimatedList dense={underMD} {...others} style={collapseProps}>
             {/* 選取全部區塊 */}
             <ListSubheader >
-                <ListItem disablePadding component="div" className="subheaderTitle"
-                    secondaryAction={<Checkbox color="primary" onChange={onAllCheck}
-                        checked={forms.length == checkedForms.length}
-                        indeterminate={checkedForms.length > 0 && checkedForms.length < forms.length}
-                    />}
-                >
+                <ListItem disablePadding component="div" className="subheaderTitle">
                     {/* 圖示 */}
                     <ListItemIcon className="iconWrapper">
                         <AnimatedIconButton size="small" disabled={underSM} onClick={toggleCollapsed} style={hideProps}>
@@ -98,14 +93,12 @@ export default React.memo(styled(({ forms, checkedForms, onItemCheck, onItemClic
 
                     return (
                         <React.Fragment key={id}>
-                            <ListItem disablePadding component="div"
-                                secondaryAction={<Checkbox color="success" checked={checkedForms.indexOf(id) > -1}
-                                    onChange={(e, checked) => onItemCheck && onItemCheck(id, checked)} />}>
+                            <ListItem disablePadding component="div">
 
                                 <Tooltip arrow disableHoverListener={!collapsed && !underSM} placement="right"
                                     title={<Typography variant="subtitle2">{title}</Typography>}>
 
-                                    <ListItemButton onClick={() => onItemClick && onItemClick(id)} disabled={checkedForms.indexOf(id) < 0}>
+                                    <ListItemButton onClick={() => onItemClick && onItemClick(id)}>
                                         <ListItemIcon>
                                             <div className="iconWrapper">
                                                 {/* form icon */}
