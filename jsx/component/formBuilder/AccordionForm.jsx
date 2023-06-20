@@ -56,12 +56,12 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     );
 }))`
     position: relative;
-    box - shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#72777f 8px 8px 8px 0px' : '#121212 8px 8px 8px 0px'};
-    background - color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(250 250 250)' : 'rgb(27 33 43)'};
+    box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#72777f 8px 8px 8px 0px' : '#121212 8px 8px 8px 0px'};
+    background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(250 250 250)' : 'rgb(27 33 43)'};
 
     &.hidden {
         margin: 0;
-        content - visibility: hidden;
+        content-visibility: hidden;
     }
 
     &.selected {
@@ -69,54 +69,54 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     }
 
     &.readOnly {
-        background - color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(242 242 242)' : 'rgb(35 42 54)'};
-    }
-    
-    &:hover {
-        background - color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(255 255 255)' : 'rgb(24 30 39)'};
+        background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(242 242 242)' : 'rgb(35 42 54)'};        
     }
 
-    &.Mui - expanded: not(.hidden): first - of - type {
+    &:hover {
+        background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(255 255 255)' : 'rgb(24 30 39)'};
+    }
+
+    &.Mui-expanded:not(.hidden):first-of-type {
         // margin-top: 0 !important;
     }
 
-    &.Mui - expanded {
+    &.Mui-expanded {
         margin: 20px 0;
     }
 
-    .MuiAccordionSummary - root {
+    .MuiAccordionSummary-root {
         position: sticky;
         top: 0;
-        z - index: 3;
+        z-index: 3;
 
         &.intersected {
             // background: rgb(63 91 124) !important;
             // background: rgb(171 7 7) !important;
             // background: #6d95cc !important;
-            background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;
+            background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;        
         }
     }
 
-    .MuiAccordionSummary - root.Mui - expanded {
-        min - height: auto!important;
+    .MuiAccordionSummary-root.Mui-expanded {
+        min-height: auto !important;
         background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#efffb47d' : '#111522a1'};
         transition: background .5s;
     }
-    
-    .MuiAccordionSummary - content {
-        align - items: center;
 
-        &.Mui - expanded {
-            margin: 12px 0;
+    .MuiAccordionSummary-content {
+        align-items: center;
+
+        &.Mui-expanded {
+            margin: 12px 0; 
         }
     }
 
-    .MuiAccordionDetails - root {
+    .MuiAccordionDetails-root {
         padding: 16px;
     }
 
     .summaryIcon {
-        margin - right: 8px;
+        margin-right: 8px;
         color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#12b118' : '#9edba1'};
 
         &.disabled {
@@ -124,4 +124,4 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         }
     }
 
-    `);
+`);

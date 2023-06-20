@@ -130,7 +130,7 @@ export default React.memo(React.forwardRef((props, ref) => {
 
                             {/* 儲存真正資料的 input field */}
                             <input type="hidden" name={name} value={inputValue}
-                                readOnly required={inputRequired} data-available={available?.toString()} />
+                                readOnly required={inputRequired} />
                         </>
                     )
                 }

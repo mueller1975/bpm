@@ -8,7 +8,7 @@ export default React.memo(React.forwardRef((props, ref) => {
     return (
         <ComponentGrid {...props}>
             {
-                ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) => {
+                ({ required, disabled, valueChangedHandler, defaultValue, value, error }) => {
                     // console.log({ name, defaultValue, value });
 
                     return <Dropdown
@@ -27,7 +27,7 @@ export default React.memo(React.forwardRef((props, ref) => {
                         disabled={disabled}
                         required={required}
                         onChange={valueChangedHandler}
-                        inputProps={{ hidden, required, "data-available": available.toString() }}
+                        inputProps={{ hidden, required, }}
                         defaultValue={defaultValue}
                         value={value}
                         error={Boolean(error)}

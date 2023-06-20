@@ -1,0 +1,89 @@
+{
+    "app.title": "華新麗華 MPB 訂單澄清系統",
+    "app.copyright": "Copyright ©2022 华新丽华股份有限公司",
+
+    "common.loading": "载入中...",
+
+    "confirmDlg.confirm": "确定",
+    "confirmDlg.cancel": "取消",
+
+    "loginDialog.username.label": "账号",
+    "loginDialog.username.placeholder": "输入账号",
+    "loginDialog.username.hint": "请输入账号",
+    "loginDialog.password.label": "密码",
+    "loginDialog.password.placeholder": "输入密码",
+    "loginDialog.password.hint": "请输入密码",
+    "loginDialog.submit": "登　入",
+
+    "sideMenu.appInfo": "应用程序信息",
+    "sideMenu.appVersion": "版　　本",
+    "sideMenu.appReleaseDate": "发布日期",
+    "sideMenu.appReleaseUnit": "发布单位",
+    "sideMenu.userInfo": "用户信息",
+    "sideMenu.logout": "注销",
+    "sideMenu.logout.confirmDlg.title": "注销确认",
+    "sideMenu.logout.confirmDlg.text": "您确定要注销系统？",
+
+    "preferences.title": "个人偏好设定",
+    "preferences.appearance": "外观",
+    "preferences.themeType": "护眼模式",
+    "preferences.notificationDuration": "讯息显示时间",
+    "preferences.notificationDuration.unit": "秒",
+    "preferences.notification.max": "消息队列数",
+    "preferences.viewSwipeable": "滑动切换页面",
+    "preferences.i18n": "国际化",
+    "preferences.language": "语言",
+    "preferences.cordovaPlugins": "Cordova 插件",
+    "preferences.cordovaPlugins.installed": "已安装",
+    "preferences.cordovaPlugins.uninstalled": "未安装",
+
+    "preferences.language.zh-TW": "繁中",
+    "preferences.language.zh-CN": "简中",
+    "preferences.language.en": "英文",
+
+    "preferences.fontSize": "字体大小",
+    "preferences.fontSize.larger": "较大",
+    "preferences.fontSize.normal": "一般",
+    "preferences.fontSize.smaller": "较小",
+
+    "preferences.cellPadding": "表格边距大小",
+    "preferences.cellPadding.larger": "较宽",
+    "preferences.cellPadding.normal": "一般",
+    "preferences.cellPadding.smaller": "较窄",
+
+    "dataTable.labelSelected": "已选取：{1} 笔",
+    "dataTable.rowIndex": "#",
+    "dataTable.emptyContent": "目前无资料可检视",
+
+    "dataTable.actions.searchKeyword": "搜寻关键词",
+    "dataTable.actions.adjustColumns": "调整字段",
+    "dataTable.actions.filterColumns": "过滤字段",
+    "dataTable.actions.reload": "刷新列表资料",
+    "dataTable.actions.addRow": "新增",
+    "dataTable.actions.deleteRows": "删除",
+    "dataTable.actions.copyRows": "复制",
+    "dataTable.actions.exportFile": "汇出档案",
+    "dataTable.actions.switchDetailRow": "开/关详细列",
+
+    "dataTable.keyword.label": "搜寻关键词",
+    "dataTable.keyword.hint": "多个关键词以空格隔开",
+    "dataTable.keyword.clear": "清除关键词",
+
+    "dataTable.pagination.rowsPerPage": "每页笔数",
+    "dataTable.pagination.display": "第 {2}-{3} 笔 / 共 {4} 笔",
+
+    "columnAdjuster.title": "字段调整",
+    "columnAdjuster.restoreDefault": "回复为预设",
+    "columnAdjuster.cancel": "取消变更",
+
+    "columnFilter.title": "字段过滤条件",
+    "columnFilter.switch": "开/关过滤条件",
+
+    "error.forbidden": "您无权限浏览此页面",
+    "error.unexpected": "系统发生无法预期的错误",
+    "error.pageNotFound": "找不到您要浏览的页面",
+    "error.resourceRequested": "请求的资源",
+
+    "questionnaire.anonymous": "不记名",
+    "questionnaire.logout": "注销"
+}

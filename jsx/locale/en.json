@@ -1,0 +1,89 @@
+{
+    "app.title": "Walsin Lihwa MPB",
+    "app.copyright": "Copyright ©2022 Walsin Lihwa Corp.",
+
+    "common.loading": "Loading...",
+
+    "confirmDlg.confirm": "Confirm",
+    "confirmDlg.cancel": "Cancel",
+
+    "loginDialog.username.label": "Username",
+    "loginDialog.username.placeholder": "Username can't be empty",
+    "loginDialog.username.hint": "Enter username",
+    "loginDialog.password.label": "Password",
+    "loginDialog.password.placeholder": "Enter password",
+    "loginDialog.password.hint": "Password can't be empty",
+    "loginDialog.submit": "Login",
+
+    "sideMenu.appInfo": "APP Information",
+    "sideMenu.appVersion": "Version",
+    "sideMenu.appReleaseDate": "Release Date",
+    "sideMenu.appReleaseUnit": "Release Div.",
+    "sideMenu.userInfo": "User Profile",
+    "sideMenu.logout": "Log Out",
+    "sideMenu.logout.confirmDlg.title": "Confirm Logout",
+    "sideMenu.logout.confirmDlg.text": "Are you sure you want to log out?",
+
+    "preferences.title": "Preferences",
+    "preferences.appearance": "Appearance",
+    "preferences.themeType": "Eye Protection",
+    "preferences.notificationDuration": "Notification Duration",
+    "preferences.notificationDuration.unit": "s",
+    "preferences.notification.max": "Max Notification Count",
+    "preferences.viewSwipeable": "View Swipeable",
+    "preferences.i18n": "Internationalization",
+    "preferences.language": "Language",
+    "preferences.cordovaPlugins": "Cordova Plugins",
+    "preferences.cordovaPlugins.installed": "Installed",
+    "preferences.cordovaPlugins.uninstalled": "Uninstalled",
+
+    "preferences.language.zh-TW": "Traditional Chinese",
+    "preferences.language.zh-CN": "Simplified Chinese",
+    "preferences.language.en": "English",
+
+    "preferences.fontSize": "Font Size",
+    "preferences.fontSize.larger": "Larger",
+    "preferences.fontSize.normal": "Normal",
+    "preferences.fontSize.smaller": "Smaller",
+
+    "preferences.cellPadding": "Table Cell Padding",
+    "preferences.cellPadding.larger": "Larger",
+    "preferences.cellPadding.normal": "Normal",
+    "preferences.cellPadding.smaller": "Smaller",
+
+    "dataTable.labelSelected": "Selected：{1} row(s)",
+    "dataTable.rowIndex": "#",
+    "dataTable.emptyContent": "No data to display.",
+
+    "dataTable.actions.searchKeyword": "Search keywords",
+    "dataTable.actions.adjustColumns": "Adjust columns",
+    "dataTable.actions.filterColumns": "Filter columns",
+    "dataTable.actions.reload": "Reload data",
+    "dataTable.actions.addRow": "New row",
+    "dataTable.actions.deleteRows": "Delete rows",
+    "dataTable.actions.copyRows": "Copy rows",
+    "dataTable.actions.exportFile": "Export File",
+    "dataTable.actions.switchDetailRow": "Switch detail row on/off",
+
+    "dataTable.keyword.label": "Keywords",
+    "dataTable.keyword.hint": "Separate keywords by blanks",
+    "dataTable.keyword.clear": "Clear keywords",
+
+    "dataTable.pagination.rowsPerPage": "Rows per page",
+    "dataTable.pagination.display": "Page {2} To {3} / Total {4} row(s)",
+
+    "columnAdjuster.title": "Column Adjuster",
+    "columnAdjuster.restoreDefault": "Restore to default",
+    "columnAdjuster.cancel": "Cancel adjustment",
+
+    "columnFilter.title": "Column Filter",
+    "columnFilter.switch": "Switch filter on/off",
+
+    "error.forbidden": "YOU'RE NOT AUTHORIZED",
+    "error.unexpected": "An unexpected error has occurred",
+    "error.pageNotFound": "Page Not Found",
+    "error.resourceRequested": "Requested Resource",
+
+    "questionnaire.anonymous": "Anonymous",
+    "questionnaire.logout": "Log Out"
+}

@@ -17,7 +17,7 @@ export default React.memo(React.forwardRef((props, ref) => {
     const inputRef = useRef();
 
     const { dropdowns, hierarchicalDropdowns } = useContext(ServiceContext);
-    
+
     // 處理【階層式】下拉清單
     useEffect(() => {
         let list = []; // 新 menu list
@@ -221,7 +221,6 @@ export default React.memo(React.forwardRef((props, ref) => {
                                             ...params.inputProps,
                                             hidden,
                                             required: inputRequired,
-                                            // available: available.toString()
                                         }}
 
                                         // 可自由輸入時, 須透過此 event 寫入真正儲存資料的 input field
@@ -233,7 +232,7 @@ export default React.memo(React.forwardRef((props, ref) => {
 
                             {/* 儲存真正資料的 input field */}
                             <input type="hidden" name={name} value={inputValue}
-                                readOnly required={inputRequired} data-available={available?.toString()} />
+                                readOnly required={inputRequired} />
                         </div>
                     )
                 }

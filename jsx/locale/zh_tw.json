@@ -1,0 +1,89 @@
+{
+    "app.title": "華新麗華 MPB 訂單澄清系統",
+    "app.copyright": "Copyright ©2022 華新麗華股份有限公司",
+
+    "common.loading": "載入中...",
+
+    "confirmDlg.confirm": "確定",
+    "confirmDlg.cancel": "取消",
+
+    "loginDialog.username.label": "帳號",
+    "loginDialog.username.placeholder": "輸入帳號",
+    "loginDialog.username.hint": "請輸入帳號",
+    "loginDialog.password.label": "密碼",
+    "loginDialog.password.placeholder": "輸入密碼",
+    "loginDialog.password.hint": "請輸入密碼",
+    "loginDialog.submit": "登　入",
+
+    "sideMenu.appInfo": "應用程式資訊",
+    "sideMenu.appVersion": "版　　本",
+    "sideMenu.appReleaseDate": "發佈日期",
+    "sideMenu.appReleaseUnit": "發佈單位",
+    "sideMenu.userInfo": "使用者資訊",
+    "sideMenu.logout": "登出",
+    "sideMenu.logout.confirmDlg.title": "登出確認",
+    "sideMenu.logout.confirmDlg.text": "您確定要登出系統？",
+
+    "preferences.title": "個人偏好設定",
+    "preferences.appearance": "外觀",
+    "preferences.themeType": "護眼模式",
+    "preferences.notificationDuration": "訊息顯示時間",
+    "preferences.notificationDuration.unit": "秒",
+    "preferences.notification.max": "訊息佇列數",
+    "preferences.viewSwipeable": "滑動切換頁面",
+    "preferences.i18n": "國際化",
+    "preferences.language": "語言",
+    "preferences.cordovaPlugins": "Cordova 插件",
+    "preferences.cordovaPlugins.installed": "已安裝",
+    "preferences.cordovaPlugins.uninstalled": "未安裝",
+
+    "preferences.language.zh-TW": "繁中",
+    "preferences.language.zh-CN": "簡中",
+    "preferences.language.en": "英文",
+
+    "preferences.fontSize": "字體大小",
+    "preferences.fontSize.larger": "較大",
+    "preferences.fontSize.normal": "一般",
+    "preferences.fontSize.smaller": "較小",
+
+    "preferences.cellPadding": "表格邊距大小",
+    "preferences.cellPadding.larger": "較寬",
+    "preferences.cellPadding.normal": "一般",
+    "preferences.cellPadding.smaller": "較窄",
+
+    "dataTable.labelSelected": "已選取：{1} 筆",
+    "dataTable.rowIndex": "#",
+    "dataTable.emptyContent": "目前無資料可檢視",
+
+    "dataTable.actions.searchKeyword": "搜尋關鍵字",
+    "dataTable.actions.adjustColumns": "調整欄位",
+    "dataTable.actions.filterColumns": "過濾欄位",
+    "dataTable.actions.reload": "刷新列表資料",
+    "dataTable.actions.addRow": "新增",
+    "dataTable.actions.deleteRows": "刪除",
+    "dataTable.actions.copyRows": "複製",
+    "dataTable.actions.exportFile": "匯出檔案",
+    "dataTable.actions.switchDetailRow": "開/關詳細列",
+
+    "dataTable.keyword.label": "搜尋關鍵字",
+    "dataTable.keyword.hint": "多個關鍵字以空格隔開",
+    "dataTable.keyword.clear": "清除關鍵字",
+
+    "dataTable.pagination.rowsPerPage": "每頁筆數",
+    "dataTable.pagination.display": "第 {2}-{3} 筆 / 共 {4} 筆",
+
+    "columnAdjuster.title": "欄位調整",
+    "columnAdjuster.restoreDefault": "回復為預設",
+    "columnAdjuster.cancel": "取消變更",
+
+    "columnFilter.title": "欄位過濾條件",
+    "columnFilter.switch": "開/關過濾條件",
+
+    "error.forbidden": "您無權限瀏覽此頁面",
+    "error.unexpected": "系統發生無法預期的錯誤",
+    "error.pageNotFound": "找不到您要瀏覽的頁面",
+    "error.resourceRequested": "請求的資源",
+
+    "questionnaire.anonymous": "不記名",
+    "questionnaire.logout": "登出"
+}

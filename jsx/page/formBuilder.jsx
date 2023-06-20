@@ -3,7 +3,10 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { RecoilRoot } from 'recoil';
 import { createAppTheme, DARK, NORMAL } from 'Themes';
-import FormBuilder from '../component/formBuilder/FormBuilder.jsx';
+import FormBuilder from 'Component/formBuilder/FormBuilder.jsx';
+import { ServiceContextProvider } from 'Context/ServiceContext.jsx';
+import { PreferencesContextProvider } from 'Context/PreferencesContext.jsx';
+import { StyledSnackbarProvider } from 'Components';
 
 const theme = createAppTheme(DARK, NORMAL, NORMAL);
 
@@ -12,7 +15,13 @@ const Page = props => {
     return (
         <ThemeProvider theme={theme}>
             <RecoilRoot>
-                <FormBuilder />
+                <ServiceContextProvider>
+                    <PreferencesContextProvider>
+                        <StyledSnackbarProvider>
+                            <FormBuilder />
+                        </StyledSnackbarProvider>
+                    </PreferencesContextProvider>
+                </ServiceContextProvider>
             </RecoilRoot>
         </ThemeProvider>
     );

@@ -40,7 +40,7 @@ export default React.memo(props => {
                             {/* 欄位實際儲存的值 */}
                             <input name={name} ref={inputRef}
                                 defaultValue={!defaultValue ? '' : typeof defaultValue === 'string' ? defaultValue : JSON.stringify(defaultValue)}
-                                hidden required={required} disabled={disabled} data-available={available.toString()} />
+                                hidden required={required} disabled={disabled} />
                         </div>
                     );
                 }

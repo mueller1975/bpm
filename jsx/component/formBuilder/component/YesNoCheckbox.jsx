@@ -13,7 +13,7 @@ export default styled(React.forwardRef((props, ref) => {
                 color={color}
                 value='Y'
                 defaultChecked={defaultValue === 'Y'}
-                inputProps={{ hidden, required, "data-available": available.toString() }}
+                inputProps={{ hidden, required, }}
                 onChange={onChange}
             />
             <Typography noWrap>{label}</Typography>

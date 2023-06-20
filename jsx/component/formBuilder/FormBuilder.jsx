@@ -5,13 +5,14 @@ import { Paper } from '@mui/material';
 import Loading from 'Component/Loading.jsx';
 import { useRecoilValue } from 'recoil';
 import AccordionForm from './AccordionForm.jsx';
-import { formState, formIdState } from './context/FormStates.jsx';
+import { allFormsState, allFormIdsState } from './context/FormStates.jsx';
 import FormList from './FormList.jsx';
+import PropertiesDrawer from './PropertiesDrawer.jsx';
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
-    const allForms = useRecoilValue(formState);
-    const allFormIds = useRecoilValue(formIdState);
+    const allForms = useRecoilValue(allFormsState);
+    const allFormIds = useRecoilValue(allFormIdsState);
     const [targetFormId, setTargetFormId] = useState();
     const [expandedForms, setExpandedForms] = useState([allFormIds[0]]); // 展開的 form
 
@@ -20,8 +21,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     console.log({ allForms })
 
-     // 展開/縮合個別 form
-     const onToggleForm = useCallback((formId, expanded) => {
+    // 展開/縮合個別 form
+    const onToggleForm = useCallback((formId, expanded) => {
         let ids = expanded ? expandedForms.concat(formId) : expandedForms.filter(id => formId != id);
         setExpandedForms(ids);
     }, [expandedForms]);
@@ -57,13 +58,13 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 {...form}
             />
         )
-    }), [allForms, expandedForms, targetFormId]);
+    }), [allForms, expandedForms, targetFormId, containerRef]);
 
     console.log({ accordionForms })
 
     return (
         <Suspense fallback={<Loading />}>
-            <Paper className={`MT-Form-Builder ${className}`} ref={containerRef}>
+            <Paper className={`MT-Form-Builder ${className}`}>
 
                 {/* form list 區塊 */}
                 <div className="menu">
@@ -74,11 +75,13 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 </div>
 
                 {/* all forms 區塊*/}
-                <div className="content">
+                <div className="content" ref={containerRef}>
                     {
                         accordionForms
                     }
                 </div>
+
+                <PropertiesDrawer />
             </Paper>
         </Suspense>
     );
@@ -90,6 +93,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         height: 100%;
         box-sizing: border-box;
         // max-height: ${props => props.fullScreen ? '100%' : 'calc(100vh - 160px)'};
+        background-color: rgba(52, 58, 78, 0.87);
 
         .menu {
             display: flex;

@@ -9,7 +9,7 @@ export default React.memo(props => {
     return (
         <ComponentGrid {...props}>
             {
-                ({ required, available, disabled, valueChangedHandler, defaultValue, value, error }) =>
+                ({ required, disabled, valueChangedHandler, defaultValue, value, error }) =>
                     // uncontrolled component 一定要有 defaultValue 屬性
                     <TextField
                         fullWidth
@@ -28,8 +28,7 @@ export default React.memo(props => {
                         // onChange={valueChangedHandler}
                         onBlur={valueChangedHandler}
 
-                        // 在 input field 註記 data-available 屬性值, 作為保存時是否寫入 json 的依據
-                        inputProps={{ readOnly, hidden, required, "data-available": available.toString() }}
+                        inputProps={{ readOnly, hidden, required }}
 
                         // InputLabelProps={{ shrink: Boolean(defaultValue) || Boolean(value) || !disabled }}
 

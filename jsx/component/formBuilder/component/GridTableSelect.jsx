@@ -85,7 +85,7 @@ export default React.memo(props => {
 
                         onClear={clearHandler}
 
-                        inputProps={{ readOnly: !freeSolo, hidden, required, "data-available": available.toString() }}
+                        inputProps={{ readOnly: !freeSolo, hidden, required, }}
 
                         error={Boolean(error)}
                         helperText={!error ? helper : error}

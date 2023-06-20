@@ -24,7 +24,7 @@ export default React.memo(styled(props => {
                             value="Y"
                             size="small"
                             defaultChecked={defaultValue === 'Y'}
-                            inputProps={{ hidden, required, "data-available": available.toString() }}
+                            inputProps={{ hidden, required, }}
                             onChange={e => valueChangedHandler && valueChangedHandler({ name, value: e.target.checked ? 'Y' : 'N' })}
                         />} />;
 
@@ -39,7 +39,6 @@ export default React.memo(styled(props => {
                             color: 'warning',
                             hidden,
                             required,
-                            available: available.toString(), // 在 <YesNoCheckbox /> 中轉為 data-available
                             onChange: e => valueChangedHandler && valueChangedHandler({ name, value: e.target.checked ? 'Y' : 'N' })
                         }}
                     />;

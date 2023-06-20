@@ -29,7 +29,7 @@ export default React.memo(props => {
 
                             {/* 儲存真正資料的 input field (加入自定義屬性 uploader="true") */}
                             <input type="hidden" name={name} value={inputValue} uploader="true"
-                                readOnly required={required} data-available={available?.toString()} />
+                                readOnly required={required} />
                         </>
                     );
                 }

@@ -29,7 +29,7 @@ export default React.memo(props => {
 
                             {/* 儲存真正資料的 input field */}
                             <input hidden readOnly name={name} value={inputValue}
-                                required={required} data-available={available.toString()} />
+                                required={required} />
                         </>
                     );
                 }

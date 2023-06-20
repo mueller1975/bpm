@@ -1,10 +1,10 @@
 package com.mazinger.app.model.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +16,30 @@ import com.mazinger.app.model.dao.ConfigRepository;
 import com.mazinger.app.model.dto.ConfigDTO;
 import com.mazinger.app.model.dto.OptionVO;
 import com.mazinger.app.model.entity.Config;
+import com.mazinger.app.model.exception.ServiceException;
 
 @Service
 public class ConfigService {
 
-    @Autowired
-    private ConfigRepository configDAO;
+	@Autowired
+	private ConfigRepository configDAO;
 
-    public List<ConfigDTO> findConfigsByCategory(String category) {
-        List<Config> entities = configDAO.findByCategory(category);
+	/**
+	 * 查詢 code 設定值
+	 * 
+	 * @param code
+	 * @return
+	 */
+	public Config getConfigByCode(String code) {
+		Config entity = configDAO.findById(code).orElse(null);
+		return entity;
+	}
 
-        ObjectMapper mapper = new ObjectMapper();
-		List<ConfigDTO> list = new ArrayList<>();
+	public Collection<Object> getConfigsByCategory(String category) throws ServiceException {
+		List<Config> entities = configDAO.findByCategory(category);
+
+		ObjectMapper mapper = new ObjectMapper();
+		List<Object> list = new ArrayList<>();
 
 		for (Config entity : entities) {
 			Object value = null;
@@ -58,14 +70,14 @@ public class ConfigService {
 				throw new ServiceException("字串轉 JSON 失敗", e);
 			}
 
-			list.add(new ConfigDTO(entity.getCode(), entity.getDescription(), value));
+			list.add((Object) (new ConfigDTO(entity.getCode(), entity.getDescription(), value)));
 		}
 
 		return list;
-    }
+	}
 
-    @Transactional(readOnly = false)
-    public Iterable<Config> saveAll(List<Config> entities) {
-        return configDAO.saveAll(entities);
-    }
+	@Transactional(readOnly = false)
+	public Iterable<Config> saveAll(List<Config> entities) {
+		return configDAO.saveAll(entities);
+	}
 }

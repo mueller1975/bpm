@@ -8,6 +8,7 @@ import Loading from 'Component/Loading.jsx'
 import MaskModal from 'Component/MaskModal.jsx'
 import ProgressButton from 'Component/ProgressButton.jsx'
 import Scrollable from 'Component/Scrollable.jsx'
+import StyledSnackbarProvider from 'Component/StyledSnackbarProvider.jsx'
 import React, { Suspense } from 'react'
 
 export const lazyWithRefForwarding = V => {
@@ -21,9 +22,9 @@ export const lazyWithRefForwarding = V => {
 }
 
 export {
-    Loading, ProgressButton, HideOnScroll, ErrorBoundary, Fieldset, IconnedDialogTitle,
-    MaskModal, LoadableView, LoadableTable
-}
+    ErrorBoundary, Fieldset, HideOnScroll, IconnedDialogTitle, LoadableTable, LoadableView,
+    Loading, MaskModal, ProgressButton, Scrollable, StyledSnackbarProvider
+};
 
 export const FileSelector = props => <ErrorBoundary><_FileSelector {...props} /></ErrorBoundary>
 
