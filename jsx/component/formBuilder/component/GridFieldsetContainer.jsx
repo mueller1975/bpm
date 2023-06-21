@@ -4,8 +4,8 @@ import React from 'react';
 import { jsonToObject } from '../lib/formUtils';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
-import { useRecoilValue, useSetRecoilState ,useRecoilState} from 'recoil';
-import { flatComponentsState, updateFlatComponentsSelector,flatComponentsState2 } from '../context/FormStates.jsx';
+import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
+import { flatComponentsState, updateFlatComponentsSelector, flatComponentsState2 } from '../context/FormStates.jsx';
 import AddIcon from '@mui/icons-material/Add';
 
 export default React.memo(styled(props => {
@@ -20,7 +20,7 @@ export default React.memo(styled(props => {
 
     const addField = () => {
         let field = { name: "testField", label: '新增欄位', };
-        update2(field);
+        update2([...fields2, field]);
     }
     // const gridSpacing = title ? 2 : 1.5;
     const gridSpacing = 1.5;

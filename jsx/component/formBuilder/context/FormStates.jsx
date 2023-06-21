@@ -54,9 +54,6 @@ export const flatComponentsState2 = atomFamily({
     }
 });
 
-export const updateComState = selector({
-
-});
 
 export const fieldState = atomFamily({
     key: 'fieldState',
