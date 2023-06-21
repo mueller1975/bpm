@@ -107,8 +107,8 @@ export const updateFormSelector = selector({
 
         if (form?.uuid) { // 既有的 form
             let idx = allForms.findIndex(f => f.uuid == form.uuid);
-            allForms[idx] = form;
             allForms = [...allForms];
+            allForms[idx] = form;            
         } else { // 新增的 form
             form.uuid = uuidv4();
             form.order = allForms.length + 1;

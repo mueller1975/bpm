@@ -1,13 +1,16 @@
 import { css } from "@emotion/react";
 import { useIntersection } from '@mantine/hooks';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { useSlideSpring } from 'Hook/useAnimations.jsx';
 import React, { useCallback } from 'react';
 import { blink } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
+import EditIcon from "@mui/icons-material/Edit";
+import { useSetRecoilState } from "recoil";
+import { formPropertiesState } from "./context/PropertiesState.js";
 
 const AnimatedAccordion = animated(Accordion);
 
@@ -16,6 +19,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const { id, title, icon: SummaryIcon, components, } = form;
 
     const formToggleHandler = useCallback((e, expanded) => onChange(id, expanded), [onChange]);
+
+    const setFormProperties = useSetRecoilState(formPropertiesState);
 
     // console.log('form accordion:', id)
 
@@ -28,6 +33,11 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     });
 
     // console.log(title, '=>', entry?.isIntersecting, entry?.intersectionRatio)
+
+    const editFormProperties = useCallback(() => {
+        console.log({ form })
+        setFormProperties({ ...form });
+    }, [form]);
 
     return (
 
@@ -45,6 +55,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                         ? 'intersected' : ''}>
                 <SummaryIcon className="summaryIcon" />
                 <Typography variant="subtitle1" color="success.light">{title}</Typography>
+                <IconButton><EditIcon onClick={editFormProperties} /></IconButton>
             </AccordionSummary>
 
             <AccordionDetails>

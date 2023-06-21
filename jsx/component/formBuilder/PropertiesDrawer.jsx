@@ -9,7 +9,7 @@ import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import GpsNotFixedIcon from '@mui/icons-material/GpsNotFixed';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import FormProperties from './FormProperties.jsx';
-import ComponentProperties from './ComponentProperties.jsx';
+import FieldProperties from './FieldProperties.jsx';
 
 // Popover 位置
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
@@ -53,7 +53,7 @@ export default React.memo(styled(props => {
 
             <Box className="content">
                 <FormProperties />
-                <ComponentProperties />
+                <FieldProperties />
             </Box>
 
         </SwipeableDrawer>
