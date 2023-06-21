@@ -1,13 +1,27 @@
-import { Grid } from '@mui/material';
+import { Grid, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
 import { jsonToObject } from '../lib/formUtils';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
+import { useRecoilValue, useSetRecoilState ,useRecoilState} from 'recoil';
+import { flatComponentsState, updateFlatComponentsSelector,flatComponentsState2 } from '../context/FormStates.jsx';
+import AddIcon from '@mui/icons-material/Add';
 
 export default React.memo(styled(props => {
-    const { noBorder = false, title, formId, formData, editable, fields, cols, available: parentAvailable = true, className } = props;
+    const { uuid, noBorder = false, title = '無標題', formId, formData, editable, fields, cols, available: parentAvailable = true, className } = props;
+    // const flatComponents = useRecoilValue(flatComponentsState);
+    // const fields2 = useRecoilValue(flatComponentsState2(uuid));
+    // const update2 = useSetRecoilState(flatComponentsState2(uuid));
 
+    const [fields2, update2] = useRecoilState(flatComponentsState2(uuid));
+
+    console.log({ fields2 })
+
+    const addField = () => {
+        let field = { name: "testField", label: '新增欄位', };
+        update2(field);
+    }
     // const gridSpacing = title ? 2 : 1.5;
     const gridSpacing = 1.5;
 
@@ -18,7 +32,7 @@ export default React.memo(styled(props => {
         // sx={{ contentVisibility: hidden ? 'hidden' : 'visibile' }}
         >
             {
-                fields.map((field, idx) => {
+                fields2.map((field, idx) => {
                     let { defaultValue, name } = field;
 
                     // let value = formData ? (jsonToObject(formData[name]) || '') : defaultValue ?? '';
@@ -35,10 +49,13 @@ export default React.memo(styled(props => {
         </Grid>
     );
 
-    return !title ? gridContainer :
+    // return !title ? gridContainer :
+    return (
         <Fieldset title={title} noBorder={noBorder} className={className}>
+            <IconButton onClick={addField}><AddIcon /></IconButton>
             {gridContainer}
-        </Fieldset>;
+        </Fieldset>
+    );
 })`
     .gridContainer {
         padding-top: 6px;

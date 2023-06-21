@@ -15,11 +15,11 @@ export default React.memo(styled(React.forwardRef(({ id, editable, data, compone
         let formComponents = components.map((component, idx) => {
             switch (component.type) {
                 case 'fieldset':
-                    return <GridFieldsetContainer key={idx} className="formComponent" formId={id} formData={data} editable={editable} {...component} />
+                    return <GridFieldsetContainer key={component.uuid} className="formComponent" formId={id} formData={data} editable={editable} {...component} />
                 case 'divider':
-                    return <Divider key={idx} className={`formComponent ${component.invisible ? 'invisible' : ''}`} />
+                    return <Divider key={component.uuid} className={`formComponent ${component.invisible ? 'invisible' : ''}`} />
                 case 'componentGroup':
-                    return <ComponentGroup key={idx} className="formComponent" formId={id} formData={data} editable={editable} {...component} />
+                    return <ComponentGroup key={component.uuid} className="formComponent" formId={id} formData={data} editable={editable} {...component} />
                 default:
                     throw new Error(`不支援的 component type [${component.type}]`);
             }

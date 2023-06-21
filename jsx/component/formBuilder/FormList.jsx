@@ -1,15 +1,14 @@
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
-    Avatar, Checkbox, Divider, IconButton, List, ListItem, ListItemButton,
+    Avatar, Divider, IconButton, List, ListItem, ListItemButton,
     ListItemIcon, ListItemText, ListSubheader, Tooltip, Typography
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { animated, config, useSpring } from '@react-spring/web';
-import React, { useEffect, useState } from 'react';
 import { stringToColor } from 'Tools';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import React, { useEffect, useState } from 'react';
 
 const AnimatedList = animated(List);
 const AnimatedIconButton = animated(IconButton);
@@ -88,7 +87,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
             {/* <Divider /> */}
 
             {/* 各 form 區塊 */
-                forms.map(({ uuid, id, title, icon: ItemIcon = QuestionMarkIcon }) => {
+                forms.map(({ uuid, id, title, icon: ItemIcon }) => {
                     let formColor = stringToColor(id); // 個別 form 圖示顏色
                     const AnimatedItemIcon = animated(ItemIcon);
 

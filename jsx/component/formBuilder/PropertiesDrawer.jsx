@@ -15,20 +15,6 @@ import ComponentProperties from './ComponentProperties.jsx';
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
     transformOrigin = { vertical: 'top', horizontal: 'right' };
 
-const FIELD_TYPES = [
-    { code: "text", name: "文字" },
-    { code: "number", name: "數字" },
-    { code: "numberRange", name: "數字範圍" },
-    { code: "yesOrNo", name: "Y/N" },
-    { code: "dropdown", name: "下拉選單" },
-    { code: "autocomplete", name: "下拉選單（可輸入）" },
-    { code: "tableSelect", name: "表格選取" },
-    { code: "inlineEditor", name: "子表多筆" },
-    { code: "fileUploader", name: "附件" },
-];
-
-const FIELD_TYPE_MENUS = FIELD_TYPES.map(({ code, name }) => <MenuItem key={code}>{name}</MenuItem>);
-
 export default React.memo(styled(props => {
     const { className } = props;
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -67,7 +53,7 @@ export default React.memo(styled(props => {
 
             <Box className="content">
                 <FormProperties />
-                <ComponentProperties />                
+                <ComponentProperties />
             </Box>
 
         </SwipeableDrawer>

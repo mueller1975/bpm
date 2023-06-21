@@ -29,7 +29,7 @@ export default React.memo(styled(props => {
     // "上傳檔案"欄位名稱必須是"attachment", 若未在 json 裡設定, 則自動產生並加到最前面
     const [uploaderColumns] = useState(() => {
         let hasFileTypeCol = columns.some(col => col.type === 'file');
-        return !hasFileTypeCol ? [{ name: 'attachment', label: '上傳附檔', type: 'file', width: 300 }, ...columns] : columns;
+        return !hasFileTypeCol ? [{ uuid: uuidv4(), name: 'attachment', label: '上傳附檔', type: 'file', width: 300 }, ...columns] : columns;
     });
 
     const [rows, setRows] = useState(() => !defaultValue || defaultValue.length == 0 ? [createNewRow(uploaderColumns)] : defaultValue);

@@ -1,4 +1,5 @@
 import readXlsxFile from 'read-excel-file';
+import { v4 as uuidv4 } from 'uuid';
 
 const DEFAULT_COLS = {
     "xs": 12,
@@ -8,6 +9,7 @@ const DEFAULT_COLS = {
 };
 
 const createForm = (id, title, order, icon) => ({
+    uuid: uuidv4(),
     id,
     title,
     order: isNaN(parseInt(order)) ? 99 : parseInt(order),
@@ -17,6 +19,7 @@ const createForm = (id, title, order, icon) => ({
 });
 
 const createFieldset = (title, cols = DEFAULT_COLS) => ({
+    uuid: uuidv4(),
     type: "fieldset",
     cols,
     fields: [],
@@ -43,7 +46,8 @@ const asFileUploader = field => {
     field.options = {
         noBorder: false,
         columns: [
-            {
+            { // 上傳附檔預設"檔案說明"欄位
+                uuid: uuidv4(),
                 name: "description",
                 label: "檔案說明",
                 width: 500
@@ -62,7 +66,7 @@ const createField = row => {
         throw "欄位變數、名稱、型態皆不得為空值";
     }
 
-    const field = { name, label };
+    const field = { name, label, uuid: uuidv4() };
 
     defaultValue !== null && (field.defaultValue = defaultValue.toString());
     unit !== null && (field.unit = unit);

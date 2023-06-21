@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles';
 import React, { Suspense, useCallback, useMemo, useRef, useState } from 'react';
-// import Form from './Form.jsx';
 import { Paper } from '@mui/material';
 import Loading from 'Component/Loading.jsx';
 import { useRecoilValue } from 'recoil';
@@ -55,7 +54,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 expanded={expandedForms.indexOf(formId) > -1}
 
                 // data={mpbData?.[formId]}
-                {...form}
+                // {...form}
+                form={form}
             />
         )
     }), [allForms, expandedForms, targetFormId, containerRef]);

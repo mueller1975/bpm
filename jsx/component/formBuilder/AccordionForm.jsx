@@ -12,16 +12,14 @@ import Form from './Form.jsx';
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
-    const { id, title, icon: SummaryIcon, selected, hidden = false, onChange, expanded,
-        components, data, className, readOnly = false, containerRef } = props;
+    const { form, selected, onChange, expanded, data, className, containerRef } = props;
+    const { id, title, icon: SummaryIcon, components, } = form;
 
     const formToggleHandler = useCallback((e, expanded) => onChange(id, expanded), [onChange]);
 
     // console.log('form accordion:', id)
 
-    const animProps = useSlideSpring({
-        reverse: hidden
-    });
+    const animProps = useSlideSpring();
 
     const { ref: iRef, entry } = useIntersection({
         root: containerRef.current,

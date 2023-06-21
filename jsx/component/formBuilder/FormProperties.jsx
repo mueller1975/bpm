@@ -1,4 +1,4 @@
-import RadioIcon from '@mui/icons-material/Radio';
+import SaveIcon from '@mui/icons-material/Save';
 import { Grid, IconButton, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
@@ -9,9 +9,9 @@ export default React.memo(styled(props => {
     const { value, className } = props;
     const [form, setForm] = useState(value ?? {});
     const { id, title } = form;
-    const setAllForms = useSetRecoilState(updateFormSelector);
+    const updateForm = useSetRecoilState(updateFormSelector);
 
-    const resetForms = () => setAllForms({ ...form, components: [] });
+    const saveProperties = () => updateForm({ ...form, components: [] });
 
     const formChangeHandler = e => {
         const { name, value: v } = e.target;
@@ -30,7 +30,7 @@ export default React.memo(styled(props => {
             </Grid>
 
             <Grid item xs={12}>
-                <IconButton onClick={resetForms}><RadioIcon color="error" /></IconButton>
+                <IconButton onClick={saveProperties}><SaveIcon color="warning" /></IconButton>
             </Grid>
         </Grid>
     );
