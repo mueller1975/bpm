@@ -49,7 +49,7 @@ export const flatComponentsState2 = atomFamily({
         }
     }),
     set: ({ set, get }, newValue) => {
-        console.log({newValue})
+        console.log({ newValue })
         set(flatComponentsState2, [...get(flatComponentsState2), newValue]);
     }
 });
@@ -100,25 +100,37 @@ export const updateFlatComponentsSelector = selectorFamily({
 export const updateFormSelector = selector({
     key: 'updateFormSelector',
     get: ({ get }) => [...get(allFormsState)],
-    set: ({ set, get }, form) => {
+    set: ({ set, get }, { afterFormUUID, form }) => {
         console.log('UPDATE FORM:', form);
 
         let allForms = get(allFormsState);
 
         if (form?.uuid) { // 既有的 form
-            let idx = allForms.findIndex(f => f.uuid == form.uuid);
+            let idx = allForms.findIndex(f => f.uuid === form.uuid);
             allForms = [...allForms];
-            allForms[idx] = form;            
+            allForms[idx] = form;
         } else { // 新增的 form
             form.uuid = uuidv4();
             form.order = allForms.length + 1;
             form.icon = QuestionMarkIcon;
-            allForms = [...allForms, form]; // recoil 不允許 allForms.push()
+
+            if (!afterFormUUID) { // 未指定則放到第一個位置
+                allForms = [form, ...allForms];
+            } else {
+                let afterIdx = allForms.findIndex(f => f.uuid === afterFormUUID);
+
+                if (afterIdx < 0) {
+                    throw `找不到指定 UUID [${afterFormUUID}] 的 Form`;
+                } else {
+                    allForms = [...allForms.slice(0, afterIdx + 1), form, ...allForms.slice(afterIdx + 1)];
+                }
+            }
         }
 
         set(allFormsState, allForms);
     },
 })
+
 
 export const formDataState = atom({
     key: 'formDataState',

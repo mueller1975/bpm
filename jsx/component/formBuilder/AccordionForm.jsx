@@ -11,14 +11,16 @@ import Form from './Form.jsx';
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useSetRecoilState } from "recoil";
 import { formPropertiesState } from "./context/PropertiesState.js";
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { updateFormSelector } from './context/FormStates.jsx';
 
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, selected, onChange, expanded, data, className, containerRef } = props;
     const { id, title, icon: SummaryIcon, components, } = form;
+    const updateForm = useSetRecoilState(updateFormSelector);
 
     const formToggleHandler = useCallback((e, expanded) => onChange(id, expanded), [onChange]);
 
@@ -36,11 +38,19 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     // console.log(title, '=>', entry?.isIntersecting, entry?.intersectionRatio)
 
-    const editFormProperties = useCallback(e => {
+    const addForm = useCallback(() => {
+        updateForm({ afterFormUUID: form.uuid, form: {} });
+    });
+
+    const editForm = useCallback(e => {
         e.stopPropagation();
         console.log({ form })
         setFormProperties({ ...form });
     }, [form]);
+
+    const deleteForm = useCallback(() => {
+
+    });
 
     return (
 
@@ -65,9 +75,9 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
                 {/* Form 動作列按鈕 */}
                 <Box className="formActions">
-                    <Fab size="small" color="error" onClick={editFormProperties}><DeleteIcon /></Fab>
-                    <Fab size="small" color="success" onClick={editFormProperties}><AddIcon /></Fab>
-                    <Fab size="small" color="warning" onClick={editFormProperties}><EditIcon /></Fab>
+                    <Fab size="small" color="error" onClick={deleteForm}><DeleteIcon /></Fab>
+                    <Fab size="small" color="success" onClick={addForm}><AddIcon /></Fab>
+                    <Fab size="small" color="warning" onClick={editForm}><EditIcon /></Fab>
                 </Box>
             </AccordionSummary>
 

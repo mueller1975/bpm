@@ -18,7 +18,7 @@ export default React.memo(styled(props => {
         setForm({ ...formProperties })
     }, [formProperties])
 
-    const saveProperties = () => updateForm({ ...form });
+    const saveProperties = () => updateForm({ form: { ...form } });
 
     const formChangeHandler = e => {
         const { name, value: v } = e.target;

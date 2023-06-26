@@ -88,7 +88,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
 
             {/* 各 form 區塊 */
                 forms.map(({ uuid, id, title, icon: ItemIcon }) => {
-                    let formColor = stringToColor(id); // 個別 form 圖示顏色
+                    let formColor = id ? stringToColor(id) : '#fff'; // 個別 form 圖示顏色
                     const AnimatedItemIcon = animated(ItemIcon);
 
                     return (
@@ -106,7 +106,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
 
                                                 {/* form 名稱第一個字 */}
                                                 <AnimatedAvatar className="itemAvatar overlapped" sx={{ bgcolor: `${formColor}40` }} style={showProps}>
-                                                    <Typography color="textPrimary">{title.substring(0, 1)}</Typography>
+                                                    <Typography color="textPrimary">{title?.substring(0, 1)}</Typography>
                                                 </AnimatedAvatar>
                                             </div>
                                         </ListItemIcon>
