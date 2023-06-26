@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { useIntersection } from '@mantine/hooks';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, IconButton, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, IconButton, Typography, Box, Fab } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { useSlideSpring } from 'Hook/useAnimations.jsx';
@@ -9,6 +9,8 @@ import React, { useCallback } from 'react';
 import { blink } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useSetRecoilState } from "recoil";
 import { formPropertiesState } from "./context/PropertiesState.js";
 
@@ -34,7 +36,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     // console.log(title, '=>', entry?.isIntersecting, entry?.intersectionRatio)
 
-    const editFormProperties = useCallback(() => {
+    const editFormProperties = useCallback(e => {
+        e.stopPropagation();
         console.log({ form })
         setFormProperties({ ...form });
     }, [form]);
@@ -53,9 +56,19 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                         && entry?.intersectionRatio < 1 // 重疉區域開始變小時
                         && entry?.boundingClientRect.y < 70 // 重疉區域是在 container 上方                                  
                         ? 'intersected' : ''}>
+
+                {/* Form 圖示 */}
                 <SummaryIcon className="summaryIcon" />
+
+                {/* Form 名稱 */}
                 <Typography variant="subtitle1" color="success.light">{title}</Typography>
-                <IconButton><EditIcon onClick={editFormProperties} /></IconButton>
+
+                {/* Form 動作列按鈕 */}
+                <Box className="formActions">
+                    <Fab size="small" color="error" onClick={editFormProperties}><DeleteIcon /></Fab>
+                    <Fab size="small" color="success" onClick={editFormProperties}><AddIcon /></Fab>
+                    <Fab size="small" color="warning" onClick={editFormProperties}><EditIcon /></Fab>
+                </Box>
             </AccordionSummary>
 
             <AccordionDetails>
@@ -102,7 +115,57 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             // background: rgb(63 91 124) !important;
             // background: rgb(171 7 7) !important;
             // background: #6d95cc !important;
+            z-index: 9999;
             background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;        
+        }
+
+        :hover {
+            .formActions {
+                opacity: 1;
+            }
+        }
+
+        .formActions {
+            opacity: 0;
+            position: absolute;
+            right: 60px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity .8s;
+
+            >button {
+                transition: all .8s;
+                color: darkgray;
+
+                &.MuiFab-warning {
+                    background-color: rgb(255 167 38 / 50%);
+
+                    :hover {
+                        background-color: rgb(255 167 38 / 100%);
+                    }
+                }
+
+                &.Mui-error {
+                    background-color: rgb(244 67 54 / 50%);
+
+                    :hover {
+                        background-color: rgb(244 67 54 / 100%);
+                    }
+                }
+
+                &.MuiFab-success {
+                    background-color: rgb(102 187 106 / 50%);
+
+                    :hover {
+                        background-color: rgb(102 187 106 / 100%);
+                    }
+                }
+
+                :hover {
+                    color: lightgray;
+                }
+            }
         }
     }
 
@@ -114,7 +177,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     .MuiAccordionSummary-content {
         align-items: center;
-
+        
         &.Mui-expanded {
             margin: 12px 0; 
         }

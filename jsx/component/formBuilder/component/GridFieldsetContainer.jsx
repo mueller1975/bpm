@@ -6,7 +6,9 @@ import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import { flatComponentsState, updateFlatComponentsSelector, flatComponentsState2 } from '../context/FormStates.jsx';
-import AddIcon from '@mui/icons-material/Add';
+import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default React.memo(styled(props => {
     const { uuid, noBorder = false, title = '無標題', formId, formData, editable, fields, cols, available: parentAvailable = true, className } = props;
@@ -49,10 +51,15 @@ export default React.memo(styled(props => {
         </Grid>
     );
 
+    const actions = [
+        { action: () => console.log(1), icon: <DeleteIcon color="error" /> },
+        { action: addField, icon: <AddIcon color="success" /> },
+        { action: () => console.log(3), icon: <EditIcon color="warning" /> },
+    ];
+
     // return !title ? gridContainer :
     return (
-        <Fieldset title={title} noBorder={noBorder} className={className}>
-            <IconButton onClick={addField}><AddIcon /></IconButton>
+        <Fieldset title={title} noBorder={noBorder} className={className} actions={actions}>
             {gridContainer}
         </Fieldset>
     );

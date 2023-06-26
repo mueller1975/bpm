@@ -1,11 +1,11 @@
-import { FormControl, FormHelperText, Typography } from '@mui/material';
+import { Fab, FormControl, FormHelperText, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Scrollable from 'Component/Scrollable.jsx';
 import React, { useCallback, useState } from 'react';
 
 export default React.memo(styled(props => {
     const { title, noBorder = false, icon, hidden = false, helper, error, className,
-        onScrollLeft, onScrollRight, ...others } = props;
+        onScrollLeft, onScrollRight, actions, ...others } = props;
     const [leftScrollerHidden, setLeftScrollerHidden] = useState(true);
     const [rightScrollerHidden, setRightScrollerHidden] = useState(true);
 
@@ -44,6 +44,14 @@ export default React.memo(styled(props => {
                     {icon}
                 </legend>
 
+                {actions &&
+                    <div className="fieldsetActions">
+                        {
+                            actions.map(({ action, icon }, i) => <Fab key={i} size="small" onClick={action}>{icon}</Fab>)
+                        }
+                    </div>
+                }
+
                 <Scrollable className="scrollable" onScroll={scrollHandler}>
                     {props.children}
                 </Scrollable>
@@ -53,7 +61,7 @@ export default React.memo(styled(props => {
         </FormControl>
     );
 })`
-    display: block;
+    display: block;    
 
     &.hidden {
         content-visibility: hidden;
@@ -64,10 +72,10 @@ export default React.memo(styled(props => {
     }
     
     .fieldset {
+        padding-top: 8px;
         min-width: 100px;
         max-width: 100%;
         
-        padding: ${props => props.noBorder ? 0 : undefined};
         border: ${props => props.noBorder ? 0 : '1px solid rgb(177 126 52 / 37%)'};
         border-radius: 4px;
         transition: all .7s;
@@ -96,6 +104,46 @@ export default React.memo(styled(props => {
             color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(211 173 119)' : '#bd8330'};
             align-items: center;
             transition: all .7s;
+        }        
+
+        .fieldsetActions {            
+            opacity: 0;
+            position: absolute;
+            top: -7px;
+            right: 0;
+            display: inline-flex;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+            transition: all .8s;
+
+            :hover {                
+                opacity: 1;
+
+                >button {
+                    transform: scale(1);
+                }
+            }
+
+            >button {
+                // background-color: #2b2b2b;
+                transition: all .5s;
+                transform: scale(0);
+
+                :hover {
+                    // background-color: #5b5b5b;
+                    transform: scale(1);
+
+                    >svg {
+                        // opacity: 1;
+                    }
+                }
+
+                >svg {
+                    transition: all .8s;
+                    // opacity: .4;
+                }
+            }
         }
 
         .scroller {
