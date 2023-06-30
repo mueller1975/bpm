@@ -2,23 +2,30 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Grid, IconButton, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState, useEffect } from 'react';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { updateFormSelector } from './context/FormStates.jsx';
+import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
+import { formState, updateFormSelector } from './context/FormStates.jsx';
 import { formPropertiesState } from './context/PropertiesState';
+import { isEqual } from 'underscore';
+import { useCallback } from 'react';
 
 export default React.memo(styled(props => {
     const { className } = props;
     const formProperties = useRecoilValue(formPropertiesState);
-    const [form, setForm] = useState(formProperties);
+    const [formInEdit, updateFormState] = useRecoilState(formState(formProperties?.uuid));
+    const [form, setForm] = useState(formInEdit);
 
-    const { uuid, id, title } = form;
+    const { uuid, id, title, editableWhen } = form || {};
     const updateForm = useSetRecoilState(updateFormSelector);
 
     useEffect(() => {
-        setForm({ ...formProperties })
-    }, [formProperties])
+        setForm({ ...formInEdit });
+    }, [formProperties]);
 
-    const saveProperties = () => updateForm({ form: { ...form } });
+    const saveProperties = useCallback(() => {
+        if (!isEqual(formInEdit, form)) {
+            updateForm({ form: { ...form } });
+        }
+    }, [formInEdit, form]);
 
     const formChangeHandler = e => {
         const { name, value: v } = e.target;
@@ -39,6 +46,12 @@ export default React.memo(styled(props => {
 
             <Grid item xs={12}>
                 <TextField name="title" label="表單名稱" size="small" fullWidth value={title ?? ''}
+                    onChange={formChangeHandler} onBlur={saveProperties} />
+            </Grid>
+
+            <Grid item xs={12}>
+                <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
+                    multiline minRows={5} maxRows={8} value={editableWhen ?? ''}
                     onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 

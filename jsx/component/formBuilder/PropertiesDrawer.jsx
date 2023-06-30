@@ -67,7 +67,10 @@ export default React.memo(styled(props => {
     }
 
     .header {
+        position: sticky;
+        top: 0;
         background: #123665;
+        z-index: 2;
     }
 
     .toolbar>* {

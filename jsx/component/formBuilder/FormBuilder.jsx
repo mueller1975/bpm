@@ -49,7 +49,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     }, [onToggleForm]);
 
     const drawerOpenHandler = useCallback(open => setDrawerOpen(open), []);
-
     const drawerDockHandler = useCallback(docked => setDrawerDocked(docked), []);
 
     const accordionForms = useMemo(() => allForms.map((form, index) => {
@@ -63,9 +62,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 selected={formId == targetFormId}
                 onChange={onToggleForm}
                 expanded={expandedForms.indexOf(formId) > -1}
-
-                // data={mpbData?.[formId]}
-                // {...form}
                 form={form}
             />
         )
@@ -89,8 +85,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         <Suspense fallback={<Loading />}>
             <Paper className={`MT-Form-Builder ${className}`}>
 
-
-                {/* form list 區塊 */}
+                {/* 表單列表區塊 */}
                 <div className="menu">
                     <FormList className="list"
                         forms={allForms}
@@ -98,9 +93,10 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                     />
                 </div>
 
+                {/* 左 Resizer */}
                 <Divider orientation='vertical' className="resizer left" />
 
-                {/* all forms 區塊*/}
+                {/* 所有表單內容 */}
                 <div className="container" ref={containerRef}>
                     <div className="content">
                         {
@@ -112,10 +108,11 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                     <FloatingActions buttons={buttons} />
                 </div>
 
-                {
+                {/* 右 Resizer */
                     !drawerDocked ? null : <Divider orientation='vertical' className="resizer right" />
                 }
 
+                {/* 屬性編輯區塊 */}
                 <PropertiesDrawer className="drawer" open={drawerOpen} docked={drawerDocked}
                     onOpen={drawerOpenHandler} onDock={drawerDockHandler} />
             </Paper>
@@ -186,6 +183,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 overflow: hidden auto;
                 padding-right: 12px;
                 padding-bottom: 30px;
+                box-sizing: border-box;
             }
         }
         

@@ -38,6 +38,17 @@ export const allFormsState = atom({
     ]
 });
 
+export const formState = atomFamily({
+    key: 'formState',
+    default: selectorFamily({
+        key: 'formState/default',
+        get: uuid => ({ get }) => {
+            const allForms = get(allFormsState);
+            return allForms.find(form => form.uuid === uuid);
+        }
+    })
+});
+
 export const flatComponentsState = selector({
     key: 'flatComponentsState',
     get: ({ get }) => {
