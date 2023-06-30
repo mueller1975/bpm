@@ -1,9 +1,50 @@
 import { Divider } from '@mui/material';
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
+import { IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { updateFormSelector } from './context/FormStates.jsx';
 
-export default React.memo(styled(React.forwardRef(({ id, editable, data, components, className }, ref) => {
+const AddComponent = styled(({ className, onAdd }) => {
+
+    return (
+        <div className={className}>
+            <IconButton onClick={onAdd}><AddIcon /></IconButton>
+        </div>
+    );
+})`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed gray;
+    border-radius: 4px;
+
+    :hover {
+        border-color: white;
+    }
+`;
+
+export default React.memo(styled(React.forwardRef(({ uuid, id, editable, data, components, className }, ref) => {
+
+    const updateForm = useSetRecoilState(updateFormSelector);
+
+    const addFormComponent = useCallback(() => {
+        let fieldset = {
+            "type": "fieldset",
+            "cols": {
+                "xs": 12,
+                "sm": 6,
+                "md": 4,
+                "lg": 3
+            },
+            "fields": []
+        };
+
+        updateForm({ form: { uuid, components: [fieldset, ...components] } });
+    }, [components]);
 
     const formComponents = useMemo(() => {
         if (!components) {
@@ -30,7 +71,9 @@ export default React.memo(styled(React.forwardRef(({ id, editable, data, compone
 
     return (
         <form id={id} ref={ref} autoComplete="off" className={className}>
-            {formComponents}
+            {
+                formComponents.length == 0 ? <AddComponent onAdd={addFormComponent} /> : formComponents
+            }
         </form>
     );
 }))`

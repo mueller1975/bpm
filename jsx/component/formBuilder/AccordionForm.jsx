@@ -19,12 +19,12 @@ const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, selected, onChange, expanded, data, className, containerRef } = props;
-    const { id, title, icon: SummaryIcon, components, } = form;
+    const { uuid, id, title, icon: SummaryIcon, components, } = form;
+
     const updateForm = useSetRecoilState(updateFormSelector);
+    const setFormProperties = useSetRecoilState(formPropertiesState);
 
     const formToggleHandler = useCallback((e, expanded) => onChange(id, expanded), [onChange]);
-
-    const setFormProperties = useSetRecoilState(formPropertiesState);
 
     // console.log('form accordion:', id)
 
@@ -82,7 +82,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             </AccordionSummary>
 
             <AccordionDetails>
-                <Form id={id} editable components={components} data={data} />
+                <Form uuid={uuid} id={id} editable components={components} data={data} />
             </AccordionDetails>
         </AnimatedAccordion>
     );

@@ -46,7 +46,7 @@ export default React.memo(styled(props => {
     };
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} className={`MT-Field-Properties ${className}`}>
             <Grid item xs={12}>
                 <TextField name="uuid" label="UUID" size="small" fullWidth disabled value={uuid} />
             </Grid>
@@ -84,5 +84,9 @@ export default React.memo(styled(props => {
 
     );
 })`
-
+    .divider-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
 `);

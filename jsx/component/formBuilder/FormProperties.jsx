@@ -27,17 +27,19 @@ export default React.memo(styled(props => {
     }
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} className={`MT-Form-Properties ${className}`}>
             <Grid item xs={12}>
-                <TextField name="uuid" label="UUID" size="small" fullWidth disabled value={uuid} />
+                <TextField name="uuid" label="UUID" size="small" fullWidth disabled value={uuid ?? ''} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="id" label="表單 ID" size="small" fullWidth value={id} onChange={formChangeHandler} />
+                <TextField name="id" label="表單 ID" size="small" fullWidth value={id ?? ''}
+                    onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="title" label="表單名稱" size="small" fullWidth value={title} onChange={formChangeHandler} />
+                <TextField name="title" label="表單名稱" size="small" fullWidth value={title ?? ''}
+                    onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>

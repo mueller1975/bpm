@@ -1,40 +1,29 @@
-import {
-    AppBar, Toolbar, IconButton, Grid, Box, Checkbox, Divider,
-    Accordion, AccordionDetails, AccordionSummary, Drawer, List, ListItem, ListItemIcon, ListItemSecondaryAction,
-    ListItemText, ListSubheader, MenuItem, Popover, Slider, Switch, TextField, Typography, SwipeableDrawer
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import React, { useEffect, useCallback, useState } from 'react';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import GpsNotFixedIcon from '@mui/icons-material/GpsNotFixed';
-import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
-import FormProperties from './FormProperties.jsx';
+import { AppBar, IconButton, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
 import FieldProperties from './FieldProperties.jsx';
-
-// Popover 位置
-const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
-    transformOrigin = { vertical: 'top', horizontal: 'right' };
+import FormProperties from './FormProperties.jsx';
 
 export default React.memo(styled(props => {
-    const { className } = props;
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [drawerDocked, setDrawerDocked] = useState(false);
+    const { open, docked, onOpen, onDock, className } = props;
 
     /* 顯示 drawer */
-    const openDrawer = () => setDrawerOpen(true);
+    const openDrawer = () => onOpen(true);
 
     /* 關閉 drawer */
-    const claseDrawer = () => setDrawerOpen(false);
+    const claseDrawer = () => onOpen(false);
 
     /* 點擊側邊 event */
-    const touchEdgeHandler = e => !drawerOpen && openDrawer();
+    const touchEdgeHandler = e => !open && onOpen(true);
 
-    const toggleDrawerDocked = () => setDrawerDocked(!drawerDocked);
+    const toggleDrawerDocked = () => onDock(!docked);
 
     return (
         <SwipeableDrawer className={`MT-Properties-Drawer ${className}`}
-            variant={drawerDocked ? 'permanent' : 'temporary'}
-            anchor="right" open={drawerOpen} onOpen={openDrawer} onClose={claseDrawer}
+            variant={docked ? 'permanent' : 'temporary'}
+            anchor="right" open={open} onOpen={openDrawer} onClose={claseDrawer}
             PaperProps={{ className: 'drawer-paper' }} SlideProps={{ mountOnEnter: true }}
             SwipeAreaProps={{ onClick: touchEdgeHandler, className: `${className} menuAnchor` }}
             ModalProps={{ keepMounted: true }}>
@@ -43,7 +32,7 @@ export default React.memo(styled(props => {
                 <Toolbar disableGutters variant="dense" className="toolbar">
                     {/* 固定 drawer */}
                     <IconButton onClick={toggleDrawerDocked}>
-                        {drawerDocked ? <GpsFixedIcon /> : <GpsNotFixedIcon />}
+                        {docked ? <GpsFixedIcon /> : <GpsNotFixedIcon />}
                     </IconButton>
 
                     {/* darwer 標題 */}
@@ -51,15 +40,22 @@ export default React.memo(styled(props => {
                 </Toolbar>
             </AppBar>
 
-            <Box className="content">
+            <div className="content">
                 <FormProperties />
                 <FieldProperties />
-            </Box>
+            </div>
 
         </SwipeableDrawer>
     );
 })`
     width: 350px;
+
+    &.MuiDrawer-docked {
+        .drawer-paper {
+            position: unset;
+            border-radius: 4px;
+        }
+    }
 
     .drawer-paper {
         width: 100%;
@@ -79,9 +75,11 @@ export default React.memo(styled(props => {
     }
 
     &.menuAnchor {
-        &:hover {
-            border: 1px dashed rgb(190 217 236 / 74%);
-            background: rgb(24 35 56 / 62%);
+        border: 1px dashed rgb(190 217 236 / 74%);
+        background: rgb(24 35 56 / 62%);
+
+        :hover {            
+            cursor: hand;
         }
 
         &:active {
@@ -93,9 +91,4 @@ export default React.memo(styled(props => {
         padding: 16px 20px 20px;
     }
 
-    .divider-title {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
 `);

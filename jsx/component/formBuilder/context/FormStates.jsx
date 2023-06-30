@@ -38,6 +38,23 @@ export const allFormsState = atom({
     ]
 });
 
+export const flatComponentsState = selector({
+    key: 'flatComponentsState',
+    get: ({ get }) => {
+        console.log('flatComponentsState....GET');
+        const promise = new Promise((resolve, reject) => {
+            let allForms = get(allFormsState);
+            const flatComponents = flattenFormComponents(allForms);
+
+            console.log({ flatComponents })
+            resolve(flatComponents);
+        });
+
+        return promise;
+        // return flatComponents;
+    },
+    set: ({ set }, newValue) => set(flatComponentsState, newValue)
+});
 
 export const flatComponentsState2 = atomFamily({
     key: 'flatComponentsState2',
@@ -73,24 +90,6 @@ export const allFormIdsState = selector({
     }
 });
 
-export const flatComponentsState = selector({
-    key: 'flatComponentsState',
-    get: ({ get }) => {
-        console.log('flatComponentsState....GET');
-        const promise = new Promise((resolve, reject) => {
-            let allForms = get(allFormsState);
-            const flatComponents = flattenFormComponents(allForms);
-
-            console.log({ flatComponents })
-            resolve(flatComponents);
-        });
-
-        return promise;
-        // return flatComponents;
-    },
-    set: ({ set }, newValue) => set(flatComponentsState, newValue)
-});
-
 export const updateFlatComponentsSelector = selectorFamily({
     key: 'updateFlatComponentsSelector',
     get: uuid => ({ get }) => [...get(flatComponentsState)[uuid]],
@@ -105,14 +104,18 @@ export const updateFormSelector = selector({
 
         let allForms = get(allFormsState);
 
-        if (form?.uuid) { // 既有的 form
+        if (form?.uuid) { // 既有的 form 以 partial update 更新
             let idx = allForms.findIndex(f => f.uuid === form.uuid);
+            let oldForm = allForms[idx];
+            form = { ...oldForm, ...form }; // partial update
+
             allForms = [...allForms];
             allForms[idx] = form;
         } else { // 新增的 form
             form.uuid = uuidv4();
             form.order = allForms.length + 1;
             form.icon = QuestionMarkIcon;
+            form.components = [];
 
             if (!afterFormUUID) { // 未指定則放到第一個位置
                 allForms = [form, ...allForms];
