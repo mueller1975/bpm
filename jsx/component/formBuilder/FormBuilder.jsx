@@ -1,24 +1,24 @@
-import { styled } from '@mui/material/styles';
-import React, { Suspense, useCallback, useMemo, useRef, useState } from 'react';
-import { Divider, Paper } from '@mui/material';
-import Loading from 'Component/Loading.jsx';
-import { useRecoilValue } from 'recoil';
-import AccordionForm from './AccordionForm.jsx';
-import { allFormsState, allFormIdsState } from './context/FormStates.jsx';
-import FormList from './FormList.jsx';
-import PropertiesDrawer from './PropertiesDrawer.jsx';
-import FloatingActions from './FloatingActions.jsx';
-import AnimatedFab from 'Component/AnimatedFab.jsx';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Divider, Paper } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import AnimatedFab from 'Component/AnimatedFab.jsx';
+import Loading from 'Component/Loading.jsx';
+import React, { Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import AccordionForm from './AccordionForm.jsx';
+import FloatingActions from './FloatingActions.jsx';
+import FormList from './FormList.jsx';
+import PropertiesDrawer from './PropertiesDrawer.jsx';
+import { allFormUUIDsState, allFormsState } from './context/FormStates.jsx';
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
     const allForms = useRecoilValue(allFormsState);
-    const allFormIds = useRecoilValue(allFormIdsState);
-    const [targetFormId, setTargetFormId] = useState();
-    const [expandedForms, setExpandedForms] = useState([allFormIds[0]]); // 展開的 form
+    const allFormUUIDs = useRecoilValue(allFormUUIDsState);
+
+    const [targetFormUUID, setTargetFormUUID] = useState();
+    const [expandedForms, setExpandedForms] = useState([allFormUUIDs[0]]); // 展開的 form
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerDocked, setDrawerDocked] = useState(true);
 
@@ -28,44 +28,47 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     console.log({ allForms })
 
     // 展開/縮合個別 form
-    const onToggleForm = useCallback((formId, expanded) => {
-        let ids = expanded ? expandedForms.concat(formId) : expandedForms.filter(id => formId != id);
-        setExpandedForms(ids);
+    const onToggleForm = useCallback((formUUID, expanded) => {
+        let uuids = expanded ? expandedForms.concat(formUUID) :
+            expandedForms.filter(uuid => formUUID != uuid);
+        setExpandedForms(uuids);
     }, [expandedForms]);
 
     // Form List: click form 時, 自動 scroll 至該 form 位置
-    const formItemClickedHandler = useCallback(formId => {
-        let index = allFormIds.indexOf(formId);
+    const formItemClickedHandler = useCallback(formUUID => {
+        console.log({ formUUID })
+        let index = allFormUUIDs.indexOf(formUUID);
 
-        setTargetFormId(formId);
+        setTargetFormUUID(formUUID);
 
         // 自動展開點擊的 form
-        if (expandedForms.indexOf(formId) < 0) {
-            onToggleForm(formId, true);
+        if (expandedForms.indexOf(formUUID) < 0) {
+            onToggleForm(formUUID, true);
         }
 
         accordionRefs.current[index]?.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
         // setTimeout(() => setTargetFormId(undefined), 3000); // 移除 animation, 避免連續再按沒反應
-    }, [onToggleForm]);
+    }, [allFormUUIDs, onToggleForm]);
 
     const drawerOpenHandler = useCallback(open => setDrawerOpen(open), []);
     const drawerDockHandler = useCallback(docked => setDrawerDocked(docked), []);
 
     const accordionForms = useMemo(() => allForms.map((form, index) => {
         // const { id, title, icon, components } = form;
-        const formId = form.id;
+        const formUUID = form.uuid;
 
         return (
-            <AccordionForm key={formId}
+            <AccordionForm key={formUUID}
                 ref={elm => accordionRefs.current[index] = elm}
                 containerRef={containerRef}
-                selected={formId == targetFormId}
+                selected={formUUID == targetFormUUID}
                 onChange={onToggleForm}
-                expanded={expandedForms.indexOf(formId) > -1}
+                onCreate={formItemClickedHandler}
+                expanded={expandedForms.indexOf(formUUID) > -1}
                 form={form}
             />
         )
-    }), [allForms, expandedForms, targetFormId, containerRef]);
+    }), [allForms, expandedForms, targetFormUUID, containerRef]);
 
     console.log({ accordionForms })
 
@@ -73,12 +76,12 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const collapseAll = useCallback(() => setExpandedForms([]), []);
 
     // 縮合所有 form
-    const expandAll = useCallback(() => setExpandedForms([...allFormIds]), [allFormIds]);
+    const expandAll = useCallback(() => setExpandedForms([...allFormUUIDs]), [allFormUUIDs]);
 
     const buttons = useMemo(() => [
         <AnimatedFab key="collapse" color="success" size="medium" onClick={collapseAll}><ExpandLessIcon color="inherit" /></AnimatedFab>,
         <AnimatedFab key="expand" color="primary" size="medium" onClick={expandAll}><ExpandMoreIcon color="inherit" /></AnimatedFab>
-    ], [allFormIds]);
+    ], [allFormUUIDs]);
 
 
     return (

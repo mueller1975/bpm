@@ -1,18 +1,17 @@
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
-    Avatar, Divider, IconButton, List, ListItem, ListItemButton,
-    ListItemIcon, ListItemText, ListSubheader, Tooltip, Typography
+    IconButton, List, ListItem, ListItemIcon, ListItemText,
+    ListSubheader
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { animated, config, useSpring } from '@react-spring/web';
-import { stringToColor } from 'Tools';
 import React, { useEffect, useState } from 'react';
+import FormListItem from './FormListItem.jsx';
 
 const AnimatedList = animated(List);
 const AnimatedIconButton = animated(IconButton);
-const AnimatedAvatar = animated(Avatar);
 const AnimatedListItemText = animated(ListItemText);
 const springConfig = { friction: 8, tension: 120 };
 
@@ -87,40 +86,47 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
             {/* <Divider /> */}
 
             {/* 各 form 區塊 */
-                forms.map(({ uuid, id, title, icon: ItemIcon }) => {
-                    let formColor = id ? stringToColor(id) : '#fff'; // 個別 form 圖示顏色
-                    const AnimatedItemIcon = animated(ItemIcon);
+                forms.map(form =>
+                    <FormListItem key={form.uuid} form={form} tooltipDisabled={!collapsed && !underSM}
+                        showProp={showProps} hideProps={hideProps} onClick={onItemClick} />
+                    //     {
+                    //     const { uuid, id, title, icon: ItemIcon } = form;
+                    //     let formColor = id ? stringToColor(id) : '#fff'; // 個別 form 圖示顏色
+                    //     const AnimatedItemIcon = animated(ItemIcon);
 
-                    return (
-                        <React.Fragment key={uuid}>
-                            <ListItem disablePadding component="div">
+                    //     return (
+                    //         <React.Fragment key={uuid}>
+                    //             <ListItem disablePadding component="div">
 
-                                <Tooltip arrow disableHoverListener={!collapsed && !underSM} placement="right"
-                                    title={<Typography variant="subtitle2">{title}</Typography>}>
+                    //                 <Tooltip arrow disableHoverListener={!collapsed && !underSM} placement="right"
+                    //                     title={<Typography variant="subtitle2">{title}</Typography>}>
 
-                                    <ListItemButton onClick={() => onItemClick && onItemClick(id)}>
-                                        <ListItemIcon>
-                                            <div className="iconWrapper">
-                                                {/* form icon */}
-                                                <AnimatedItemIcon sx={{ color: formColor }} style={hideProps} />
+                    //                     <ListItemButton onClick={() => onItemClick && onItemClick(uuid)}>
+                    //                         <ListItemIcon>
+                    //                             <div className="iconWrapper">
+                    //                                 {/* form icon */}
+                    //                                 <AnimatedItemIcon sx={{ color: formColor }} style={hideProps} />
 
-                                                {/* form 名稱第一個字 */}
-                                                <AnimatedAvatar className="itemAvatar overlapped" sx={{ bgcolor: `${formColor}40` }} style={showProps}>
-                                                    <Typography color="textPrimary">{title?.substring(0, 1)}</Typography>
-                                                </AnimatedAvatar>
-                                            </div>
-                                        </ListItemIcon>
+                    //                                 {/* form 名稱第一個字 */}
+                    //                                 <AnimatedAvatar className="itemAvatar overlapped" sx={{ bgcolor: `${formColor}40` }} style={showProps}>
+                    //                                     <Typography color="textPrimary">{title?.substring(0, 1)}</Typography>
+                    //                                 </AnimatedAvatar>
+                    //                             </div>
+                    //                         </ListItemIcon>
 
-                                        {/* form 名稱 */}
-                                        <AnimatedListItemText primary={title} style={hideProps} />
-                                    </ListItemButton>
-                                </Tooltip>
-                            </ListItem>
+                    //                         {/* form 名稱 */}
+                    //                         <AnimatedListItemText primary={title} style={hideProps} />
 
-                            <Divider />
-                        </React.Fragment>
-                    );
-                })
+                    //                         <FormListItemActions form={form} />
+                    //                     </ListItemButton>
+                    //                 </Tooltip>
+                    //             </ListItem>
+
+                    //             <Divider />
+                    //         </React.Fragment>
+                    //     );
+                    // }
+                )
             }
         </AnimatedList>
     );

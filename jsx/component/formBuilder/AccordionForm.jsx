@@ -5,7 +5,7 @@ import { Accordion, AccordionDetails, AccordionSummary, IconButton, Typography, 
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { useSlideSpring } from 'Hook/useAnimations.jsx';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { blink } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
 import EditIcon from "@mui/icons-material/Edit";
@@ -18,15 +18,20 @@ import { updateFormSelector } from './context/FormStates.jsx';
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
-    const { form, selected, onChange, expanded, data, className, containerRef } = props;
+    const { form, selected, onChange, onCreate, expanded, data, className, containerRef } = props;
     const { uuid, id, title, icon: SummaryIcon, components, } = form;
 
     const updateForm = useSetRecoilState(updateFormSelector);
     const setFormProperties = useSetRecoilState(formPropertiesState);
 
-    const formToggleHandler = useCallback((e, expanded) => onChange(id, expanded), [onChange]);
+    const formToggleHandler = useCallback((e, expanded) => onChange(uuid, expanded), [onChange]);
 
-    // console.log('form accordion:', id)
+    useEffect(() => {
+        if (!id) {
+            setFormProperties({ uuid });
+            onCreate(uuid);
+        }
+    }, []);
 
     const animProps = useSlideSpring();
 
@@ -38,22 +43,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     // console.log(title, '=>', entry?.isIntersecting, entry?.intersectionRatio)
 
-    const addForm = useCallback(() => {
-        updateForm({ afterFormUUID: form.uuid, form: {} });
-    });
-
-    const editForm = useCallback(e => {
-        e.stopPropagation();
-        console.log({ form })
-        setFormProperties({ ...form });
-    }, [form]);
-
-    const deleteForm = useCallback(() => {
-
-    });
-
     return (
-
         // 不可 mountOnEnter=true, 因保存時, 如 form 未曾展開, 該 form 所有欄位值無法被取得
         // <Fade in={!hidden} timeout={DURATION}>
         <AnimatedAccordion key={id} ref={ref} style={animProps} onChange={formToggleHandler} expanded={expanded}
@@ -72,13 +62,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
                 {/* Form 名稱 */}
                 <Typography variant="subtitle1" color="success.light">{title}</Typography>
-
-                {/* Form 動作列按鈕 */}
-                <Box className="formActions">
-                    <Fab size="small" color="error" onClick={deleteForm}><DeleteIcon /></Fab>
-                    <Fab size="small" color="success" onClick={addForm}><AddIcon /></Fab>
-                    <Fab size="small" color="warning" onClick={editForm}><EditIcon /></Fab>
-                </Box>
             </AccordionSummary>
 
             <AccordionDetails>
@@ -127,55 +110,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             // background: #6d95cc !important;
             z-index: 9999;
             background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;        
-        }
-
-        :hover {
-            .formActions {
-                opacity: 1;
-            }
-        }
-
-        .formActions {
-            opacity: 0;
-            position: absolute;
-            right: 60px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: opacity .8s;
-
-            >button {
-                transition: all .8s;
-                color: darkgray;
-
-                &.MuiFab-warning {
-                    background-color: rgb(255 167 38 / 50%);
-
-                    :hover {
-                        background-color: rgb(255 167 38 / 100%);
-                    }
-                }
-
-                &.Mui-error {
-                    background-color: rgb(244 67 54 / 50%);
-
-                    :hover {
-                        background-color: rgb(244 67 54 / 100%);
-                    }
-                }
-
-                &.MuiFab-success {
-                    background-color: rgb(102 187 106 / 50%);
-
-                    :hover {
-                        background-color: rgb(102 187 106 / 100%);
-                    }
-                }
-
-                :hover {
-                    color: lightgray;
-                }
-            }
         }
     }
 

@@ -38,6 +38,17 @@ export const allFormsState = atom({
     ]
 });
 
+export const allFormMapState = selector({
+    key: 'allFormMapState',
+    get: ({ get }) => {
+        console.log('GET allFormMapState...........');
+
+        const allForms = get(allFormsState);
+        const formMap = {};
+
+    }
+});
+
 export const formState = atomFamily({
     key: 'formState',
     default: selectorFamily({
@@ -98,6 +109,14 @@ export const allFormIdsState = selector({
     get: ({ get }) => {
         const forms = get(allFormsState);
         return forms.map(({ id }) => id);
+    }
+});
+
+export const allFormUUIDsState = selector({
+    key: 'allFormUUIDs',
+    get: ({ get }) => {
+        const forms = get(allFormsState);
+        return forms.map(({ uuid }) => uuid);
     }
 });
 

@@ -36,22 +36,26 @@ export default React.memo(styled(props => {
     return (
         <Grid container spacing={2} className={`MT-Form-Properties ${className}`}>
             <Grid item xs={12}>
-                <TextField name="uuid" label="UUID" size="small" fullWidth disabled value={uuid ?? ''} />
+                <TextField name="uuid" label="UUID" size="small" fullWidth disabled
+                    value={uuid ?? ''} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="id" label="表單 ID" size="small" fullWidth value={id ?? ''}
+                <TextField name="id" label="表單 ID" size="small" fullWidth
+                    disabled={!uuid} value={id ?? ''}
                     onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="title" label="表單名稱" size="small" fullWidth value={title ?? ''}
+                <TextField name="title" label="表單名稱" size="small" fullWidth
+                    disabled={!uuid} value={title ?? ''}
                     onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
                 <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
-                    multiline minRows={5} maxRows={8} value={editableWhen ?? ''}
+                    multiline minRows={5} maxRows={8}
+                    disabled={!uuid} value={editableWhen ?? ''}
                     onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 
