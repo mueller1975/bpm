@@ -26,7 +26,8 @@ export default React.memo(styled(props => {
 
     return (
         <React.Fragment key={uuid}>
-            <ListItem disablePadding component="div" onMouseEnter={() => setActionsOpen(true)}
+            <ListItem disablePadding component="div" className={`MT-FormListItem ${className}`}
+                onMouseEnter={() => setActionsOpen(true)}
                 onMouseLeave={() => setActionsOpen(false)}>
 
                 <Tooltip arrow disableHoverListener={tooltipDisabled} placement="right"
@@ -57,5 +58,29 @@ export default React.memo(styled(props => {
         </React.Fragment>
     );
 })`
+    &.MT-FormListItem {
+        .iconWrapper {
+            position: relative;
+            align-items: center;
+    
+            .overlapped {
+                position: absolute;
+            }
+        }
+    
+        .MuiListItemIcon-root {
+            min-width: 40px;
+        }
+    
+        .MuiListItemButton-root {
+            transition: background-color .3s;
+        }
+
+        .itemAvatar {
+            width: 36px;
+            height: 36px;
+            // background-color: rgb(54 89 116 / 52%);
+        }
+    }
 
 `);

@@ -175,9 +175,5 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
         // max-width: 120px;
     }
 
-    .itemAvatar {
-        width: 36px;
-        height: 36px;
-        // background-color: rgb(54 89 116 / 52%);
-    }
+    
 `);

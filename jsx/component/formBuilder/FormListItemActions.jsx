@@ -42,11 +42,11 @@ export default React.memo(styled(props => {
     return (
         <Popper open={open} anchorEl={anchorEl} placement="right"
             className={`MT-FormListItemActions ${className}`}>
-            <Paper className={toolbar}>
+            <div className="toolbar">
                 <Fab size="small" color="error" onClick={deleteForm}><DeleteIcon /></Fab>
                 <Fab size="small" color="success" onClick={addForm}><AddIcon /></Fab>
                 <Fab size="small" color="warning" onClick={editForm}><EditIcon /></Fab>
-            </Paper>
+            </div>
         </Popper>
     );
 })`
@@ -56,7 +56,7 @@ export default React.memo(styled(props => {
         >.toolbar {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
             padding: 4px;
 
             >button {
