@@ -1,18 +1,15 @@
-import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
-    Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
-    ListSubheader, AppBar, Toolbar
+    AppBar, IconButton, List, ListItemText, Toolbar
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { animated, config, useSpring } from '@react-spring/web';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import FormListItem from './FormListItem.jsx';
 import { updateFormSelector } from './context/FormStates.jsx';
-import AddComponentButton from './AddComponentButton.jsx';
 
 const AnimatedList = animated(List);
 const AnimatedIconButton = animated(IconButton);

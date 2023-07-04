@@ -1,13 +1,15 @@
 import { css } from "@emotion/react";
 import { useIntersection } from '@mantine/hooks';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Fab, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { useSlideSpring } from 'Hook/useAnimations.jsx';
 import React, { useCallback, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { blink } from '../styled/Animations.jsx';
+import { blink, jiggle } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
 import { formPropertiesState } from "./context/PropertiesState.js";
 
@@ -36,11 +38,20 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         rootMargin: '-4px 0px 0px 0px',
     });
 
+    const editForm = useCallback(e => {
+        e.stopPropagation();
+        console.log({ form })
+        setFormProperties({ uuid });
+    }, [form]);
+
+    const deleteForm = useCallback(e => {
+        e.stopPropagation();
+
+    }, [form]);
+
     // console.log(title, '=>', entry?.isIntersecting, entry?.intersectionRatio)
 
     return (
-        // 不可 mountOnEnter=true, 因保存時, 如 form 未曾展開, 該 form 所有欄位值無法被取得
-        // <Fade in={!hidden} timeout={DURATION}>
         <AnimatedAccordion key={id} ref={ref} style={animProps} onChange={formToggleHandler} expanded={expanded}
             className={`${className} ${selected ? 'selected' : ''}`}>
 
@@ -57,6 +68,12 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
                 {/* Form 名稱 */}
                 <Typography variant="subtitle1" color="success.light">{title}</Typography>
+
+                {/* Form 動作列按鈕 */}
+                <div className="formActions">
+                    <Fab size="small" color="error" onClick={deleteForm}><DeleteIcon /></Fab>
+                    <Fab size="small" color="warning" onClick={editForm}><EditIcon /></Fab>
+                </div>
             </AccordionSummary>
 
             <AccordionDetails>
@@ -105,6 +122,32 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             // background: #6d95cc !important;
             z-index: 9999;
             background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;        
+        }
+
+        :hover {
+            .formActions {
+                opacity: 1;
+            }
+        }
+
+        .formActions {
+            opacity: 0;
+            position: absolute;
+            right: 60px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity .8s;
+
+            >button {
+                transition: all .8s;
+                color: lightgray;
+
+                :hover {
+                    color: white;
+                    animation: ${jiggle} .15s 3;
+                }
+            }
         }
     }
 

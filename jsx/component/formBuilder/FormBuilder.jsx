@@ -14,11 +14,13 @@ import { allFormUUIDsState, allFormsState } from './context/FormStates.jsx';
 import AddComponentButton from './AddComponentButton.jsx';
 import { updateFormSelector } from './context/FormStates.jsx';
 import { useSetRecoilState } from 'recoil';
+import { formPropertiesState } from "./context/PropertiesState.js";
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
     const allForms = useRecoilValue(allFormsState);
     const allFormUUIDs = useRecoilValue(allFormUUIDsState);
+    const setFormProperties = useSetRecoilState(formPropertiesState);
 
     const [targetFormUUID, setTargetFormUUID] = useState();
     const [expandedForms, setExpandedForms] = useState([allFormUUIDs[0]]); // 展開的 form
@@ -49,6 +51,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     // Form List: click form 時, 自動 scroll 至該 form 位置
     const formItemClickedHandler = useCallback(formUUID => {
         console.log({ formUUID })
+        setFormProperties({ uuid: formUUID });
+
         let index = allFormUUIDs.indexOf(formUUID);
 
         setTargetFormUUID(formUUID);

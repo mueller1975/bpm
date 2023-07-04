@@ -1,7 +1,7 @@
 import SaveIcon from '@mui/icons-material/Save';
 import { Grid, IconButton, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
 import { formState, updateFormSelector } from './context/FormStates.jsx';
 import { formPropertiesState } from './context/PropertiesState';
@@ -13,13 +13,16 @@ export default React.memo(styled(props => {
     const formProperties = useRecoilValue(formPropertiesState);
     const [form, updateFormState] = useRecoilState(formState(formProperties?.uuid));
     const updateForm = useSetRecoilState(updateFormSelector);
+    const idRef = useRef();
 
     const [newForm, setNewForm] = useState(form);
     const { uuid, id, title, editableWhen } = newForm || {};
 
-
     useEffect(() => {
         setNewForm({ ...form });
+
+        // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
+        setTimeout(() => idRef.current.focus());
     }, [formProperties]);
 
     const saveProperties = useCallback(() => {
@@ -43,7 +46,7 @@ export default React.memo(styled(props => {
 
             <Grid item xs={12}>
                 <TextField name="id" label="表單 ID" size="small" fullWidth
-                    disabled={!uuid} value={id ?? ''}
+                    inputRef={idRef} disabled={!uuid} value={id ?? ''} autoFocus
                     onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 
