@@ -1,6 +1,9 @@
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import GpsNotFixedIcon from '@mui/icons-material/GpsNotFixed';
-import { AppBar, IconButton, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
+import {
+    AppBar, IconButton, SwipeableDrawer, Toolbar, Typography,
+    Accordion, AccordionSummary, AccordionDetails
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 import FieldProperties from './FieldProperties.jsx';
@@ -41,10 +44,26 @@ export default React.memo(styled(props => {
             </AppBar>
 
             <div className="content">
-                <FormProperties />
-                <FieldProperties />
-            </div>
+                <Accordion>
+                    <AccordionSummary><Typography>表單屬性</Typography></AccordionSummary>
 
+                    <AccordionDetails>
+                        <FormProperties />
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary><Typography>群組屬性</Typography></AccordionSummary>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary><Typography>欄位屬性</Typography></AccordionSummary>
+
+                    <AccordionDetails>
+                        <FieldProperties />
+                    </AccordionDetails>
+                </Accordion>
+            </div>
         </SwipeableDrawer>
     );
 })`
