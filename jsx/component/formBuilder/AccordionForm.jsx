@@ -1,28 +1,23 @@
 import { css } from "@emotion/react";
 import { useIntersection } from '@mantine/hooks';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, IconButton, Typography, Box, Fab } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { useSlideSpring } from 'Hook/useAnimations.jsx';
 import React, { useCallback, useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { blink } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
-import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { formPropertiesState } from "./context/PropertiesState.js";
-import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { updateFormSelector } from './context/FormStates.jsx';
 
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, selected, onChange, onCreate, expanded, data, className, containerRef } = props;
-    const { uuid, id, title, icon: SummaryIcon, components, } = form;
-
-    const updateForm = useSetRecoilState(updateFormSelector);
     const setFormProperties = useSetRecoilState(formPropertiesState);
+
+    const { uuid, id, title, icon: SummaryIcon, components, } = form;
 
     const formToggleHandler = useCallback((e, expanded) => onChange(uuid, expanded), [onChange]);
 

@@ -1,49 +1,39 @@
-import { Divider } from '@mui/material';
-import React, { useMemo, useCallback } from 'react';
+import { Divider, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import React, { useCallback, useMemo } from 'react';
+import { useSetRecoilState } from 'recoil';
+import AddComponentButton from './AddComponentButton.jsx';
 import { updateFormSelector } from './context/FormStates.jsx';
-
-const AddComponent = styled(({ className, onAdd }) => {
-
-    return (
-        <div className={className}>
-            <IconButton onClick={onAdd}><AddIcon /></IconButton>
-        </div>
-    );
-})`
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px dashed gray;
-    border-radius: 4px;
-
-    :hover {
-        border-color: white;
-    }
-`;
+import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx';
+import { v4 as uuidv4 } from 'uuid';
 
 export default React.memo(styled(React.forwardRef(({ uuid, id, editable, data, components, className }, ref) => {
 
     const updateForm = useSetRecoilState(updateFormSelector);
 
-    const addFormComponent = useCallback(() => {
+    const addFormComponent = useCallback(afterUUID => {
         let fieldset = {
-            "type": "fieldset",
-            "cols": {
-                "xs": 12,
-                "sm": 6,
-                "md": 4,
-                "lg": 3
+            uuid: uuidv4(),
+            type: "fieldset",
+            cols: {
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3
             },
-            "fields": []
+            fields: []
         };
 
-        updateForm({ form: { uuid, components: [fieldset, ...components] } });
+        let newComponents;
+
+        if (afterUUID) {
+            let idx = components.findIndex(f => f.uuid === afterUUID);
+            newComponents = [...components.slice(0, idx + 1), fieldset, ...components.slice(idx + 1)];
+        } else {
+            newComponents = [fieldset, ...components];
+        }
+
+        updateForm({ form: { uuid, components: newComponents } });
     }, [components]);
 
     const formComponents = useMemo(() => {
@@ -56,7 +46,12 @@ export default React.memo(styled(React.forwardRef(({ uuid, id, editable, data, c
         let formComponents = components.map((component, idx) => {
             switch (component.type) {
                 case 'fieldset':
-                    return <GridFieldsetContainer key={component.uuid} className="formComponent" formId={id} formData={data} editable={editable} {...component} />
+                    return (
+                        <React.Fragment key={component.uuid}>
+                            <GridFieldsetContainer className="formComponent" formId={id} formData={data} editable={editable} {...component} />
+                            <AddComponentButton className="formComponent" onClick={() => addFormComponent(component.uuid)} />
+                        </React.Fragment>
+                    );
                 case 'divider':
                     return <Divider key={component.uuid} className={`formComponent ${component.invisible ? 'invisible' : ''}`} />
                 case 'componentGroup':
@@ -71,14 +66,13 @@ export default React.memo(styled(React.forwardRef(({ uuid, id, editable, data, c
 
     return (
         <form id={id} ref={ref} autoComplete="off" className={className}>
-            {
-                formComponents.length == 0 ? <AddComponent onAdd={addFormComponent} /> : formComponents
-            }
+            <AddComponentButton className="formComponent" onClick={addFormComponent} />
+            {formComponents}
         </form>
     );
 }))`
     &>.formComponent:not(.hidden):nth-of-type(n+2) {
-        margin-top: 8px;
+        margin-top: 16px;
     }
 
     .invisible {

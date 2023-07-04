@@ -17,18 +17,23 @@ import { ErrorBoundary } from 'Components';
  * @param {*} param0 
  * @returns 
  */
-export const generateField = ({ key, type = 'text', ...others }) => {
+export const generateField = ({ cols, field, formId }) => {
+    const props = {...field, formId, cols};
+
+    const type = props.type ?? 'text';
+    const key = props.uuid;
+
     let FieldComponent;
 
     switch (type) {
         case 'divider':
             return (
-                <Grid key={key} item {...others.cols}>
+                <Grid key={key} item {...cols}>
                     <Divider />
                 </Grid>
             );
         case 'autocomplete':
-            FieldComponent = others.remoteAPI ? GridRemoteAutocomplete : GridAutocomplete;
+            FieldComponent = props.remoteAPI ? GridRemoteAutocomplete : GridAutocomplete;
             break;
         case 'checkbox':
             FieldComponent = GridCheckbox;
@@ -37,7 +42,7 @@ export const generateField = ({ key, type = 'text', ...others }) => {
             FieldComponent = GridDropdown;
             break;
         case 'employeeSelect':
-            others.source = 'employee'; // 查詢對象為 '員工資料'
+            props.source = 'employee'; // 查詢對象為 '員工資料'
             FieldComponent = GridTableSelect;
             break;
         case 'tableSelect':
@@ -54,11 +59,11 @@ export const generateField = ({ key, type = 'text', ...others }) => {
             break;
         case 'number':
             FieldComponent = GridTextField;
-            others.type = 'number';
+            props.htmlType = 'number';
             break;
         case 'computed':
             FieldComponent = GridTextField;
-            others.type = 'computed';
+            props.htmlType = 'computed';
             break;
         case 'textField':
         case 'text':
@@ -66,14 +71,14 @@ export const generateField = ({ key, type = 'text', ...others }) => {
             break;
         case 'textarea':
             FieldComponent = GridTextField;
-            others.multiline = true;
+            props.multiline = true;
             break;
         default:
             console.warn(`generateField(): 不支援的元件型態 ${type}`);
             return <div style={{ color: 'red' }}>不支援的元件 type [{type}]</div>
     }
 
-    return <ErrorBoundary key={key}><FieldComponent key={key} {...others} /></ErrorBoundary>;
+    return <ErrorBoundary key={key}><FieldComponent key={key} {...props} /></ErrorBoundary>;
 };
 
 /**

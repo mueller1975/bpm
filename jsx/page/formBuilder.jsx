@@ -7,25 +7,28 @@ import FormBuilder from 'Component/formBuilder/FormBuilder.jsx';
 import { ServiceContextProvider } from 'Context/ServiceContext.jsx';
 import { PreferencesContextProvider } from 'Context/PreferencesContext.jsx';
 import { StyledSnackbarProvider } from 'Components';
+import globalStyles from './lib/globalStyles';
+import { GlobalStyles } from '@mui/material';
 
 const theme = createAppTheme(DARK, NORMAL, NORMAL);
+const gStyles = globalStyles(theme.palette.mode); // global theme styles
 
-const Page = props => {
+const Page = React.memo(props => (
+    <ThemeProvider theme={theme}>
+        {/* Global CSS */}
+        <GlobalStyles styles={gStyles} />
 
-    return (
-        <ThemeProvider theme={theme}>
-            <RecoilRoot>
-                <ServiceContextProvider>
-                    <PreferencesContextProvider>
-                        <StyledSnackbarProvider>
-                            <FormBuilder />
-                        </StyledSnackbarProvider>
-                    </PreferencesContextProvider>
-                </ServiceContextProvider>
-            </RecoilRoot>
-        </ThemeProvider>
-    );
-};
+        <RecoilRoot>
+            <ServiceContextProvider>
+                <PreferencesContextProvider>
+                    <StyledSnackbarProvider>
+                        <FormBuilder />
+                    </StyledSnackbarProvider>
+                </PreferencesContextProvider>
+            </ServiceContextProvider>
+        </RecoilRoot>
+    </ThemeProvider>
+));
 
 const root = createRoot(document.querySelector('#root'));
 root.render(<Page />);

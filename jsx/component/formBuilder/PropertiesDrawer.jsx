@@ -60,16 +60,15 @@ export default React.memo(styled(props => {
     .drawer-paper {
         width: 100%;
         max-width: 360px;
-        // padding: 20px;
-        // position: relative;
         box-sizing: border-box;
-        box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '-4px 0 20px rgb(203 217 249 / 73%)' : '-4px 0 20px rgb(83 106 158 / 23%)'};
+        // box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '-4px 0 20px rgb(203 217 249 / 73%)' : '-4px 0 20px rgb(83 106 158 / 23%)'};
+        background: linear-gradient(-45deg,rgb(2 28 2 / 90%),rgb(35 49 34 / 90%),rgb(2 28 2 / 90%));
     }
 
     .header {
         position: sticky;
         top: 0;
-        background: #123665;
+        background: #09160b;
         z-index: 2;
     }
 
@@ -78,8 +77,8 @@ export default React.memo(styled(props => {
     }
 
     &.menuAnchor {
-        border: 1px dashed rgb(190 217 236 / 74%);
-        background: rgb(24 35 56 / 62%);
+        border: 1px dashed rgb(34 143 9 / 74%);
+        background: rgb(3 39 6 / 62%);
 
         :hover {            
             cursor: hand;

@@ -1,14 +1,11 @@
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
-    Avatar, Divider, IconButton, List, ListItem, ListItemButton,
-    ListItemIcon, ListItemText, ListSubheader, Tooltip, Typography
+    Avatar, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText,
+    Tooltip, Typography
 } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { animated, config, useSpring } from '@react-spring/web';
+import { styled } from '@mui/material/styles';
+import { animated } from '@react-spring/web';
 import { stringToColor } from 'Tools';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import FormListItemActions from './FormListItemActions.jsx';
 
 const AnimatedAvatar = animated(Avatar);
@@ -30,7 +27,7 @@ export default React.memo(styled(props => {
                 onMouseEnter={() => setActionsOpen(true)}
                 onMouseLeave={() => setActionsOpen(false)}>
 
-                <Tooltip arrow disableHoverListener={tooltipDisabled} placement="right"
+                <Tooltip arrow disableHoverListener={tooltipDisabled || !title} placement="bottom"
                     title={<Typography variant="subtitle2">{title}</Typography>}>
 
                     <ListItemButton onClick={() => onClick && onClick(uuid)} ref={itemRef}>
@@ -77,6 +74,7 @@ export default React.memo(styled(props => {
         }
 
         .itemAvatar {
+            top: 0;
             width: 36px;
             height: 36px;
             // background-color: rgb(54 89 116 / 52%);

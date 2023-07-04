@@ -154,7 +154,7 @@ export const useResponseVO = (asyncFunction, { delay = 0, immediate = false } = 
                                     error = new Error(data)
                                 }
                             } catch (e) {
-                                console.log('ERROR:', e)
+                                console.error('ERROR:', e)
                                 error = new Error(e)
                             }
 

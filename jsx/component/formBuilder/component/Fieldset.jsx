@@ -2,6 +2,7 @@ import { Fab, FormControl, FormHelperText, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Scrollable from 'Component/Scrollable.jsx';
 import React, { useCallback, useState } from 'react';
+import { jiggle } from '../../styled/Animations.jsx';
 
 export default React.memo(styled(props => {
     const { title, noBorder = false, icon, hidden = false, helper, error, className,
@@ -76,7 +77,7 @@ export default React.memo(styled(props => {
         min-width: 100px;
         max-width: 100%;
         
-        border: ${props => props.noBorder ? 0 : '1px solid rgb(177 126 52 / 37%)'};
+        border: ${props => props.noBorder ? 0 : '1px solid rgb(177 126 52 / 80%)'};
         border-radius: 4px;
         transition: all .7s;
 
@@ -131,17 +132,7 @@ export default React.memo(styled(props => {
                 transform: scale(0);
 
                 :hover {
-                    // background-color: #5b5b5b;
-                    transform: scale(1);
-
-                    >svg {
-                        // opacity: 1;
-                    }
-                }
-
-                >svg {
-                    transition: all .8s;
-                    // opacity: .4;
+                    animation: ${jiggle} .15s 3;
                 }
             }
         }

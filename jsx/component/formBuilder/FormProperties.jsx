@@ -11,26 +11,27 @@ import { useCallback } from 'react';
 export default React.memo(styled(props => {
     const { className } = props;
     const formProperties = useRecoilValue(formPropertiesState);
-    const [formInEdit, updateFormState] = useRecoilState(formState(formProperties?.uuid));
-    const [form, setForm] = useState(formInEdit);
-
-    const { uuid, id, title, editableWhen } = form || {};
+    const [form, updateFormState] = useRecoilState(formState(formProperties?.uuid));
     const updateForm = useSetRecoilState(updateFormSelector);
 
+    const [newForm, setNewForm] = useState(form);
+    const { uuid, id, title, editableWhen } = newForm || {};
+
+
     useEffect(() => {
-        setForm({ ...formInEdit });
+        setNewForm({ ...form });
     }, [formProperties]);
 
     const saveProperties = useCallback(() => {
-        if (!isEqual(formInEdit, form)) {
-            updateForm({ form: { ...form } });
+        if (!isEqual(form, newForm)) {
+            updateForm({ form: { ...newForm } });
         }
-    }, [formInEdit, form]);
+    }, [form, newForm]);
 
     const formChangeHandler = e => {
         const { name, value: v } = e.target;
         console.log({ name, v })
-        setForm({ ...form, [name]: v });
+        setNewForm({ ...newForm, [name]: v });
     }
 
     return (

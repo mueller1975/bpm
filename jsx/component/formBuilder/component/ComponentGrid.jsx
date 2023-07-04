@@ -4,7 +4,7 @@ import { Grid, Fab, } from '@mui/material';
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import { jiggle } from '../../styled/Animations.jsx';
 
 export default React.memo(styled(props => {
     const { className, children, cols } = props;
@@ -14,7 +14,7 @@ export default React.memo(styled(props => {
     })
 
     return (
-        <Grid item className={`MT-Component-Grid ${className}`} {...cols} onclick={editFieldProperties}>
+        <Grid item className={`MT-ComponentGrid ${className}`} {...cols} onClick={editFieldProperties}>
             <div className="fieldActions">
                 <Fab size="small"><DeleteIcon color="error" /></Fab>
                 <Fab size="small"><AddIcon color="success" /></Fab>
@@ -27,7 +27,7 @@ export default React.memo(styled(props => {
         </Grid>
     );
 })`
-    &.MT-Component-Grid {
+    &.MT-ComponentGrid {
         position: relative;
 
         :hover {
@@ -47,6 +47,12 @@ export default React.memo(styled(props => {
             z-index: 2;
             opacity: 0;
             transition: all .5s;       
+
+            button {
+                :hover {
+                    animation: ${jiggle} .15s 3;
+                }                
+            }
         }
     }
 `);

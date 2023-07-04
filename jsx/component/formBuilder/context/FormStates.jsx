@@ -57,7 +57,15 @@ export const formState = atomFamily({
             const allForms = get(allFormsState);
             return allForms.find(form => form.uuid === uuid);
         }
-    })
+    }),
+    set: ({ set, get, setSelf }, newForm) => {
+        console.log({ setSelf })
+        let allForms = get(allFormsState);
+        let idx = allForms.findIndex(f => f.uuid === newForm.uuid);
+        let form = { ...allForms[idx], ...newForm };
+        allForms[idx] = form;
+        set(allFormsState, [...allForms]);
+    }
 });
 
 export const flatComponentsState = selector({
@@ -83,14 +91,14 @@ export const flatComponentsState2 = atomFamily({
     default: selectorFamily({
         key: 'flatComponentsState2/default',
         get: uuid => ({ get }) => {
-            console.log('flatComponentsState2....GET:', uuid);
-            return get(flatComponentsState)[uuid];
+            console.log('flatComponentsState2....GET uuid:', uuid);
+            return uuid ? get(flatComponentsState)[uuid] : [];
         }
     }),
-    set: ({ set, get }, newValue) => {
-        console.log({ newValue })
-        set(flatComponentsState2, [...get(flatComponentsState2), newValue]);
-    }
+    // set: ({ set, get }, newValue) => {
+    //     console.log({ newValue })
+    //     set(flatComponentsState2, [...get(flatComponentsState2), newValue]);
+    // }
 });
 
 
@@ -163,7 +171,6 @@ export const updateFormSelector = selector({
         set(allFormsState, allForms);
     },
 })
-
 
 export const formDataState = atom({
     key: 'formDataState',

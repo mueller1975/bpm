@@ -1,14 +1,18 @@
+import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
-    IconButton, List, ListItem, ListItemIcon, ListItemText,
-    ListSubheader
+    Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
+    ListSubheader, AppBar, Toolbar
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { animated, config, useSpring } from '@react-spring/web';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import FormListItem from './FormListItem.jsx';
+import { updateFormSelector } from './context/FormStates.jsx';
+import AddComponentButton from './AddComponentButton.jsx';
 
 const AnimatedList = animated(List);
 const AnimatedIconButton = animated(IconButton);
@@ -18,6 +22,7 @@ const springConfig = { friction: 8, tension: 120 };
 export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others }) => {
     const [collapsed, setCollapsed] = useState(true);
     const [firstExpanded, setFirstExpanded] = useState(false);
+    const updateForm = useSetRecoilState(updateFormSelector);
 
     const theme = useTheme();
     const underMD = useMediaQuery(theme.breakpoints.down('md'));
@@ -30,8 +35,8 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
     const collapseProps = useSpring({
         // delay: !firstExpanded ? 3000 : 0,
         immediate: !firstExpanded,
-        from: { width: 104, zIndex: 0 },
-        to: { width: 235, zIndex: 1, },
+        from: { width: 68, zIndex: 0 },
+        to: { width: 180, zIndex: 1, },
         reverse: collapsed,
         config: springConfig
         // onStart: () => !firstExpanded && setFirstExpanded(true)
@@ -64,68 +69,25 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
 
     return (
         <AnimatedList dense={underMD} {...others} style={collapseProps}>
-            {/* 選取全部區塊 */}
-            <ListSubheader >
-                <ListItem disablePadding component="div" className="subheaderTitle">
-                    {/* 圖示 */}
-                    <ListItemIcon className="iconWrapper">
-                        <AnimatedIconButton size="small" disabled={underSM} onClick={toggleCollapsed} style={hideProps}>
-                            <ArrowBackIosIcon fontSize="small" />
-                        </AnimatedIconButton>
+            <AppBar position="relative" className="header">
+                <Toolbar disableGutters variant="dense" className="toolbar">
+                    <AnimatedIconButton disabled={underSM} onClick={toggleCollapsed} style={hideProps}>
+                        <ArrowBackIosIcon />
+                    </AnimatedIconButton>
 
-                        <AnimatedIconButton size="small" disabled={underSM} onClick={toggleCollapsed} className="overlapped" style={showProps}>
-                            <ArrowForwardIosIcon fontSize="small" />
-                        </AnimatedIconButton>
-                    </ListItemIcon>
+                    <AnimatedIconButton disabled={underSM} onClick={toggleCollapsed} className="overlapped" style={showProps}>
+                        <ArrowForwardIosIcon />
+                    </AnimatedIconButton>
 
                     {/* 文字 */}
                     <AnimatedListItemText primary="表單分區" primaryTypographyProps={{ color: "primary" }} style={hideProps} />
-                </ListItem>
-            </ListSubheader>
-
-            {/* <Divider /> */}
+                </Toolbar>
+            </AppBar>
 
             {/* 各 form 區塊 */
                 forms.map(form =>
                     <FormListItem key={form.uuid} form={form} tooltipDisabled={!collapsed && !underSM}
-                        showProp={showProps} hideProps={hideProps} onClick={onItemClick} />
-                    //     {
-                    //     const { uuid, id, title, icon: ItemIcon } = form;
-                    //     let formColor = id ? stringToColor(id) : '#fff'; // 個別 form 圖示顏色
-                    //     const AnimatedItemIcon = animated(ItemIcon);
-
-                    //     return (
-                    //         <React.Fragment key={uuid}>
-                    //             <ListItem disablePadding component="div">
-
-                    //                 <Tooltip arrow disableHoverListener={!collapsed && !underSM} placement="right"
-                    //                     title={<Typography variant="subtitle2">{title}</Typography>}>
-
-                    //                     <ListItemButton onClick={() => onItemClick && onItemClick(uuid)}>
-                    //                         <ListItemIcon>
-                    //                             <div className="iconWrapper">
-                    //                                 {/* form icon */}
-                    //                                 <AnimatedItemIcon sx={{ color: formColor }} style={hideProps} />
-
-                    //                                 {/* form 名稱第一個字 */}
-                    //                                 <AnimatedAvatar className="itemAvatar overlapped" sx={{ bgcolor: `${formColor}40` }} style={showProps}>
-                    //                                     <Typography color="textPrimary">{title?.substring(0, 1)}</Typography>
-                    //                                 </AnimatedAvatar>
-                    //                             </div>
-                    //                         </ListItemIcon>
-
-                    //                         {/* form 名稱 */}
-                    //                         <AnimatedListItemText primary={title} style={hideProps} />
-
-                    //                         <FormListItemActions form={form} />
-                    //                     </ListItemButton>
-                    //                 </Tooltip>
-                    //             </ListItem>
-
-                    //             <Divider />
-                    //         </React.Fragment>
-                    //     );
-                    // }
+                        showProps={showProps} hideProps={hideProps} onClick={onItemClick} />
                 )
             }
         </AnimatedList>
@@ -144,11 +106,20 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
         z-index: 2;
         border-radius: 4px 4px 0 0;
         background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#f6f6f6' : '#10162a'};
-        box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '1px 1px #b0b0b0' : '1px 1px #5e5e5e'};
+        // box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '1px 1px #b0b0b0' : '1px 1px #5e5e5e'};
     }
 
     .subheaderTitle {
         padding-right: 48px;
+    }
+
+    .toolbar {
+        background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#f6f6f6' : '#10162a'};
+        padding-left: 8px;
+
+        >.overlapped {
+            position: absolute;
+        }
     }
 
     .iconWrapper {
@@ -175,5 +146,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
         // max-width: 120px;
     }
 
-    
+    .addItemButton {
+        padding: 8px;
+    }
 `);

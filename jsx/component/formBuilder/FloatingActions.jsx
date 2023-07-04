@@ -5,7 +5,7 @@ import React from 'react';
 export default styled(({ buttons, className }) => {
 
     return (
-        <div className={`MT-Floating-Actions ${className}`}>
+        <div className={`MT-FloatingActions ${className}`}>
             <SpringTransition2 effect="slideDown" items={buttons} keys={({ key }) => key} bounce={2}>
                 {button => button}
             </SpringTransition2>

@@ -11,6 +11,9 @@ import FloatingActions from './FloatingActions.jsx';
 import FormList from './FormList.jsx';
 import PropertiesDrawer from './PropertiesDrawer.jsx';
 import { allFormUUIDsState, allFormsState } from './context/FormStates.jsx';
+import AddComponentButton from './AddComponentButton.jsx';
+import { updateFormSelector } from './context/FormStates.jsx';
+import { useSetRecoilState } from 'recoil';
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
@@ -22,10 +25,19 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerDocked, setDrawerDocked] = useState(true);
 
+    const updateForm = useSetRecoilState(updateFormSelector);
+
     const containerRef = useRef();
     const accordionRefs = useRef([]);
 
     console.log({ allForms })
+
+    // 新增表單
+    const addForm = useCallback((e, afterFormUUID) => {
+        console.log('add form......')
+        e.stopPropagation();
+        updateForm({ afterFormUUID, form: {} });
+    });
 
     // 展開/縮合個別 form
     const onToggleForm = useCallback((formUUID, expanded) => {
@@ -58,15 +70,19 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         const formUUID = form.uuid;
 
         return (
-            <AccordionForm key={formUUID}
-                ref={elm => accordionRefs.current[index] = elm}
-                containerRef={containerRef}
-                selected={formUUID == targetFormUUID}
-                onChange={onToggleForm}
-                onCreate={formItemClickedHandler}
-                expanded={expandedForms.indexOf(formUUID) > -1}
-                form={form}
-            />
+            <React.Fragment key={formUUID}>
+                <AccordionForm
+                    uuid={formUUID}
+                    ref={elm => accordionRefs.current[index] = elm}
+                    containerRef={containerRef}
+                    selected={formUUID == targetFormUUID}
+                    onChange={onToggleForm}
+                    onCreate={formItemClickedHandler}
+                    expanded={expandedForms.indexOf(formUUID) > -1}
+                    form={form}
+                />
+                <AddComponentButton className="add-button" onClick={e => addForm(e, formUUID)} />
+            </React.Fragment>
         )
     }), [allForms, expandedForms, targetFormUUID, containerRef]);
 
@@ -102,6 +118,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 {/* 所有表單內容 */}
                 <div className="container" ref={containerRef}>
                     <div className="content">
+                        <AddComponentButton onClick={addForm} />
                         {
                             accordionForms
                         }
