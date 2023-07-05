@@ -1,15 +1,14 @@
-import { Divider, Grid } from '@mui/material';
+import { Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
-import AddComponentButton from './AddComponentButton.jsx';
-import { updateFormSelector } from './context/FormStates.jsx';
-import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx';
 import { v4 as uuidv4 } from 'uuid';
+import AddComponentButton from './AddComponentButton.jsx';
+import { formState } from './context/FormStates.jsx';
+import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx';
 
-export default React.memo(styled(React.forwardRef(({ uuid, id, editable, data, components, className }, ref) => {
-
-    const updateForm = useSetRecoilState(updateFormSelector);
+export default React.memo(styled(React.forwardRef(({ uuid, id, components, className }, ref) => {
+    const updateForm = useSetRecoilState(formState(uuid));
 
     const addFormComponent = useCallback(afterUUID => {
         let fieldset = {
@@ -48,21 +47,21 @@ export default React.memo(styled(React.forwardRef(({ uuid, id, editable, data, c
                 case 'fieldset':
                     return (
                         <React.Fragment key={component.uuid}>
-                            <GridFieldsetContainer className="formComponent" formId={id} formData={data} editable={editable} {...component} />
+                            <GridFieldsetContainer className="formComponent" formId={id} formUUID={uuid} {...component} />
                             <AddComponentButton className="formComponent" onClick={() => addFormComponent(component.uuid)} />
                         </React.Fragment>
                     );
                 case 'divider':
                     return <Divider key={component.uuid} className={`formComponent ${component.invisible ? 'invisible' : ''}`} />
                 case 'componentGroup':
-                    return <ComponentGroup key={component.uuid} className="formComponent" formId={id} formData={data} editable={editable} {...component} />
+                    return <ComponentGroup key={component.uuid} className="formComponent" formId={id} {...component} />
                 default:
                     throw new Error(`不支援的 component type [${component.type}]`);
             }
         });
 
         return formComponents;
-    }, [components, editable]);
+    }, [components]);
 
     return (
         <form id={id} ref={ref} autoComplete="off" className={className}>

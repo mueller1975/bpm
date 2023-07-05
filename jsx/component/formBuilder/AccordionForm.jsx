@@ -11,13 +11,13 @@ import React, { useCallback, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { blink, jiggle } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
-import { formPropertiesState } from "./context/PropertiesState.js";
+import { propertiesState } from "./context/PropertiesState.js";
 
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, selected, onChange, onCreate, expanded, data, className, containerRef } = props;
-    const setFormProperties = useSetRecoilState(formPropertiesState);
+    const setFormProperties = useSetRecoilState(propertiesState('FORM'));
 
     const { uuid, id, title, icon: SummaryIcon, components, } = form;
 
@@ -117,9 +117,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         z-index: 3;
 
         &.intersected {
-            // background: rgb(63 91 124) !important;
-            // background: rgb(171 7 7) !important;
-            // background: #6d95cc !important;
             z-index: 9999;
             background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;        
         }

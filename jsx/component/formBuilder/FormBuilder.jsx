@@ -5,29 +5,27 @@ import { styled } from '@mui/material/styles';
 import AnimatedFab from 'Component/AnimatedFab.jsx';
 import Loading from 'Component/Loading.jsx';
 import React, { Suspense, useCallback, useMemo, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import AccordionForm from './AccordionForm.jsx';
+import AddComponentButton from './AddComponentButton.jsx';
 import FloatingActions from './FloatingActions.jsx';
 import FormList from './FormList.jsx';
 import PropertiesDrawer from './PropertiesDrawer.jsx';
-import { allFormUUIDsState, allFormsState } from './context/FormStates.jsx';
-import AddComponentButton from './AddComponentButton.jsx';
-import { updateFormSelector } from './context/FormStates.jsx';
-import { useSetRecoilState } from 'recoil';
-import { formPropertiesState } from "./context/PropertiesState.js";
+import { allFormUUIDsState, allFormsState, formState } from './context/FormStates.jsx';
+import { propertiesState } from "./context/PropertiesState.js";
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
     const allForms = useRecoilValue(allFormsState);
     const allFormUUIDs = useRecoilValue(allFormUUIDsState);
-    const setFormProperties = useSetRecoilState(formPropertiesState);
+    const setFormProperties = useSetRecoilState(propertiesState('FORM'));
 
     const [targetFormUUID, setTargetFormUUID] = useState();
     const [expandedForms, setExpandedForms] = useState([allFormUUIDs[0]]); // 展開的 form
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerDocked, setDrawerDocked] = useState(true);
 
-    const updateForm = useSetRecoilState(updateFormSelector);
+    const createFormState = useSetRecoilState(formState());
 
     const containerRef = useRef();
     const accordionRefs = useRef([]);
@@ -38,7 +36,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const addForm = useCallback((e, afterFormUUID) => {
         console.log('add form......')
         e.stopPropagation();
-        updateForm({ afterFormUUID, form: {} });
+        createFormState({ afterFormUUID, form: {} });
     });
 
     // 展開/縮合個別 form
@@ -98,11 +96,11 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     // 縮合所有 form
     const expandAll = useCallback(() => setExpandedForms([...allFormUUIDs]), [allFormUUIDs]);
 
+    // 右下角動作列按鈕
     const buttons = useMemo(() => [
         <AnimatedFab key="collapse" color="success" size="medium" onClick={collapseAll}><ExpandLessIcon color="inherit" /></AnimatedFab>,
         <AnimatedFab key="expand" color="primary" size="medium" onClick={expandAll}><ExpandMoreIcon color="inherit" /></AnimatedFab>
     ], [allFormUUIDs]);
-
 
     return (
         <Suspense fallback={<Loading />}>

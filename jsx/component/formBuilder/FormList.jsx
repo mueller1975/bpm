@@ -7,9 +7,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { animated, config, useSpring } from '@react-spring/web';
 import React, { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import FormListItem from './FormListItem.jsx';
-import { updateFormSelector } from './context/FormStates.jsx';
 
 const AnimatedList = animated(List);
 const AnimatedIconButton = animated(IconButton);
@@ -19,7 +17,6 @@ const springConfig = { friction: 8, tension: 120 };
 export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others }) => {
     const [collapsed, setCollapsed] = useState(true);
     const [firstExpanded, setFirstExpanded] = useState(false);
-    const updateForm = useSetRecoilState(updateFormSelector);
 
     const theme = useTheme();
     const underMD = useMediaQuery(theme.breakpoints.down('md'));
@@ -77,7 +74,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
                     </AnimatedIconButton>
 
                     {/* 文字 */}
-                    <AnimatedListItemText primary="表單分區" primaryTypographyProps={{ color: "primary" }} style={hideProps} />
+                    <AnimatedListItemText primary="表單分區" primaryTypographyProps={{ color: "textSecondary" }} style={hideProps} />
                 </Toolbar>
             </AppBar>
 
@@ -96,14 +93,12 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, ...others })
     border-radius: 4px;
     background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(255 255 255 / 60%)' : 'rgb(11 20 37 / 63%)'};
     box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '8px 8px 8px 0px #72777f' : '#121212 8px 8px 8px 0px'};
-    // box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '6px 6px 3px 0px rgb(112 112 123 / 51%)' : '6px 6px 3px 0px rgb(21 21 23 / 51%)'};
 
     .MuiListSubheader-root {
         padding: 4px 0 4px 16px;
         z-index: 2;
         border-radius: 4px 4px 0 0;
         background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#f6f6f6' : '#10162a'};
-        // box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '1px 1px #b0b0b0' : '1px 1px #5e5e5e'};
     }
 
     .subheaderTitle {

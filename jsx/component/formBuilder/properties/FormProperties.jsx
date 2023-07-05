@@ -1,44 +1,44 @@
-import SaveIcon from '@mui/icons-material/Save';
-import { Grid, IconButton, TextField } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useState, useEffect, useRef } from 'react';
-import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
-import { formState, updateFormSelector } from './context/FormStates.jsx';
-import { formPropertiesState } from './context/PropertiesState';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
-import { useCallback } from 'react';
+import { formState } from '../context/FormStates.jsx';
+import { formPropertiesState, propertiesState } from '../context/PropertiesState';
 
 export default React.memo(styled(props => {
-    const { className } = props;
-    const formProperties = useRecoilValue(formPropertiesState);
+    const { onEdit, className } = props;
+    // const formProperties = useRecoilValue(formPropertiesState);
+    const formProperties = useRecoilValue(propertiesState('FORM'));
     const [form, updateFormState] = useRecoilState(formState(formProperties?.uuid));
-    const updateForm = useSetRecoilState(updateFormSelector);
-    const idRef = useRef();
+    const inputRef = useRef();
 
     const [newForm, setNewForm] = useState(form);
     const { uuid, id, title, editableWhen } = newForm || {};
 
     useEffect(() => {
         setNewForm({ ...form });
+        console.log({ formProperties })
+        onEdit(Boolean(formProperties?.uuid));
 
         // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
-        setTimeout(() => idRef.current.focus());
+        setTimeout(() => inputRef.current.focus());
     }, [formProperties]);
 
     const saveProperties = useCallback(() => {
         if (!isEqual(form, newForm)) {
-            updateForm({ form: { ...newForm } });
+            // updateForm({ form: { ...newForm } });
+            updateFormState({ form: { ...newForm } });
         }
     }, [form, newForm]);
 
     const formChangeHandler = e => {
         const { name, value: v } = e.target;
-        console.log({ name, v })
         setNewForm({ ...newForm, [name]: v });
-    }
+    };
 
     return (
-        <Grid container spacing={2} className={`MT-Form-Properties ${className}`}>
+        <Grid container spacing={2} className={`MT-FormProperties ${className}`}>
             <Grid item xs={12}>
                 <TextField name="uuid" label="UUID" size="small" fullWidth disabled
                     value={uuid ?? ''} />
@@ -46,7 +46,7 @@ export default React.memo(styled(props => {
 
             <Grid item xs={12}>
                 <TextField name="id" label="表單 ID" size="small" fullWidth
-                    inputRef={idRef} disabled={!uuid} value={id ?? ''} autoFocus
+                    inputRef={inputRef} disabled={!uuid} value={id ?? ''}
                     onChange={formChangeHandler} onBlur={saveProperties} />
             </Grid>
 
@@ -61,10 +61,6 @@ export default React.memo(styled(props => {
                     multiline minRows={5} maxRows={8}
                     disabled={!uuid} value={editableWhen ?? ''}
                     onChange={formChangeHandler} onBlur={saveProperties} />
-            </Grid>
-
-            <Grid item xs={12}>
-                <IconButton onClick={saveProperties}><SaveIcon color="warning" /></IconButton>
             </Grid>
         </Grid>
     );

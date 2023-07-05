@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
     AppBar, Toolbar, IconButton, Grid, Box, Checkbox, Divider,
     Accordion, AccordionDetails, AccordionSummary, Drawer, List, ListItem, ListItemIcon, ListItemSecondaryAction,
@@ -9,7 +9,7 @@ import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import GpsNotFixedIcon from '@mui/icons-material/GpsNotFixed';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { fieldPropertiesState } from './context/PropertiesState';
+import { fieldPropertiesState } from '../context/PropertiesState';
 
 // Popover 位置
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
@@ -30,11 +30,19 @@ const FIELD_TYPES = [
 const FIELD_TYPE_MENUS = FIELD_TYPES.map(({ code, name }) => <MenuItem key={code}>{name}</MenuItem>);
 
 export default React.memo(styled(props => {
-    const { className } = props;
+    const { onEdit, className } = props;
     const fieldProperties = useRecoilValue(fieldPropertiesState);
     const [field, setField] = useState(fieldProperties);
 
+    const inputRef = useRef();
     const { uuid, name, label, type } = field;
+
+    useEffect(() => {
+        onEdit(Boolean(fieldProperties?.uuid));
+
+        // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
+        setTimeout(() => inputRef.current.focus());
+    }, [fieldProperties]);
 
     const fieldChangeHandler = e => {
         const { name, value } = e.target;
@@ -52,8 +60,8 @@ export default React.memo(styled(props => {
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="name" label="欄位名稱" size="small" fullWidth autoComplete="off"
-                    value={name} onChange={fieldChangeHandler} />
+                <TextField name="title" label="群標題" size="small" fullWidth
+                    inputRef={inputRef} value={name} onChange={fieldChangeHandler} />
             </Grid>
 
             <Grid item xs={12}>
@@ -81,7 +89,6 @@ export default React.memo(styled(props => {
                 <TextField name="name" label="欄位名稱" size="small" fullWidth />
             </Grid>
         </Grid>
-
     );
 })`
     .divider-title {
