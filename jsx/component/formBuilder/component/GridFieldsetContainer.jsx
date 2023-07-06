@@ -12,10 +12,10 @@ import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
 
 export default React.memo(styled(props => {
-    const { uuid, noBorder = false, title = '無標題', formId, formUUID,
+    const { uuid: fieldsetUUID, noBorder = false, title = '無標題', formId, formUUID,
         fields: fields3, cols, available: parentAvailable = true, className } = props;
 
-    const [fieldset, updateFieldset] = useRecoilState(fieldsetState([formUUID, uuid]));
+    const [fieldset, updateFieldset] = useRecoilState(fieldsetState([formUUID, fieldsetUUID]));
     const { fields } = fieldset;
     console.log({ fieldset })
 
@@ -26,7 +26,7 @@ export default React.memo(styled(props => {
     console.log({ fields })
 
     useEffect(() => {
-        if (formUUID && uuid) {
+        if (formUUID && fieldsetUUID) {
             editProperties();
         }
     }, []);
@@ -38,7 +38,7 @@ export default React.memo(styled(props => {
     }
 
     const editProperties = () => {
-        setFieldsetProperties([formUUID, uuid]);
+        setFieldsetProperties([formUUID, fieldsetUUID]);
     };
 
     let gridContainer = useMemo(() => (
