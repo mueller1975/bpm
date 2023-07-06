@@ -53,6 +53,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
         let index = allFormUUIDs.indexOf(formUUID);
 
+        console.log({ index })
         setTargetFormUUID(formUUID);
 
         // 自動展開點擊的 form
@@ -60,7 +61,9 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             onToggleForm(formUUID, true);
         }
 
-        accordionRefs.current[index]?.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
+        let elm = accordionRefs.current[index];
+        elm.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
+        // accordionRefs.current[index]?.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
         // setTimeout(() => setTargetFormId(undefined), 3000); // 移除 animation, 避免連續再按沒反應
     }, [allFormUUIDs, onToggleForm]);
 
@@ -83,6 +86,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                     expanded={expandedForms.indexOf(formUUID) > -1}
                     form={form}
                 />
+
                 <AddComponentButton className="add-button" onClick={e => addForm(e, formUUID)} />
             </React.Fragment>
         )

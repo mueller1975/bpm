@@ -43,7 +43,10 @@ export default React.memo(styled(props => {
             variant={docked ? 'permanent' : 'temporary'}
             anchor="right" open={open} onOpen={openDrawer} onClose={claseDrawer}
             PaperProps={{ className: 'drawer-paper' }} SlideProps={{ mountOnEnter: true }}
-            SwipeAreaProps={{ onClick: touchEdgeHandler, className: `${className} menuAnchor` }}
+            SwipeAreaProps={{
+                onClick: touchEdgeHandler,
+                className: `MT-PropertiesDrawer ${className} menuAnchor`
+            }}
             ModalProps={{ keepMounted: true }}>
 
             <AppBar position="relative" className="header">

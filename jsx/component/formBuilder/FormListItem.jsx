@@ -25,7 +25,7 @@ export default React.memo(styled(props => {
         <React.Fragment key={uuid}>
             <ListItem disablePadding component="div" className={`MT-FormListItem ${className}`}>
 
-                <Tooltip arrow disableHoverListener={tooltipDisabled || !title} placement="bottom"
+                <Tooltip arrow disableHoverListener={tooltipDisabled || !title} placement="right"
                     title={<Typography variant="subtitle2">{title}</Typography>}>
 
                     <ListItemButton onClick={() => onClick && onClick(uuid)} ref={itemRef}>

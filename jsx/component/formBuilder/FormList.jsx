@@ -172,6 +172,8 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
 
         >.list {
             padding: 0;
+            height: 100%;
+            overflow: hidden auto;
 
             .toolbar {
                 background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#f6f6f6' : '#10162a'};
