@@ -11,6 +11,16 @@ import {
 import NumberRangeField from '../component/NumberRangeField.jsx';
 import TableSelect from '../component/TableSelect.jsx';
 import { ErrorBoundary } from 'Components';
+import * as FormIcons from '../lib/formIcons';
+
+/**
+ * icon 名稱轉換為 Icon 元件
+ * @param {*} iconName 
+ * @returns 
+ */
+export const getIconComponent = iconName => {
+    return FormIcons[iconName] ?? FormIcons['HelpOutlineIcon'];
+};
 
 /**
  * 建立欄位 form component
@@ -18,7 +28,7 @@ import { ErrorBoundary } from 'Components';
  * @returns 
  */
 export const generateField = ({ cols, field, formId }) => {
-    const props = {...field, formId, cols};
+    const props = { ...field, formId, cols };
 
     const type = props.type ?? 'text';
     const key = props.uuid;

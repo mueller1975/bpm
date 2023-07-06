@@ -17,18 +17,14 @@ export const allFormsState = atom({
 
             promise.then(async response => {
                 let vo = await response.json();
-
-                let forms = vo.data.map(({ value }) => ({
-                    ...value,
-                    icon: FormIcons[value.icon] ?? FormIcons['HelpOutlineIcon']
-                }));
+                let forms = vo.data.map(({ value }) => value);
 
                 forms = sortBy(forms, "order");
                 setSelf(forms);
 
                 console.info('取得 all forms:', forms);
             }).catch(error => {
-
+                console.error('從後端取得表單設定失敗', error);
             }).finally(() => {
 
             });
@@ -101,8 +97,8 @@ export const fieldsetState = selectorFamily({
 
         let form = get(formState(formUUID));
         console.log('[fieldsetState] GET:', form);
-        let fieldset = form.components.find(({ uuid }) => uuid === fieldsetUUID);
-        return fieldset;
+
+        return !form ? [] : form.components.find(({ uuid }) => uuid === fieldsetUUID);
     },
     set: ([formUUID, fieldsetUUID]) => ({ get, set }, newFieldset) => {
         let form = get(formState(formUUID));
@@ -121,14 +117,23 @@ export const fieldsetState = selectorFamily({
     },
 });
 
-export const fieldState = atomFamily({
+export const fieldState = selectorFamily({
     key: 'fieldState',
-    default: selectorFamily({
-        key: 'fieldState/default',
-        get: uuid => ({ get }) => {
+    get: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get }) => {
+        let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
+        return fieldset.fields.find(({ uuid }) => uuid === fieldUUID);
+    },
+    set: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get, set }, newValue) => {
+        let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
+        let fields = fieldset.fields;
+        let idx = fields.findIndex(({ uuid }) => uuid === fieldUUID);
+        let field = { ...fieldset.fields[idx], ...newValue };
 
-        }
-    })
+        fields = [...fields];
+        fields[idx] = field;
+
+        set(fieldsetState([formUUID, fieldsetUUID]), { fields });
+    },
 });
 
 export const allFormIdsState = selector({

@@ -2,11 +2,11 @@ import { styled } from '@mui/material/styles';
 import { SpringTransition2 } from 'Animations';
 import React from 'react';
 
-export default styled(({ buttons, className }) => {
+export default styled(({ actions, className }) => {
 
     return (
         <div className={`MT-FloatingActions ${className}`}>
-            <SpringTransition2 effect="slideDown" items={buttons} keys={({ key }) => key} bounce={2}>
+            <SpringTransition2 effect="slideDown" items={actions} keys={({ key }) => key} bounce={2}>
                 {button => button}
             </SpringTransition2>
         </div>

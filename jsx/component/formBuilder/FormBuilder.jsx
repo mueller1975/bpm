@@ -97,7 +97,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const expandAll = useCallback(() => setExpandedForms([...allFormUUIDs]), [allFormUUIDs]);
 
     // 右下角動作列按鈕
-    const buttons = useMemo(() => [
+    const actions = useMemo(() => [
         <AnimatedFab key="collapse" color="success" size="medium" onClick={collapseAll}><ExpandLessIcon color="inherit" /></AnimatedFab>,
         <AnimatedFab key="expand" color="primary" size="medium" onClick={expandAll}><ExpandMoreIcon color="inherit" /></AnimatedFab>
     ], [allFormUUIDs]);
@@ -108,10 +108,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
                 {/* 表單列表區塊 */}
                 <div className="menu">
-                    <FormList className="list"
-                        forms={allForms}
-                        onItemClick={formItemClickedHandler}
-                    />
+                    <FormList forms={allForms} onItemClick={formItemClickedHandler} />
                 </div>
 
                 {/* 左 Resizer */}
@@ -127,7 +124,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                     </div>
 
                     {/* dialog 右下角 form component 全展開/縮合鈕 */}
-                    <FloatingActions buttons={buttons} />
+                    <FloatingActions actions={actions} />
                 </div>
 
                 {/* 右 Resizer */
@@ -176,10 +173,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             display: flex;
             flex-direction: column;
             padding-bottom: 12px;    
-
-            .list {
-                overflow: hidden auto;
-            }
         }
 
         >.MuiAppBar-root {

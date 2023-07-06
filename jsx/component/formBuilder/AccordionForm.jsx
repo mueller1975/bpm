@@ -12,6 +12,7 @@ import { useSetRecoilState } from 'recoil';
 import { blink, jiggle } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
 import { propertiesState } from "./context/PropertiesState.js";
+import { getIconComponent } from './lib/formUI.jsx';
 
 const AnimatedAccordion = animated(Accordion);
 
@@ -19,7 +20,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, selected, onChange, onCreate, expanded, data, className, containerRef } = props;
     const setFormProperties = useSetRecoilState(propertiesState('FORM'));
 
-    const { uuid, id, title, icon: SummaryIcon, components, } = form;
+    const { uuid, id, title, icon, components, } = form;
+    const SummaryIcon = getIconComponent(icon);
 
     const formToggleHandler = useCallback((e, expanded) => onChange(uuid, expanded), [onChange]);
 

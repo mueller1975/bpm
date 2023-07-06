@@ -5,8 +5,8 @@ import {
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { stringToColor } from 'Tools';
-import React, { useRef, useState } from 'react';
-import FormListItemActions from './FormListItemActions.jsx';
+import React, { useMemo, useRef } from 'react';
+import { getIconComponent } from './lib/formUI.jsx';
 
 const AnimatedAvatar = animated(Avatar);
 const AnimatedListItemText = animated(ListItemText);
@@ -14,18 +14,16 @@ const AnimatedListItemText = animated(ListItemText);
 export default React.memo(styled(props => {
     const { form, tooltipDisabled = true, showProps, hideProps,
         onClick, className } = props;
-    const [actionsOpen, setActionsOpen] = useState(false);
     const itemRef = useRef();
 
-    const { uuid, id, title, icon: ItemIcon } = form;
-    const AnimatedItemIcon = animated(ItemIcon);
-    let formColor = id ? stringToColor(id) : '#fff'; // 個別 form 圖示顏色
+    const { uuid, id, title, icon } = form;
+
+    const AnimatedItemIcon = useMemo(() => animated(getIconComponent(icon)), [icon]);
+    const formColor = id ? stringToColor(id) : '#fff'; // 個別 form 圖示顏色
 
     return (
         <React.Fragment key={uuid}>
-            <ListItem disablePadding component="div" className={`MT-FormListItem ${className}`}
-                onMouseEnter={() => setActionsOpen(true)}
-                onMouseLeave={() => setActionsOpen(false)}>
+            <ListItem disablePadding component="div" className={`MT-FormListItem ${className}`}>
 
                 <Tooltip arrow disableHoverListener={tooltipDisabled || !title} placement="bottom"
                     title={<Typography variant="subtitle2">{title}</Typography>}>

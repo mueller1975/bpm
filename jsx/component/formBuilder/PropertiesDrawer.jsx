@@ -39,7 +39,7 @@ export default React.memo(styled(props => {
     const expandField = expanded => setFieldExpanded(expanded); // 欄位屬性 Accordion 開合
 
     return (
-        <SwipeableDrawer className={`MT-Properties-Drawer ${className}`}
+        <SwipeableDrawer className={`MT-PropertiesDrawer ${className}`}
             variant={docked ? 'permanent' : 'temporary'}
             anchor="right" open={open} onOpen={openDrawer} onClose={claseDrawer}
             PaperProps={{ className: 'drawer-paper' }} SlideProps={{ mountOnEnter: true }}
@@ -98,66 +98,67 @@ export default React.memo(styled(props => {
         </SwipeableDrawer>
     );
 })`
-    width: 350px;
+    &.MT-PropertiesDrawer {
+        width: 350px;
 
-    &.MuiDrawer-docked {
-        .drawer-paper {
-            position: unset;
-            border-radius: 4px;
-        }
-    }
-
-    .drawer-paper {
-        width: 100%;
-        max-width: 360px;
-        box-sizing: border-box;
-        background: linear-gradient(-45deg,rgb(2 28 2 / 90%),rgb(35 49 34 / 90%),rgb(2 28 2 / 90%));
-    }
-
-    .header {
-        position: sticky;
-        top: 0;
-        background: #09160b;
-        z-index: 2;
-    }
-
-    .toolbar {
-        padding-left: 8px;
-    }
-
-    &.menuAnchor {
-        border: 1px dashed rgb(12 47 4);
-        background: rgb(3 39 6 / 62%);
-
-        :hover {            
-            cursor: hand;
-            border-color: rgb(130 181 119);
-        }
-
-        &:active {
-            background: rgb(104 140 206 / 62%);
-        }
-    }
-
-    .content {
-        .summary {
-            color: rgba(255, 255, 255, 0.7);
-            background-color: rgb(2 28 2);
-            cursor: default !important;
-
-            >.MuiAccordionSummary-content {
-                gap: 4px;
+        &.MuiDrawer-docked {
+            .drawer-paper {
+                position: unset;
+                border-radius: 4px;
             }
         }
 
-        .summary[aria-expanded=true] {
-            color: #ffa726;
+        .drawer-paper {
+            width: 100%;
+            max-width: 360px;
+            box-sizing: border-box;
+            background: linear-gradient(-45deg,rgb(2 28 2 / 90%),rgb(35 49 34 / 90%),rgb(2 28 2 / 90%));
         }
 
-        .details {
-            background-color: #102411;
-            padding: 16px;
+        .header {
+            position: sticky;
+            top: 0;
+            background: #09160b;
+            z-index: 2;
+        }
+
+        .toolbar {
+            padding-left: 8px;
+        }
+
+        &.menuAnchor {
+            border: 1px dashed rgb(12 47 4);
+            background: rgb(3 39 6 / 62%);
+
+            :hover {            
+                cursor: hand;
+                border-color: rgb(130 181 119);
+            }
+
+            &:active {
+                background: rgb(104 140 206 / 62%);
+            }
+        }
+
+        .content {
+            .summary {
+                color: rgba(255, 255, 255, 0.7);
+                background-color: rgb(2 28 2);
+                cursor: default !important;
+
+                >.MuiAccordionSummary-content {
+                    gap: 4px;
+                }
+            }
+
+            .summary[aria-expanded=true] {
+                color: #ffa726;
+            }
+
+            .details {
+                background-color: #102411;
+                padding: 16px;
+            }
         }
     }
-
 `);
