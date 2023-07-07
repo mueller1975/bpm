@@ -27,15 +27,15 @@ export const getIconComponent = iconName => {
  * @param {*} param0 
  * @returns 
  */
-export const generateField = ({ cols, field, formId }) => {
-    const props = { cols, ...field, formId };
+export const generateField = ({ cols, field, formId, hierarchy }) => {
+    const props = { cols, type: 'text', ...field, formId, hierarchy };
 
-    const type = props.type ?? 'text';
+    // const type = props.type ?? 'text';
     const key = props.uuid;
 
     let FieldComponent;
 
-    switch (type) {
+    switch (props.type) {
         case 'divider':
             return (
                 <Grid key={key} item {...cols}>

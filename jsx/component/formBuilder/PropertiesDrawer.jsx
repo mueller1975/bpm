@@ -130,16 +130,12 @@ export default React.memo(styled(props => {
         }
 
         &.menuAnchor {
-            border: 1px dashed rgb(12 47 4);
             background: rgb(3 39 6 / 62%);
 
             :hover {            
-                cursor: hand;
-                border-color: rgb(130 181 119);
-            }
-
-            &:active {
-                background: rgb(104 140 206 / 62%);
+                cursor: pointer;
+                border: 1px dashed rgb(139 176 131);
+                background: rgb(7 58 11 / 62%);
             }
         }
 

@@ -12,7 +12,7 @@ export const fieldsetPropertiesState = atom({
 
 export const fieldPropertiesState = atom({
     key: 'fieldPropertiesState',
-    default: {},
+    default: [],
 });
 
 export const propertiesState = selectorFamily({

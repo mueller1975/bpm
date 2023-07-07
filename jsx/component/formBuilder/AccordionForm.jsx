@@ -43,7 +43,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const editForm = useCallback(e => {
         e.stopPropagation();
         console.log({ form })
-        setFormProperties({ uuid });
+        setFormProperties({ uuid, inputFocused: true });
     }, [form]);
 
     const deleteForm = useCallback(e => {

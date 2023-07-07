@@ -43,7 +43,7 @@ export default React.memo(styled(props => {
 
     let gridContainer = useMemo(() => (
         // NOT available 時, "隱藏" Grid 而非 return null, 因欄位的狀態為 uncontrolled
-        <Grid container spacing={gridSpacing} className={`gridContainer ${!title ? className : ''}`}>
+        <Grid container spacing={gridSpacing} className={`gridContainer`}>
             <Grid item {...cols}>
                 <AddComponentButton onClick={addField} />
             </Grid>
@@ -51,7 +51,7 @@ export default React.memo(styled(props => {
             {
                 fields.map((field, idx) => {
                     let { uuid, name } = field;
-                    return generateField({ cols, field, formId });
+                    return generateField({ cols, field, formId, hierarchy: [formUUID, fieldsetUUID, uuid] });
                 })
             }
         </Grid>
@@ -72,11 +72,6 @@ export default React.memo(styled(props => {
     &.MT-GridFieldsetContainer {
         .gridContainer {
             padding-top: 6px;
-        }
-        
-        &.hidden {
-            margin: 0;
-            content-visibility: hidden;
         }
     }
 `);

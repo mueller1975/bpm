@@ -49,7 +49,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     // Form List: click form 時, 自動 scroll 至該 form 位置
     const formItemClickedHandler = useCallback(formUUID => {
         console.log({ formUUID })
-        setFormProperties({ uuid: formUUID });
+        setFormProperties({ uuid: formUUID, inputFocused: false }); // inputFocused: 是否立即 focus 在屬性欄位
 
         let index = allFormUUIDs.indexOf(formUUID);
 
@@ -61,9 +61,9 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             onToggleForm(formUUID, true);
         }
 
+
         let elm = accordionRefs.current[index];
         elm.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
-        // accordionRefs.current[index]?.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
         // setTimeout(() => setTargetFormId(undefined), 3000); // 移除 animation, 避免連續再按沒反應
     }, [allFormUUIDs, onToggleForm]);
 

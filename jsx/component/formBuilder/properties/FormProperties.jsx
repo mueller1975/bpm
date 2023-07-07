@@ -4,30 +4,32 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
 import { formState } from '../context/FormStates.jsx';
-import { formPropertiesState, propertiesState } from '../context/PropertiesState';
+import { propertiesState } from '../context/PropertiesState';
 
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
     // const formProperties = useRecoilValue(formPropertiesState);
     const formProperties = useRecoilValue(propertiesState('FORM'));
     const [form, updateFormState] = useRecoilState(formState(formProperties?.uuid));
-    const inputRef = useRef();
 
     const [newForm, setNewForm] = useState(form);
     const { uuid, id, title, editableWhen } = newForm || {};
+
+    const inputRef = useRef();
 
     useEffect(() => {
         setNewForm({ ...form });
         console.log({ formProperties })
         onEdit(Boolean(formProperties?.uuid));
 
-        // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
-        setTimeout(() => inputRef.current.focus());
+        if (formProperties?.inputFocused) {
+            // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
+            setTimeout(() => inputRef.current.focus());
+        }
     }, [formProperties]);
 
     const saveProperties = useCallback(() => {
         if (!isEqual(form, newForm)) {
-            // updateForm({ form: { ...newForm } });
             updateFormState({ form: { ...newForm } });
         }
     }, [form, newForm]);

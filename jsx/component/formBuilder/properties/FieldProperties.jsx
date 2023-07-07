@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import {
-    AppBar, Toolbar, IconButton, Grid, Box, Checkbox, Divider,
-    Accordion, AccordionDetails, AccordionSummary, Drawer, List, ListItem, ListItemIcon, ListItemSecondaryAction,
-    ListItemText, ListSubheader, MenuItem, Popover, Slider, Switch, TextField, Typography, SwipeableDrawer
+    Divider, Grid, MenuItem, TextField, Typography
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import GpsNotFixedIcon from '@mui/icons-material/GpsNotFixed';
-import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { fieldPropertiesState } from '../context/PropertiesState';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { fieldState } from '../context/FormStates.jsx';
+import { propertiesState } from '../context/PropertiesState';
+import { isEqual } from 'underscore';
 
 // Popover 位置
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
@@ -27,53 +25,71 @@ const FIELD_TYPES = [
     { code: "fileUploader", name: "附件" },
 ];
 
-const FIELD_TYPE_MENUS = FIELD_TYPES.map(({ code, name }) => <MenuItem key={code}>{name}</MenuItem>);
+const FIELD_TYPE_MENUS = FIELD_TYPES.map(({ code, name }) => <MenuItem key={code} value={code}>{name}</MenuItem>);
 
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
-    const fieldProperties = useRecoilValue(fieldPropertiesState);
-    const [field, setField] = useState(fieldProperties);
+    const fieldProperties = useRecoilValue(propertiesState('FIELD'));
+    const [field, updateFieldState] = useRecoilState(fieldState(fieldProperties));
+
+    const [newField, setNewField] = useState(field);
+    const { uuid, name, label, type, helper } = newField;
 
     const inputRef = useRef();
-    const { uuid, name, label, type } = field;
 
     useEffect(() => {
-        onEdit(Boolean(fieldProperties?.uuid));
+        setNewField({ ...field }); // fieldProperties 改變時, 代表切換編輯的欄位
+        onEdit(fieldProperties.length > 0);
 
         // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
         setTimeout(() => inputRef.current.focus());
     }, [fieldProperties]);
 
+    const saveProperties = useCallback(() => {
+        console.log('SAVING field properties.....')
+        if (!isEqual(field, newField)) {
+            // updateForm({ form: { ...newForm } });
+            updateFieldState({ ...newField });
+        }
+    }, [field, newField]);
+
     const fieldChangeHandler = e => {
         const { name, value } = e.target;
-        setField({ ...field, [name]: value });
-    };
-
-    const typeChangeHandler = newValue => {
-        setField({ ...field, type: newValue })
+        setNewField({ ...newField, [name]: value });
     };
 
     return (
-        <Grid container spacing={2} className={`MT-Field-Properties ${className}`}>
+        <Grid container spacing={2} className={`MT-FieldProperties ${className}`}>
             <Grid item xs={12}>
-                <TextField name="uuid" label="UUID" size="small" fullWidth disabled value={uuid} />
+                <TextField name="uuid" label="UUID" size="small" fullWidth disabled
+                    value={uuid ?? ''} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="title" label="群標題" size="small" fullWidth
-                    inputRef={inputRef} value={name} onChange={fieldChangeHandler} />
+                <TextField name="name" label="變數名稱" size="small" fullWidth
+                    inputRef={inputRef} value={name ?? ''} onChange={fieldChangeHandler}
+                    onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="label" label="欄位標籤" size="small" fullWidth
-                    value={label} onChange={fieldChangeHandler} />
+                <TextField name="label" label="標籤" size="small" fullWidth
+                    value={label ?? ''} onChange={fieldChangeHandler}
+                    onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="type" label="欄位屬性" size="small" fullWidth select
-                    value={type} onChange={typeChangeHandler}>
+                <TextField name="type" label="欄位型態" size="small" fullWidth select
+                    value={type ?? 'text'} onChange={fieldChangeHandler}
+                    onBlur={saveProperties}>
+
                     {FIELD_TYPE_MENUS}
                 </TextField>
+            </Grid>
+
+            <Grid item xs={12}>
+                <TextField name="helper" label="註腳" size="small" fullWidth
+                    value={helper ?? ''} onChange={fieldChangeHandler}
+                    onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>

@@ -142,6 +142,8 @@ export const createAppTheme = (themeType, fontSize, cellPadding) => {
                     textAlign: 'right',
                     whiteSpace: 'noWrap',
                     marginTop: 0,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
                 }
             }
         },

@@ -10,10 +10,11 @@ export default React.memo(styled(props => {
     const { onEdit, className } = props;
     const fieldsetProperties = useRecoilValue(propertiesState('FIELDSET'));
     const [fieldset, updateFieldsetState] = useRecoilState(fieldsetState(fieldsetProperties));
-    const inputRef = useRef();
-
+    
     const [newFieldset, setNewFieldset] = useState(fieldset);
     const { uuid, title, availableWhen, editableWhen } = newFieldset || {};
+
+    const inputRef = useRef();
 
     useEffect(() => {
         console.log('.............', {fieldsetProperties}, fieldset)

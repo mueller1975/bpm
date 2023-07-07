@@ -46,7 +46,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     }, [dropdowns]);
 
     return (
-        !menuItems ? null :
+        // !menuItems ? null :
             <TextField {...others} label={label ?? config?.description} select ref={ref}>
                 <MenuItem value='' sx={{ color: 'secondary.main' }} dense>--- 清空此欄 ---</MenuItem>
                 {menuItems}

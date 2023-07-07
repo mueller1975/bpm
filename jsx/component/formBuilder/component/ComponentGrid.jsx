@@ -5,20 +5,25 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { jiggle } from '../../styled/Animations.jsx';
+import { useSetRecoilState } from 'recoil';
+import { propertiesState } from '../context/PropertiesState.js';
 
 export default React.memo(styled(props => {
-    const { className, children, cols } = props;
+    const { hierarchy, className, children, cols } = props;
+    const setFieldProperties = useSetRecoilState(propertiesState('FIELD'));
 
-    const editFieldProperties = useCallback(() => {
-        console.log(props);
-    })
+    const editFieldProperties = useCallback(e => {
+        e.stopPropagation();
+        console.log('EDITing field:', hierarchy, '=>', props);
+        setFieldProperties(hierarchy);
+    }, [hierarchy]);
 
     return (
-        <Grid item className={`MT-ComponentGrid ${className}`} {...cols} onClick={editFieldProperties}>
+        <Grid item className={`MT-ComponentGrid ${className}`} {...cols}>
             <div className="fieldActions">
                 <Fab size="small"><DeleteIcon color="error" /></Fab>
                 <Fab size="small"><AddIcon color="success" /></Fab>
-                <Fab size="small"><EditIcon color="warning" /></Fab>
+                <Fab size="small" onClick={editFieldProperties}><EditIcon color="warning" /></Fab>
             </div>
 
             {

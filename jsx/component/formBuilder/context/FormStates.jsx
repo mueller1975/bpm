@@ -91,13 +91,13 @@ export const formState = selectorFamily({
 export const fieldsetState = selectorFamily({
     key: 'fieldsetState',
     get: ([formUUID, fieldsetUUID]) => ({ get }) => {
+        console.log('[fieldsetState] GET:', formUUID, fieldsetUUID);
+
         if (!formUUID || !fieldsetUUID) {
             return {};
         }
 
         let form = get(formState(formUUID));
-        console.log('[fieldsetState] GET:', form);
-
         return !form ? [] : form.components.find(({ uuid }) => uuid === fieldsetUUID);
     },
     set: ([formUUID, fieldsetUUID]) => ({ get, set }, newFieldset) => {
@@ -120,8 +120,18 @@ export const fieldsetState = selectorFamily({
 export const fieldState = selectorFamily({
     key: 'fieldState',
     get: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get }) => {
+        console.log('[fieldState] GET hierarchy:', formUUID, fieldsetUUID, fieldUUID);
+
+        if (!formUUID || !fieldsetUUID || !fieldUUID) {
+            return {};
+        }
+
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
-        return fieldset.fields.find(({ uuid }) => uuid === fieldUUID);
+        console.log('[fieldState] GET fielset:', fieldset);
+
+        let field = fieldset.fields.find(({ uuid }) => uuid === fieldUUID);
+        console.log('[fieldState] GET fiel:', field);
+        return field;
     },
     set: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get, set }, newValue) => {
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
