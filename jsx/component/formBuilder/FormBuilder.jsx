@@ -11,7 +11,7 @@ import AddComponentButton from './AddComponentButton.jsx';
 import FloatingActions from './FloatingActions.jsx';
 import FormList from './FormList.jsx';
 import PropertiesDrawer from './PropertiesDrawer.jsx';
-import { allFormUUIDsState, allFormsState, formState } from './context/FormStates.jsx';
+import { allFormUUIDsState, allFormsState, formState } from './context/FormStates';
 import { propertiesState } from "./context/PropertiesState.js";
 
 export default React.memo(styled(React.forwardRef((props, ref) => {

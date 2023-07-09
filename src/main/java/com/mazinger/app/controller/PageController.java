@@ -20,4 +20,9 @@ public class PageController {
     public String formImporter() {
         return "index";
     }
+
+    @GetMapping("/app")
+    public String app() {
+        return "app";
+    }
 }

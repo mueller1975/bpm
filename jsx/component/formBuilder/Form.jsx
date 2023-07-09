@@ -4,7 +4,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import AddComponentButton from './AddComponentButton.jsx';
-import { formState } from './context/FormStates.jsx';
+import { formState } from './context/FormStates';
 import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx';
 
 export default React.memo(styled(React.forwardRef(({ uuid, id, components, className }, ref) => {

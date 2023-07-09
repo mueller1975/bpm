@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { formDataState } from '../context/FormStates.jsx';
+import { formDataState } from '../context/FormStates';
 import * as U from '../lib/formJsonUtils.js';
 import ComponentGrid from './ComponentGrid.jsx';
 import TableSelect from './TableSelect.jsx';

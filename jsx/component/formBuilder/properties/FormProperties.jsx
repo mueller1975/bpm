@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
-import { formState } from '../context/FormStates.jsx';
+import { formState } from '../context/FormStates';
 import { propertiesState } from '../context/PropertiesState';
 
 export default React.memo(styled(props => {

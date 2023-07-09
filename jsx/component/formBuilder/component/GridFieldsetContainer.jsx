@@ -6,7 +6,7 @@ import React, { useMemo, useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import AddComponentButton from '../AddComponentButton.jsx';
-import { fieldsetState } from '../context/FormStates.jsx';
+import { fieldsetState } from '../context/FormStates';
 import { propertiesState } from '../context/PropertiesState';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';

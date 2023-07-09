@@ -5,7 +5,7 @@ import {
 import { styled } from '@mui/material/styles';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { fieldState } from '../context/FormStates.jsx';
+import { fieldState } from '../context/FormStates';
 import { propertiesState } from '../context/PropertiesState';
 import { isEqual } from 'underscore';
 
