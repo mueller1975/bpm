@@ -10,14 +10,14 @@ export default React.memo(styled(props => {
     const { onEdit, className } = props;
     const fieldsetProperties = useRecoilValue(propertiesState('FIELDSET'));
     const [fieldset, updateFieldsetState] = useRecoilState(fieldsetState(fieldsetProperties));
-    
+
     const [newFieldset, setNewFieldset] = useState(fieldset);
     const { uuid, title, availableWhen, editableWhen } = newFieldset || {};
 
     const inputRef = useRef();
 
     useEffect(() => {
-        console.log('.............', {fieldsetProperties}, fieldset)
+        console.log('.............', { fieldsetProperties }, fieldset)
         setNewFieldset({ ...fieldset });
         console.log({ fieldsetProperties })
         onEdit(fieldsetProperties.length > 0);
@@ -32,10 +32,10 @@ export default React.memo(styled(props => {
         }
     }, [fieldset, newFieldset]);
 
-    const formChangeHandler = e => {
+    const valueChangeHandler = e => {
         const { name, value: v } = e.target;
         setNewFieldset({ ...newFieldset, [name]: v });
-    }
+    };
 
     return (
         <Grid container spacing={2} className={`MT-FieldsetProperties ${className}`}>
@@ -46,22 +46,20 @@ export default React.memo(styled(props => {
 
             <Grid item xs={12}>
                 <TextField name="title" label="標題" size="small" fullWidth
-                    inputRef={inputRef} disabled={!uuid} value={title ?? ''}
-                    onChange={formChangeHandler} onBlur={saveProperties} />
+                    inputRef={inputRef} value={title ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
                 <TextField name="availableWhen" label="可見條件" size="small" fullWidth
-                    multiline minRows={5} maxRows={8}
-                    disabled={!uuid} value={availableWhen ?? ''}
-                    onChange={formChangeHandler} onBlur={saveProperties} />
+                    multiline minRows={5} maxRows={8} value={availableWhen ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
                 <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
-                    multiline minRows={5} maxRows={8}
-                    disabled={!uuid} value={editableWhen ?? ''}
-                    onChange={formChangeHandler} onBlur={saveProperties} />
+                    multiline minRows={5} maxRows={8} value={editableWhen ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
         </Grid>
     );

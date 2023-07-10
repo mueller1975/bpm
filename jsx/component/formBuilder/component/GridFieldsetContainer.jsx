@@ -32,7 +32,7 @@ export default React.memo(styled(props => {
     }, []);
 
     const addField = () => {
-        let field = { uuid: uuidv4(), name: "testField", label: '新增欄位', };
+        let field = { uuid: uuidv4(), name: "", label: '新增欄位', };
         // update2([...fields, field]);
         updateFieldset({ fields: [...fields, field] });
     }

@@ -1,6 +1,6 @@
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import {
-    Divider, Grid, MenuItem, TextField, Typography
+    Divider, Grid, MenuItem, TextField, Typography, Checkbox, FormControlLabel
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -33,7 +33,8 @@ export default React.memo(styled(props => {
     const [field, updateFieldState] = useRecoilState(fieldState(fieldProperties));
 
     const [newField, setNewField] = useState(field);
-    const { uuid, name, label, type, helper } = newField;
+    const { uuid, name, label, defaultValue, type, helper, disabled = false,
+        isContextStateProp, required, requiredWhen, disabledWhen } = newField;
 
     const inputRef = useRef();
 
@@ -48,14 +49,30 @@ export default React.memo(styled(props => {
     const saveProperties = useCallback(() => {
         console.log('SAVING field properties.....')
         if (!isEqual(field, newField)) {
-            // updateForm({ form: { ...newForm } });
             updateFieldState({ ...newField });
         }
     }, [field, newField]);
 
-    const fieldChangeHandler = e => {
+    const valueChangeHandler = e => {
         const { name, value } = e.target;
         setNewField({ ...newField, [name]: value });
+    };
+
+    const checkboxChangeHandler = e => {
+        const { name, checked } = e.target;
+        console.log({ name, checked })
+
+        let dependentFields = {};
+
+        if (name === 'disabled' && checked) {
+            dependentFields = { disabledWhen: '' };
+        } else if (name === 'required' && checked) {
+            dependentFields = { requiredWhen: '' };
+        }
+
+        let newFieldState = { ...newField, [name]: checked, ...dependentFields };
+        setNewField(newFieldState);
+        updateFieldState(newFieldState);
     };
 
     return (
@@ -67,19 +84,19 @@ export default React.memo(styled(props => {
 
             <Grid item xs={12}>
                 <TextField name="name" label="變數名稱" size="small" fullWidth
-                    inputRef={inputRef} value={name ?? ''} onChange={fieldChangeHandler}
+                    inputRef={inputRef} value={name ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
                 <TextField name="label" label="標籤" size="small" fullWidth
-                    value={label ?? ''} onChange={fieldChangeHandler}
+                    value={label ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
                 <TextField name="type" label="欄位型態" size="small" fullWidth select
-                    value={type ?? 'text'} onChange={fieldChangeHandler}
+                    value={type ?? 'text'} onChange={valueChangeHandler}
                     onBlur={saveProperties}>
 
                     {FIELD_TYPE_MENUS}
@@ -87,10 +104,53 @@ export default React.memo(styled(props => {
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="helper" label="註腳" size="small" fullWidth
-                    value={helper ?? ''} onChange={fieldChangeHandler}
+                <TextField name="defaultValue" label="預設值" size="small" fullWidth
+                    value={defaultValue ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
+
+            <Grid item xs={12}>
+                <TextField name="helper" label="註腳" size="small" fullWidth
+                    value={helper ?? ''} onChange={valueChangeHandler}
+                    onBlur={saveProperties} />
+            </Grid>
+
+            <Grid item xs={12}>
+                <FormControlLabel name="disabled" label="唯讀" control={<Checkbox checked={disabled ?? false}
+                    onChange={checkboxChangeHandler} />} />
+
+                <FormControlLabel name="required" label="必填" control={<Checkbox checked={required ?? false}
+                    onChange={checkboxChangeHandler} />} />
+
+                <FormControlLabel name="isContextStateProp" label="全域變數"
+                    control={<Checkbox checked={isContextStateProp ?? false}
+                        onChange={checkboxChangeHandler} />} />
+            </Grid>
+
+            {
+                !disabled &&
+                <Grid item xs={12}>
+                    <TextField name="disabledWhen" label="唯讀條件" size="small" fullWidth
+                        multiline minRows={5} maxRows={8} value={disabledWhen ?? ''}
+                        disabled={disabled}
+                        onChange={valueChangeHandler} onBlur={saveProperties} />
+                </Grid>
+            }
+
+            {
+                !required &&
+                <Grid item xs={12}>
+                    <TextField name="requiredWhen" label="必填條件" size="small" fullWidth
+                        multiline minRows={5} maxRows={8} value={requiredWhen ?? ''}
+                        disabled={required}
+                        onChange={valueChangeHandler} onBlur={saveProperties} />
+                </Grid>
+            }
+
+            <Grid item xs={12}>
+
+            </Grid>
+
 
             <Grid item xs={12}>
                 <Divider light>

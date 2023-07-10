@@ -34,7 +34,7 @@ export default React.memo(styled(props => {
         }
     }, [form, newForm]);
 
-    const formChangeHandler = e => {
+    const valueChangeHandler = e => {
         const { name, value: v } = e.target;
         setNewForm({ ...newForm, [name]: v });
     };
@@ -48,21 +48,21 @@ export default React.memo(styled(props => {
 
             <Grid item xs={12}>
                 <TextField name="id" label="表單 ID" size="small" fullWidth
-                    inputRef={inputRef} disabled={!uuid} value={id ?? ''}
-                    onChange={formChangeHandler} onBlur={saveProperties} />
+                    inputRef={inputRef} value={id ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
                 <TextField name="title" label="表單名稱" size="small" fullWidth
-                    disabled={!uuid} value={title ?? ''}
-                    onChange={formChangeHandler} onBlur={saveProperties} />
+                    value={title ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
 
             <Grid item xs={12}>
                 <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
                     multiline minRows={5} maxRows={8}
-                    disabled={!uuid} value={editableWhen ?? ''}
-                    onChange={formChangeHandler} onBlur={saveProperties} />
+                    value={editableWhen ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
         </Grid>
     );

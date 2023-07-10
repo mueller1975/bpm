@@ -75,6 +75,7 @@ export default React.memo(styled(props => {
         
         >.fieldset {
             padding-top: 12px;
+            padding-bottom: 12px;
             min-width: 100px;
             max-width: 100%;
             
