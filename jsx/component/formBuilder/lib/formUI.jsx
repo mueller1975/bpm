@@ -1,4 +1,4 @@
-import { Divider, Grid, TextField } from '@mui/material';
+import { Divider, Grid, MenuItem, TextField } from '@mui/material';
 import React, { useCallback } from 'react';
 import RowAutocomplete from '../component/RowAutocomplete.jsx';
 import Dropdown from '../component/Dropdown.jsx';
@@ -12,6 +12,9 @@ import NumberRangeField from '../component/NumberRangeField.jsx';
 import TableSelect from '../component/TableSelect.jsx';
 import { ErrorBoundary } from 'Components';
 import * as FormIcons from './formIcons';
+
+export const ICON_MENU = Object.entries(FormIcons).map(([key, value]) =>
+    <MenuItem key={key} value={key}>{key}</MenuItem>);
 
 /**
  * icon 名稱轉換為 Icon 元件

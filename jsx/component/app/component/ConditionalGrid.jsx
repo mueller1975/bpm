@@ -15,7 +15,9 @@ import FieldTooltip from './FieldTooltip.jsx';
  */
 export default React.memo(styled(props => {
     const { formId, cols, name, label, hidden = false, type, computedBy, computedWhen,
-        isContextStateProp = false, isMappedStateProp = false, freeSolo = false, tooltip, className } = props;
+        isContextStateProp = false, isMappedStateProp = false, freeSolo = false, tooltip, className,
+        required, disabled, available,
+        availableWhen, requiredWhen, disabledWhen, editableWhen, } = props;
 
     const ctxState = useRecoilValue(formContextState);
     const [form, setForm] = useRecoilState(formState(formId));
@@ -66,20 +68,23 @@ export default React.memo(styled(props => {
     const error = formError?.fields?.[name];
 
     return (
-        <Conditional {...props}>
+        // <Conditional {...props}>
+        <Conditional formId={formId} name={name} required={required} disabled={disabled} available={available}
+            availableWhen={availableWhen} requiredWhen={requiredWhen} disabledWhen={disabledWhen}
+            editableWhen={editableWhen}>
             {
-                ({ parentAvailable, available, required, disabled }) => {
+                ({  available, required, disabled }) => {
 
                     const renderProps = useMemo(() => ({ defaultValue, value, available, required, disabled, valueChangedHandler, error }), [
                         defaultValue, value, available, required, disabled, valueChangedHandler, error]);
 
                     const children = typeof props.children == 'function' ? props.children(renderProps) : props.children;
-                    const fieldTooltip = useMemo(() => tooltip ?? (label.length > 7 ? label : undefined), []);
+                    const fieldTooltip = useMemo(() => tooltip ?? (label?.length > 7 ? label : undefined), []);
 
                     return (
                         <Grid item
                             {...cols}
-                            className={`ConditionalGrid ${className} ${hidden || !available ? 'hidden' : ''}`}
+                            className={`MT-ConditionalGrid ${className} ${hidden || !available ? 'hidden' : ''}`}
                         >
                             {
                                 !fieldTooltip ? children :

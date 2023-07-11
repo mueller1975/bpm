@@ -9,5 +9,8 @@ export const userState = atom({
 });
 
 export const flowUserTaskState = atom({
-    key: 'flowUserTaskState'
+    key: 'flowUserTaskState',
+    default: {
+        formPrivileges: ['EDIT']
+    }
 });

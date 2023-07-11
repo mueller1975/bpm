@@ -2,7 +2,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
     AppBar, IconButton, List, ListItemText, SpeedDial, SpeedDialAction, SpeedDialIcon,
-    Toolbar
+    Toolbar, Typography
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -10,6 +10,9 @@ import { animated, config, useSpring } from '@react-spring/web';
 import { useNotification } from 'Hook/useTools.jsx';
 import React, { useEffect, useMemo, useState } from 'react';
 import FormListItem from './FormListItem.jsx';
+import { useSetRecoilState } from 'recoil';
+import { allFormsState, loadDBForms } from './context/FormStates';
+import StorageIcon from '@mui/icons-material/Storage';
 
 const AnimatedList = animated(List);
 const AnimatedIconButton = animated(IconButton);
@@ -19,6 +22,7 @@ const springConfig = { friction: 8, tension: 120 };
 export default React.memo(styled(({ forms, onItemClick, onLoadData, className }) => {
     const [collapsed, setCollapsed] = useState(true);
     const [firstExpanded, setFirstExpanded] = useState(false);
+    const setAllForms = useSetRecoilState(allFormsState);
 
     const theme = useTheme();
     const underMD = useMediaQuery(theme.breakpoints.down('md'));
@@ -65,10 +69,13 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
         }, 1000);
     }, []);
 
-
+    const loadFromDB = async() => {
+        let forms = await loadDBForms();
+        setAllForms(forms);
+    };
 
     const actions = useMemo(() => [
-
+        { key: 'loadFromDB', icon: <StorageIcon />, tooltipTitle: <Typography variant='subtitle1'>讀取 DB 表單</Typography>, onClick: loadFromDB },
     ], []);
 
     return (

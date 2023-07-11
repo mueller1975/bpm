@@ -31,16 +31,19 @@ export default React.memo(styled(props => {
                         >
                             {
                                 fields.map((field, idx) => {
-                                    let { defaultValue, name } = field;
+                                    let { uuid, name, defaultValue } = field;
 
                                     // let value = formData ? (jsonToObject(formData[name]) || '') : defaultValue ?? '';
                                     let value = (formData ? jsonToObject(formData[name]) : defaultValue) ?? '';
                                     let disabled = field.disabled || !editable;
-                                    
+
                                     return generateField({
-                                        cols, ...field, formId,
-                                        key: `${name}-${idx}`, // key 為欄位 name + index, 目的為避免當存在相同 name 的欄位時所造成的 warning
-                                        defaultValue: value, disabled, available: componentAvailable
+                                        cols,
+                                        formId,
+                                        field,
+                                        defaultValue: value,
+                                        disabled,
+                                        available: componentAvailable
                                     });
                                 })
                             }

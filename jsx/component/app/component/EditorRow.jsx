@@ -84,7 +84,7 @@ export default React.memo(styled(props => {
 
             {/* 設定的欄位 */
                 !columns ? null :
-                    columns.map(({ name, label, type, configCode, source, filterBy, uiDependsOn, width, hidden = false,
+                    columns.map(({uuid, name, label, type, configCode, source, filterBy, uiDependsOn, width, hidden = false,
                         disabled: colDisabled = false, disabledWhen, disabledWhenMenuIsEmpty = false, freeSolo = true,
                         menuDependsOn, menuDependsOnParent, mappedRowProps = [], availableWhen }) => {
 
@@ -115,10 +115,10 @@ export default React.memo(styled(props => {
                         // console.log('&&& rebuild row component...')
                         return !fieldComponent ? null :
                             type == 'ui' ?
-                                <React.Fragment key={name}>
+                                <React.Fragment key={uuid}>
                                     {fieldComponent}
                                 </React.Fragment> :
-                                <div key={name} style={{ width }} className={hidden ? 'hidden' : undefined}>
+                                <div key={uuid} style={{ width }} className={hidden ? 'hidden' : undefined}>
                                     {fieldComponent}
                                 </div>;
                     })

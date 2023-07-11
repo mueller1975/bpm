@@ -3,7 +3,7 @@ import React from 'react';
 import ConditionalGrid from './ConditionalGrid.jsx';
 
 export default React.memo(props => {
-    const { name, label, type, helper, variant, hidden = false, readOnly = false,
+    const { name, label, type, htmlType, helper, variant, hidden = false, readOnly = false,
         multiline = false, minRows = 3, maxRows = 5, className, onWheel } = props;
 
     return (
@@ -21,7 +21,7 @@ export default React.memo(props => {
                         maxRows={maxRows}
                         name={name}
                         label={label}
-                        type={type}
+                        type={htmlType}
                         hidden={hidden}
                         disabled={disabled}
                         required={required}

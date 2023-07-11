@@ -27,8 +27,8 @@ export const getIconComponent = iconName => {
  * @param {*} param0 
  * @returns 
  */
-export const generateField = ({ cols, field, formId, hierarchy }) => {
-    const props = { cols, type: 'text', ...field, formId, hierarchy };
+export const generateField = ({ cols, formId, field, defaultValue, disabled, available }) => {
+    const props = { cols, formId, type: 'text', ...field, defaultValue, disabled, available};
 
     // const type = props.type ?? 'text';
     const key = props.uuid;

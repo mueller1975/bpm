@@ -14,7 +14,8 @@ const createForm = (id, title, order, icon) => ({
     title,
     order: isNaN(parseInt(order)) ? 99 : parseInt(order),
     icon,
-    editableWhen: "ctxState.flowUserTask?.formPrivileges?.includes('EDIT')",
+    // editableWhen: "ctxState.flowUserTask?.formPrivileges?.includes('EDIT')",
+    editableWhen: "userTask?.formPrivileges?.includes('EDIT')",
     components: []
 });
 

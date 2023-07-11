@@ -1,7 +1,17 @@
 import { atom, selector } from "recoil";
+import { sortBy } from 'underscore';
 
 const MPB_FORMS_API = "./service/config/mpbForms4Lab";
 const FETCH_FORM_API = () => fetch(MPB_FORMS_API, { redirect: 'manual' });
+
+export const loadDBForms = async () => {
+    let response = await FETCH_FORM_API();
+    let vo = await response.json();
+    let forms = vo.data.map(({ value }) => value);
+
+    forms = sortBy(forms, "order");
+    return forms;
+};
 
 export const allFormsState = atom({
     key: "allFormsState",
@@ -14,11 +24,20 @@ export const allFormsState = atom({
 
             } else {
                 savedForms = JSON.parse(savedForms);
-                console.log({savedForms});
+                console.log({ savedForms });
                 setSelf(savedForms);
             }
         }
     ]
+});
+
+export const loadFromDBSelector = selector({
+    key: 'loadFromDBSelector',
+    get: ({ get }) => get(allFormsState),
+    set: ({ get, set }) => {
+        let forms = loadDBForms();
+        set(allFormsState, forms);
+    }
 });
 
 export const allFormIdsState = selector({

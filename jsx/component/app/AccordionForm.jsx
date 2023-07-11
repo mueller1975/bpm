@@ -9,12 +9,15 @@ import React, { useCallback } from 'react';
 import { blink } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
 import { Conditional } from './lib/formComponents.jsx';
+import { getIconComponent } from './lib/formUI.jsx';
 
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
-    const { id, title, icon: SummaryIcon, selected, hidden = false, onChange, expanded,
-        components, data, className, readOnly = false, containerRef } = props;
+    const { form, readOnly = false, containerRef, selected, hidden = false,
+        onChange, expanded, className } = props;
+
+    const { id, title, icon, components, data ,editableWhen} = form;
 
     const formToggleHandler = useCallback((e, expanded) => onChange(id, expanded), [onChange]);
 
@@ -32,8 +35,10 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     // console.log(title, '=>', entry?.isIntersecting, entry?.intersectionRatio)
 
+    const SummaryIcon = getIconComponent(icon);
+
     return (
-        <Conditional formId={id} {...props}>
+        <Conditional formId={id} editableWhen={editableWhen}>
             {
                 ({ available, required, disabled, editable }) => {
                     // console.log(id, '=> editable?', editable);

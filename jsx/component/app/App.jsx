@@ -4,19 +4,17 @@ import React, { Suspense } from 'react';
 import MPBForm from './MPBForm.jsx';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userState } from './context/UserStates';
-
+import CompsiteForm from './CompsiteForm.jsx';
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
     const user = useRecoilValue(userState);
 
-
-
     const data = { mpbData: "{}" };
 
     return (
         <Suspense fallback={<Loading />}>
-            <MPBForm isNew data={data} />
+            <CompsiteForm isNew data={data} />
         </Suspense >
     );
 }))`

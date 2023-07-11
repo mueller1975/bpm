@@ -17,9 +17,9 @@ import { getFormFieldValues, jsonToObject } from './lib/form';
 import testFormData from './lib/testFormData.json';
 import { useQueryFormById } from './lib/useFetchAPI';
 import { Paper } from '@mui/material';
+import FormContent from './FormContent.jsx';
 
 const FormList = lazyWithRefForwarding(React.lazy(() => import("./FormList.jsx")));
-const AccordionForm = lazyWithRefForwarding(React.lazy(() => import("./AccordionForm.jsx")));
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { isNew, data, defaultData, onChange, className, fullScreen, readOnly = false, springRef } = props;
@@ -51,6 +51,10 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
         flowUserTask(flowUserTask); // 設定使用者 user task 資訊
     }, showError);
+
+    useEffect(() => {
+        setCheckedForms([...allFormIds]);
+    }, [allFormIds]);
 
     useEffect(() => {
         if (!data?.id) {
@@ -142,7 +146,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const collapseAll = useCallback(() => setExpandedForms([]), []);
 
     // 縮合所有 form
-    const expandAll = useCallback(() => setExpandedForms([...allFormIds]), []);
+    const expandAll = useCallback(() => setExpandedForms([...allFormIds]), [allFormIds]);
 
     // Form List: check/uncheck all
     const checkAllHandler = useCallback((e, checked) => {
@@ -156,7 +160,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     }, [checkedForms]);
 
     // 展開/縮合個別 form
-    const onToggleForm = useCallback((formId, expanded) => {
+    const formToggleHandler = useCallback((formId, expanded) => {
         let ids = expanded ? expandedForms.concat(formId) : expandedForms.filter(id => formId != id);
         setExpandedForms(ids);
     }, [expandedForms]);
@@ -169,41 +173,13 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
         // 自動展開點擊的 form
         if (expandedForms.indexOf(formId) < 0) {
-            onToggleForm(formId, true);
+            formToggleHandler(formId, true);
         }
 
         accordionRefs.current[index]?.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
         // setTimeout(() => setTargetFormId(undefined), 3000); // 移除 animation, 避免連續再按沒反應
-    }, [onToggleForm]);
+    }, [formToggleHandler]);
 
-    // *** accordionForms 必須與其 default value (存於 mpbData) 一起 initialize
-    // const accordionForms = !(isNew || mpbData) ? undefined : allForms.map((form, index) => {
-    const accordionForms = useMemo(() => !mpbData ? <Loading message="MPB 資料載入中..." /> : allForms.map((form, index) => {
-        // const { id, title, icon, components } = form;
-        const formId = form.id;
-        // console.log({ index, formId })
-
-        if (mpbData) {
-            // console.log('form', formId, 'DATA:', mpbData[formId]);
-        }
-
-        return (
-            <AccordionForm key={formId}
-                readOnly={readOnly}
-                ref={elm => accordionRefs.current[index] = elm}
-                containerRef={containerRef}
-                selected={formId == targetFormId}
-                hidden={checkedForms.indexOf(formId) < 0}
-                onChange={onToggleForm}
-                expanded={expandedForms.indexOf(formId) > -1}
-
-                data={mpbData?.[formId]}
-                {...form}
-            />
-        )
-    }), [mpbData, checkedForms, expandedForms, targetFormId]);
-
-    // console.log({ isNew, formComponents })
 
     // 載入測試資料
     const loadTestMpbData = useCallback(() => {
@@ -220,10 +196,10 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const buttons = useMemo(() => [
         <AnimatedFab key="collapse" color="success" size="medium" onClick={collapseAll}><ExpandLessIcon color="inherit" /></AnimatedFab>,
         <AnimatedFab key="expand" color="primary" size="medium" onClick={expandAll}><ExpandMoreIcon color="inherit" /></AnimatedFab>
-    ], []);
+    ], [expandAll]);
 
     return (
-        <Paper ref={ref} className={`MT-MPBForm ${className}`}>
+        <Paper ref={ref} className={`MT-CompositeForm ${className}`}>
             {/* 告警 dialog */}
             <ConfirmDialog open={alertDlgOpen} title="資料過時警告" titleIcon={ErrorOutlineIcon} onConfirm={closeAlertDlg} confirmText="我知道了"
                 severity="warn" content={['本 MPB 單資料內容已「被其他使用者異動」！', '請直接離開並「刷新列表資料」後再重新開啟本單。']} />
@@ -250,13 +226,16 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             {/* all forms 區塊*/}
             <div className="content" ref={containerRef}>
                 {
-                    accordionForms
+                    !mpbData ? <Loading message="MPB 資料載入中..." /> :
+                        <FormContent containerRef={containerRef} formData={mpbData}
+                            checkedForms={checkedForms} expandedForms={expandedForms}
+                            targetFormId={targetFormId} onFormToggle={formToggleHandler} />
                 }
             </div>
         </Paper>
     );
 }))`
-    &.MT-MPBForm {
+    &.MT-CompositeForm {
         display: flex;
         gap: 20px;
         padding: 20px;

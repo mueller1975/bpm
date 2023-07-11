@@ -25,7 +25,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerDocked, setDrawerDocked] = useState(true);
 
-    const createFormState = useSetRecoilState(formState());
+    const createFormState = useSetRecoilState(formState()); // formState() 不帶參數 uuid 值則為新增 form
 
     const containerRef = useRef();
     const accordionRefs = useRef([]);

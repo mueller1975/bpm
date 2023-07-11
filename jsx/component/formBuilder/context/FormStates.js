@@ -1,12 +1,10 @@
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import { atom, selector, selectorFamily, atomFamily } from "recoil";
+import { atom, selector, selectorFamily } from "recoil";
 import { sortBy } from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
-import * as FormIcons from '../lib/formIcons';
-import { flattenFormComponents } from '../lib/form';
 
 const MPB_FORMS_API = "./service/config/mpbForms4Lab";
 const FETCH_FORM_API = () => fetch(MPB_FORMS_API, { redirect: 'manual' });
+const DEFAULT_ICON_NAME = "QuestionMarkIcon";
 
 export const allFormsState = atom({
     key: "allFormsState",
@@ -68,7 +66,7 @@ export const formState = selectorFamily({
         } else { // 新增的 form 傳入的 uuid 是 undefined
             form.uuid = uuidv4();
             form.order = allForms.length + 1;
-            form.icon = QuestionMarkIcon;
+            form.icon = DEFAULT_ICON_NAME;
             form.components = [];
 
             if (!afterFormUUID) { // 未指定則放到第一個位置
