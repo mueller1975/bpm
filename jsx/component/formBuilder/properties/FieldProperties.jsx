@@ -8,6 +8,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { fieldState } from '../context/FormStates';
 import { propertiesState } from '../context/PropertiesState';
 import { isEqual } from 'underscore';
+import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
 
 // Popover 位置
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
@@ -18,6 +19,7 @@ const FIELD_TYPES = [
     { code: "number", name: "數字" },
     { code: "numberRange", name: "數字範圍" },
     { code: "yesOrNo", name: "Y/N" },
+    { code: "computed", name: "動態文字" },
     { code: "dropdown", name: "下拉選單" },
     { code: "autocomplete", name: "下拉選單（可輸入）" },
     { code: "tableSelect", name: "表格選取" },
@@ -34,7 +36,9 @@ export default React.memo(styled(props => {
 
     const [newField, setNewField] = useState(field);
     const { uuid, name, label, defaultValue, type, helper, disabled = false,
-        isContextStateProp, required, requiredWhen, disabledWhen } = newField;
+        configCode, source, isContextStateProp, isMappedStateProp, mappedStateProps,
+        filterBy, computedBy,
+        required, requiredWhen, disabledWhen } = newField;
 
     const inputRef = useRef();
 
@@ -55,8 +59,23 @@ export default React.memo(styled(props => {
 
     const valueChangeHandler = e => {
         const { name, value } = e.target;
-        setNewField({ ...newField, [name]: value });
+
+        let dependentFields = {};
+
+        if (name === 'type' && value === 'tableSelect') {
+            dependentFields['defaultValue'] = '';
+        }
+
+        let newFieldState = { ...newField, [name]: value, ...dependentFields };
+        setNewField(newFieldState);
+
+        return newFieldState;
     };
+
+    const mappingChangeHandler = e => {
+        let newFieldState = valueChangeHandler(e);
+        updateFieldState(newFieldState);
+    }
 
     const checkboxChangeHandler = e => {
         const { name, checked } = e.target;
@@ -64,10 +83,22 @@ export default React.memo(styled(props => {
 
         let dependentFields = {};
 
-        if (name === 'disabled' && checked) {
-            dependentFields = { disabledWhen: '' };
-        } else if (name === 'required' && checked) {
-            dependentFields = { requiredWhen: '' };
+        if (checked) {
+            switch (name) {
+                case 'disabled':
+                    dependentFields['disabledWhen'] = '';
+                    break;
+                case 'required':
+                    dependentFields['requiredWhen'] = '';
+                    break;
+                case 'isContextStateProp':
+                    dependentFields['isMappedStateProp'] = false;
+                    break;
+                case 'isMappedStateProp':
+                    dependentFields['isContextStateProp'] = false;
+                    break;
+                default:
+            }
         }
 
         let newFieldState = { ...newField, [name]: checked, ...dependentFields };
@@ -103,6 +134,32 @@ export default React.memo(styled(props => {
                 </TextField>
             </Grid>
 
+            {
+                ['dropdown', 'autocomplete'].includes(type) ?
+                    <Grid item xs={12}>
+                        <TextField name="configCode" label="選單代碼" size="small" fullWidth
+                            value={configCode ?? ''} onChange={valueChangeHandler}
+                            onBlur={saveProperties} />
+                    </Grid> : type === 'tableSelect' ?
+                        <>
+                            <Grid item xs={12}>
+                                <TextField name="source" label="表格選取 - 來源代碼" size="small" fullWidth
+                                    value={source ?? ''} onChange={valueChangeHandler}
+                                    onBlur={saveProperties} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <PropertiesMappingField name="mappedStateProps" label="表格選取 - 欄位映射" size="small" fullWidth
+                                    multiline minRows={5} maxRows={8} value={mappedStateProps ?? ''}
+                                    disabled={disabled} onChange={mappingChangeHandler} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField name="filterBy" label="表格選取 - 條件過濾" size="small" fullWidth
+                                    multiline minRows={5} maxRows={8} value={filterBy ?? ''}
+                                    disabled={disabled} onChange={valueChangeHandler} onBlur={saveProperties} />
+                            </Grid>
+                        </> : null
+            }
+
             <Grid item xs={12}>
                 <TextField name="defaultValue" label="預設值" size="small" fullWidth
                     value={defaultValue ?? ''} onChange={valueChangeHandler}
@@ -121,10 +178,6 @@ export default React.memo(styled(props => {
 
                 <FormControlLabel name="required" label="必填" control={<Checkbox checked={required ?? false}
                     onChange={checkboxChangeHandler} />} />
-
-                <FormControlLabel name="isContextStateProp" label="全域變數"
-                    control={<Checkbox checked={isContextStateProp ?? false}
-                        onChange={checkboxChangeHandler} />} />
             </Grid>
 
             {
@@ -148,21 +201,17 @@ export default React.memo(styled(props => {
             }
 
             <Grid item xs={12}>
+                <FormControlLabel name="isContextStateProp" label="全域變數"
+                    control={<Checkbox checked={isContextStateProp ?? false}
+                        onChange={checkboxChangeHandler} />} />
 
-            </Grid>
-
-
-            <Grid item xs={12}>
-                <Divider light>
-                    <div className="divider-title">
-                        <FormatListNumberedIcon fontSize="small" />
-                        <Typography color="textSecondary">子表多筆屬性</Typography>
-                    </div>
-                </Divider>
+                <FormControlLabel name="isMappedStateProp" label="映射變數"
+                    control={<Checkbox checked={isMappedStateProp ?? false}
+                        onChange={checkboxChangeHandler} />} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="name" label="欄位名稱" size="small" fullWidth />
+
             </Grid>
         </Grid>
     );

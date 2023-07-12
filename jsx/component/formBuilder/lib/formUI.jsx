@@ -34,21 +34,20 @@ export const generateField = ({ cols, field, formId, hierarchy }) => {
     const props = { cols, type: 'text', ...field, formId, hierarchy };
 
     // const type = props.type ?? 'text';
-    const key = props.uuid;
-
+    const { uuid, type } = props;
     let FieldComponent;
 
-    switch (props.type) {
+    switch (type) {
         case 'divider':
             return (
-                <Grid key={key} item {...cols}>
+                <Grid key={uuid} item {...cols}>
                     <Divider />
                 </Grid>
             );
         case 'autocomplete':
             FieldComponent = props.remoteAPI ? GridRemoteAutocomplete : GridAutocomplete;
             break;
-        case 'checkbox':
+        case 'yesOrNo':
             FieldComponent = GridCheckbox;
             break;
         case 'dropdown':
@@ -76,7 +75,6 @@ export const generateField = ({ cols, field, formId, hierarchy }) => {
             break;
         case 'computed':
             FieldComponent = GridTextField;
-            props.htmlType = 'computed';
             break;
         case 'textField':
         case 'text':
@@ -91,7 +89,7 @@ export const generateField = ({ cols, field, formId, hierarchy }) => {
             return <div style={{ color: 'red' }}>不支援的元件 type [{type}]</div>
     }
 
-    return <ErrorBoundary key={key}><FieldComponent key={key} {...props} /></ErrorBoundary>;
+    return <ErrorBoundary key={uuid}><FieldComponent key={uuid} {...props} /></ErrorBoundary>;
 };
 
 /**

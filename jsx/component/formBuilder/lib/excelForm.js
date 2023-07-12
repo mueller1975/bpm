@@ -116,7 +116,7 @@ const createField = row => {
             field.type = 'numberRange';
             break;
         case 'Y/N':
-            field.type = 'checkbox';
+            field.type = 'yesOrNo';
             break;
         case '表格選取':
             if (!menuOrTableCode) {
