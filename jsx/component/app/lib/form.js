@@ -3,6 +3,29 @@ import * as U from './formJsonUtils.js';
 const allFormFields = [], allFormIds = [], allL4FormFields = [];
 
 /**
+ * 表單基本資料
+ * @param {*} param0 
+ * @returns 
+ */
+export const getInitialFormData = ({ user: { empId, name, deptId, deptName } }) => ({
+    creator: empId, // 建立者工號
+    creatorName: name, // 建立者姓名
+    creatorDept: deptId, // 建立者部門代號
+    creatorDeptName: deptName, // 建立者部門名稱
+
+    applicant: empId, // 申請者工號
+    applicantName: name, // 申請者姓名
+    applicantDept: deptId, // 申請者部門代號
+    applicantDeptName: deptName, // 申請者部門名稱
+
+    approvalStatus: 'UNSAVED', // 表單審批狀態
+    createTime: new Date(), // 建立時間
+    modifyTime: null, // 異動時間
+    applyTime: null, // 提交時間
+    closeTime: null, // 審批完成時間
+});
+
+/**
  * Convert JSON string to js object
  * @param {*} json string
  * @returns 

@@ -18,6 +18,7 @@ import testFormData from './lib/testFormData.json';
 import { useQueryFormById } from './lib/useFetchAPI';
 import { Paper } from '@mui/material';
 import FormContent from './FormContent.jsx';
+import { getInitialFormData } from './lib/form';
 
 const FormList = lazyWithRefForwarding(React.lazy(() => import("./FormList.jsx")));
 
@@ -79,6 +80,9 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         // console.log('MPB NO.', data ? data.mpbNo : data)
         // console.log({ isNew, data, defaultData });
         // console.log({ CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES });
+
+
+        console.log({ user })
         let formData = {}; // 要塞到 form 欄位的值
 
         if (isNew) { // 新增 form            
@@ -87,24 +91,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             formData = merge({}, DEFAULT_FORM_VALUES, defaultData);
 
             // 新 form 基本資訊
-            let main = formData.main || {};
-            formData.main = main;
-
-            main.creator = user.empId; // 填寫人工號
-            main.creatorName = user.name; // 填寫人姓名
-
-            // 複製的澄清單 main form 欄位初始化
-            if (main.approvalStatus == 'FORKED') {
-                main.approvalStatus = 'FORKED'; // 審批狀態
-                main.forkedMpbNo = main.mpbNo; // 複製來源的訂單澄清單號
-                main.forkedMpbVersion = main.mpbVersion; // 複製來源的訂單澄清單版次
-                main.mpbNo = ''; // 清空"訂單澄清單號"
-                main.mpbVersion = ''; // 清空"版次"
-                main.creationTime = ''; // 清空"建立日期"
-                main.applyTime = ''; // 清空"提交日期"
-            }
-
-            // console.log('NEW:', { formData })
+            formData._ = getInitialFormData({ user });
+            console.log('NEW:', { formData })
         } else { // 開啟已存檔的 form
             formData = JSON.parse(data.mpbData);
             // console.log(mpbData ? mpbData.mpbNo : mpbData, '=>', data.mpbNo);
@@ -137,7 +125,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         setFormContext(ctxState);
 
         console.log('**** MPB Context State dispatched:', { mpbCtxState: ctxState })
-    }, [data]);
+    }, [user, data]);
 
     // 關閉告警 dialog
     const closeAlertDlg = useCallback(() => setAlertDlgOpen(false), []);

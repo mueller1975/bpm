@@ -9,6 +9,7 @@ import { fieldState } from '../context/FormStates';
 import { propertiesState } from '../context/PropertiesState';
 import { isEqual } from 'underscore';
 import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
+import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
 
 // Popover 位置
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
@@ -161,7 +162,7 @@ export default React.memo(styled(props => {
             }
 
             <Grid item xs={12}>
-                <TextField name="defaultValue" label="預設值" size="small" fullWidth
+                <MultiTypeTextField name="defaultValue" label="預設值" size="small" fullWidth
                     value={defaultValue ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
