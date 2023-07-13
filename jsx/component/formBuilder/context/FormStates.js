@@ -96,7 +96,7 @@ export const fieldsetState = selectorFamily({
         }
 
         let form = get(formState(formUUID));
-        return !form ? [] : form.components.find(({ uuid }) => uuid === fieldsetUUID);
+        return !form ? {} : form.components.find(({ uuid }) => uuid === fieldsetUUID);
     },
     set: ([formUUID, fieldsetUUID]) => ({ get, set }, newFieldset) => {
         let form = get(formState(formUUID));
@@ -110,8 +110,7 @@ export const fieldsetState = selectorFamily({
 
         console.log('[fieldsetState] SET:', components);
 
-        set(formState(formUUID), { form: { components } })
-
+        set(formState(formUUID), { form: { components } });
     },
 });
 
@@ -125,13 +124,21 @@ export const fieldState = selectorFamily({
         }
 
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
-        console.log('[fieldState] GET fielset:', fieldset);
+        console.log('[fieldState] GET fieldset:', fieldset);
 
-        let field = fieldset.fields.find(({ uuid }) => uuid === fieldUUID);
-        console.log('[fieldState] GET fiel:', field);
+        let field = fieldset.fields?.find(({ uuid }) => uuid === fieldUUID);
+
+        if (!field) {
+            console.error('[fieldState] GET field:', field);
+        } else {
+            console.log('[fieldState] GET field:', field);
+        }
+
         return field;
     },
     set: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get, set }, newValue) => {
+        console.log(`[fieldState] SET:`, formUUID, fieldsetUUID, fieldUUID);
+        
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
         let fields = fieldset.fields;
         let idx = fields.findIndex(({ uuid }) => uuid === fieldUUID);

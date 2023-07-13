@@ -15,6 +15,7 @@ import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
     transformOrigin = { vertical: 'top', horizontal: 'right' };
 
+// 欄位型態
 const FIELD_TYPES = [
     { code: "text", name: "文字" },
     { code: "number", name: "數字" },
@@ -28,6 +29,7 @@ const FIELD_TYPES = [
     { code: "fileUploader", name: "附件" },
 ];
 
+// 欄位型態 menu
 const FIELD_TYPE_MENUS = FIELD_TYPES.map(({ code, name }) => <MenuItem key={code} value={code}>{name}</MenuItem>);
 
 export default React.memo(styled(props => {
@@ -51,17 +53,23 @@ export default React.memo(styled(props => {
         setTimeout(() => inputRef.current.focus());
     }, [fieldProperties]);
 
+    // 更新 state
     const saveProperties = useCallback(() => {
         console.log('SAVING field properties.....')
+        console.log({ field, newField })
         if (!isEqual(field, newField)) {
+            console.log('Field Properties SAVED...')
             updateFieldState({ ...newField });
         }
     }, [field, newField]);
 
+    // 輸入 & 下拉欄位值變動
     const valueChangeHandler = e => {
         const { name, value } = e.target;
 
-        let dependentFields = {};
+        console.warn('Parent Value changed:', name, ':', value)
+
+        let dependentFields = {}; // 連動欄位變動
 
         if (name === 'type' && value === 'tableSelect') {
             dependentFields['defaultValue'] = '';
@@ -73,16 +81,18 @@ export default React.memo(styled(props => {
         return newFieldState;
     };
 
+    // 映射欄位值變動
     const mappingChangeHandler = e => {
         let newFieldState = valueChangeHandler(e);
-        updateFieldState(newFieldState);
+        updateFieldState(newFieldState); // 更新 state
     }
 
+    // 勾選欄位值變動
     const checkboxChangeHandler = e => {
         const { name, checked } = e.target;
         console.log({ name, checked })
 
-        let dependentFields = {};
+        let dependentFields = {}; // 連動欄位變動
 
         if (checked) {
             switch (name) {
@@ -104,30 +114,35 @@ export default React.memo(styled(props => {
 
         let newFieldState = { ...newField, [name]: checked, ...dependentFields };
         setNewField(newFieldState);
-        updateFieldState(newFieldState);
+        updateFieldState(newFieldState); // 更新 state
     };
 
     return (
         <Grid container spacing={2} className={`MT-FieldProperties ${className}`}>
+
+            {/* uuid */}
             <Grid item xs={12}>
                 <TextField name="uuid" label="UUID" size="small" fullWidth disabled
                     value={uuid ?? ''} />
             </Grid>
 
+            {/* 變數名稱 */}
             <Grid item xs={12}>
                 <TextField name="name" label="變數名稱" size="small" fullWidth
                     inputRef={inputRef} value={name ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
+            {/* 標籤 */}
             <Grid item xs={12}>
                 <TextField name="label" label="標籤" size="small" fullWidth
                     value={label ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
+            {/* 型態 */}
             <Grid item xs={12}>
-                <TextField name="type" label="欄位型態" size="small" fullWidth select
+                <TextField name="type" label="型態" size="small" fullWidth select
                     value={type ?? 'text'} onChange={valueChangeHandler}
                     onBlur={saveProperties}>
 
@@ -137,11 +152,14 @@ export default React.memo(styled(props => {
 
             {
                 ['dropdown', 'autocomplete'].includes(type) ?
+                    // 下拉選單 - 選單代碼
                     <Grid item xs={12}>
                         <TextField name="configCode" label="選單代碼" size="small" fullWidth
                             value={configCode ?? ''} onChange={valueChangeHandler}
                             onBlur={saveProperties} />
-                    </Grid> : type === 'tableSelect' ?
+                    </Grid> :
+                    type === 'tableSelect' ?
+                        // 表格選取 - 來源代碼、欄位映射、條件過濾
                         <>
                             <Grid item xs={12}>
                                 <TextField name="source" label="表格選取 - 來源代碼" size="small" fullWidth
@@ -161,18 +179,22 @@ export default React.memo(styled(props => {
                         </> : null
             }
 
+            {/* 預設值 */}
             <Grid item xs={12}>
-                <MultiTypeTextField name="defaultValue" label="預設值" size="small" fullWidth
+                {/* 藉由指定 key 值, 達到切換欄位時自動 reset 元件狀態 */}
+                <MultiTypeTextField key={uuid} name="defaultValue" label="預設值" size="small" fullWidth
                     value={defaultValue ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
+            {/* 欄位註腳 */}
             <Grid item xs={12}>
                 <TextField name="helper" label="註腳" size="small" fullWidth
                     value={helper ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
+            {/* 唯讀 & 必填 */}
             <Grid item xs={12}>
                 <FormControlLabel name="disabled" label="唯讀" control={<Checkbox checked={disabled ?? false}
                     onChange={checkboxChangeHandler} />} />
@@ -181,7 +203,7 @@ export default React.memo(styled(props => {
                     onChange={checkboxChangeHandler} />} />
             </Grid>
 
-            {
+            { /* 唯讀條件 */
                 !disabled &&
                 <Grid item xs={12}>
                     <TextField name="disabledWhen" label="唯讀條件" size="small" fullWidth
@@ -191,7 +213,7 @@ export default React.memo(styled(props => {
                 </Grid>
             }
 
-            {
+            { /* 必填條件 */
                 !required &&
                 <Grid item xs={12}>
                     <TextField name="requiredWhen" label="必填條件" size="small" fullWidth
@@ -201,6 +223,7 @@ export default React.memo(styled(props => {
                 </Grid>
             }
 
+            {/* 全域變數 / 映射變數 */}
             <Grid item xs={12}>
                 <FormControlLabel name="isContextStateProp" label="全域變數"
                     control={<Checkbox checked={isContextStateProp ?? false}

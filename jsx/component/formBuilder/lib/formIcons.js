@@ -18,10 +18,12 @@ import StraightenIcon from '@mui/icons-material/Straighten';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 export {
     AccountTreeIcon, AssignmentIcon, BackpackIcon, ViewInArIcon, EngineeringIcon,
     InfoIcon, PersonSearchIcon, PrecisionManufacturingIcon, ScienceIcon, StraightenIcon,
     SummarizeIcon, VerifiedUserIcon, SavedSearchIcon, HelpOutlineIcon, SimCardIcon,
-    SettingsInputComponentIcon, CableIcon, PrintIcon, FileCopyIcon, SellIcon
+    SettingsInputComponentIcon, CableIcon, PrintIcon, FileCopyIcon, SellIcon,
+    QuestionMarkIcon
 };
