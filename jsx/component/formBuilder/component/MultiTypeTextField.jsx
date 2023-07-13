@@ -12,27 +12,17 @@ const VALUE_TYPES = [
 const VALUE_TYPES_MAP = VALUE_TYPES.reduce((acc, cur) => ({ ...acc, [cur.name]: cur }), {});
 
 export default React.memo(styled(props => {
-    const { type: defaultType, name, value, onChange, onBlur, className, ...others } = props;
+    const { name, value, onChange, onBlur, className, ...others } = props;
 
-    const [type, setType] = useState(() => {
-        let { computedBy } = value;
-        return computedBy ? 'computedBy' : defaultType ?? 'text';
-    });
-
-    const [inputValue, setInputValue] = useState(
-        type === 'computedBy' ? value.computedBy : value
-    );
-
-    useEffect(() => {
-        let newValue = type === 'computedBy' ? { computedBy: inputValue } : inputValue;
-
-        console.warn(`Type changed to [${type}]:`, newValue)
-        onChange({ target: { name, value: newValue } });
-    }, [type]);
+    const [type, setType] = useState('text');
+    const [inputValue, setInputValue] = useState('');
 
     // 值變更
     useEffect(() => {
-        let newInputValue = type === 'computedBy' ? value.computedBy : value;
+        const { computedBy } = value;
+        const [newType, newInputValue] = computedBy ? ['computedBy', computedBy] : ['text', value];
+
+        setType(newType);
         setInputValue(newInputValue);
         // console.log({ type, value, newInputValue })
     }, [value]);
@@ -54,12 +44,20 @@ export default React.memo(styled(props => {
     }, [type, onChange]);
 
     // 切換欄位值型態
+    // 不可直接在此變更 type 值, type 值須由 value 值解析而來!!!
     const nextType = e => {
         let idx = VALUE_TYPES.findIndex(({ name }) => type === name);
         let nextIdx = (idx + 1) % 2;
         let newType = VALUE_TYPES[nextIdx].name;
 
-        setType(newType);
+        let newE = {
+            target: {
+                name,
+                value: newType === 'computedBy' ? { computedBy: inputValue } : inputValue
+            }
+        }
+
+        onChange(newE); // 變更 value 值
     };
 
     return (
@@ -69,16 +67,14 @@ export default React.memo(styled(props => {
             name={name}
             value={inputValue}
             onChange={inputChangeHandler}
-            // onBlur={onBlur}
+            onBlur={onBlur}
             InputProps={{
                 startAdornment:
                     <InputAdornment position="start">{type}</InputAdornment>,
                 endAdornment:
                     <InputAdornment position="end">
                         <Tooltip title={VALUE_TYPES_MAP[type].hint} arrow>
-                            <IconButton onClick={nextType}
-                            // onBlur={onBlur}
-                            >
+                            <IconButton onClick={nextType} onBlur={onBlur}>
                                 {VALUE_TYPES_MAP[type].icon}
                             </IconButton>
                         </Tooltip>
