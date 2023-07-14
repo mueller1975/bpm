@@ -1,32 +1,39 @@
-import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import {
-    Divider, Grid, MenuItem, TextField, Typography, Checkbox, FormControlLabel
+    Checkbox,
+    Divider,
+    FormControlLabel,
+    Grid, MenuItem, TextField
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { isEqual } from 'underscore';
+import Fieldset from '../component/Fieldset.jsx';
+import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
+import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
 import { fieldState } from '../context/FormStates';
 import { propertiesState } from '../context/PropertiesState';
-import { isEqual } from 'underscore';
-import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
-import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
 
 // Popover 位置
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
     transformOrigin = { vertical: 'top', horizontal: 'right' };
 
+const COMMON_FIELD_PROPERTIES = [
+    'uuid', 'name', 'label', 'defaultValue', 'disabled', 'required', 'hidden', 'disabledWhen', 'requiredWhen'
+];
+
 // 欄位型態
 const FIELD_TYPES = [
-    { code: "text", name: "文字" },
-    { code: "number", name: "數字" },
-    { code: "numberRange", name: "數字範圍" },
-    { code: "yesOrNo", name: "Y/N" },
-    { code: "computed", name: "動態文字" },
-    { code: "dropdown", name: "下拉選單" },
-    { code: "autocomplete", name: "下拉選單（可輸入）" },
-    { code: "tableSelect", name: "表格選取" },
-    { code: "inlineEditor", name: "子表多筆" },
-    { code: "fileUploader", name: "附件" },
+    { code: 'text', name: '文字', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'number', name: '數字', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'numberRange', name: '數字範圍', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'yesOrNo', name: 'Y/N', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'computed', name: '動態文字', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'dropdown', name: '下拉選單', properties: [...COMMON_FIELD_PROPERTIES, 'configCode', 'menuDependsOn', 'disabledWhenMenuIsEmpty'] },
+    // { code: 'autocomplete', name: '下拉選單（可輸入）' },
+    { code: 'tableSelect', name: '表格選取', properties: [...COMMON_FIELD_PROPERTIES, 'source', 'filterBy'] },
+    { code: 'inlineEditor', name: '子表多筆', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'fileUploader', name: '附件', properties: [...COMMON_FIELD_PROPERTIES] },
 ];
 
 // 欄位型態 menu
@@ -40,7 +47,7 @@ export default React.memo(styled(props => {
     const [newField, setNewField] = useState(field);
     const { uuid, name, label, defaultValue, type, helper, disabled = false,
         configCode, source, isContextStateProp, isMappedStateProp, mappedStateProps,
-        filterBy, computedBy,
+        filterBy, computedBy, menuDependsOn, freeSolo = false, disabledWhenMenuIsEmpty = false,
         required, requiredWhen, disabledWhen } = newField;
 
     const inputRef = useRef();
@@ -58,7 +65,7 @@ export default React.memo(styled(props => {
         console.log('SAVING field properties.....')
         console.log({ field, newField })
         if (!isEqual(field, newField)) {
-            console.log('Field Properties SAVED...')
+            console.log(`Field Properties SAVED [${name}]:`, JSON.stringify(newField));
             updateFieldState({ ...newField });
         }
     }, [field, newField]);
@@ -67,12 +74,20 @@ export default React.memo(styled(props => {
     const valueChangeHandler = e => {
         const { name, value } = e.target;
 
-        console.warn('Parent Value changed:', name, ':', value)
+        // console.warn('Parent Value changed:', name, ':', value)
 
         let dependentFields = {}; // 連動欄位變動
 
-        if (name === 'type' && value === 'tableSelect') {
-            dependentFields['defaultValue'] = '';
+        if (name === 'type') {
+            switch (type) {
+                case 'tableSelect':
+                    dependentFields['defaultValue'] = '';
+                    break;
+                case 'dropdown':
+                    // dependentFields = { ...dependentFields, freeSolo: false, menuDependsOn }
+                    break;
+                default:
+            }
         }
 
         let newFieldState = { ...newField, [name]: value, ...dependentFields };
@@ -122,27 +137,27 @@ export default React.memo(styled(props => {
 
             {/* uuid */}
             <Grid item xs={12}>
-                <TextField name="uuid" label="UUID" size="small" fullWidth disabled
+                <TextField name='uuid' label='UUID' size='small' fullWidth disabled
                     value={uuid ?? ''} />
             </Grid>
 
             {/* 變數名稱 */}
             <Grid item xs={12}>
-                <TextField name="name" label="變數名稱" size="small" fullWidth
+                <TextField name='name' label='變數名稱' size='small' fullWidth
                     inputRef={inputRef} value={name ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             {/* 標籤 */}
             <Grid item xs={12}>
-                <TextField name="label" label="標籤" size="small" fullWidth
+                <TextField name='label' label='標籤' size='small' fullWidth
                     value={label ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             {/* 型態 */}
             <Grid item xs={12}>
-                <TextField name="type" label="型態" size="small" fullWidth select
+                <TextField name='type' label='型態' size='small' fullWidth select
                     value={type ?? 'text'} onChange={valueChangeHandler}
                     onBlur={saveProperties}>
 
@@ -152,61 +167,101 @@ export default React.memo(styled(props => {
 
             {
                 ['dropdown', 'autocomplete'].includes(type) ?
-                    // 下拉選單 - 選單代碼
+                    // 下拉選單設定
                     <Grid item xs={12}>
-                        <TextField name="configCode" label="選單代碼" size="small" fullWidth
-                            value={configCode ?? ''} onChange={valueChangeHandler}
-                            onBlur={saveProperties} />
+                        <Fieldset title='下拉選單設定'>
+                            <Grid container spacing={2}>
+                                {/* 選單代碼 */}
+                                <Grid item xs={12}>
+                                    <TextField name='configCode' label='選單代碼' size='small' fullWidth
+                                        value={configCode ?? ''} onChange={valueChangeHandler}
+                                        onBlur={saveProperties} />
+                                </Grid>
+
+                                {/* 允許手動輸入非選單項目 */}
+                                <Grid item xs={12}>
+                                    <FormControlLabel name='freeSolo' label='允許手動輸入非選單項目'
+                                        control={<Checkbox size='small' checked={freeSolo ?? false}
+                                            onChange={checkboxChangeHandler} />} />
+                                </Grid>
+
+
+                                {/* 允許手動輸入非選單項目 */}
+                                <Grid item xs={12}>
+                                    <FormControlLabel name='disabledWhenMenuIsEmpty' label='沒有選項時不允許選取'
+                                        control={<Checkbox size='small' checked={disabledWhenMenuIsEmpty ?? false}
+                                            onChange={checkboxChangeHandler} />} />
+                                </Grid>
+
+                                {/* 選單相依於欄位變數名稱 */}
+                                <Grid item xs={12}>
+                                    <MultiTypeTextField name='menuDependsOn' label='選單相依於欄位變數名稱'
+                                        size='small' fullWidth
+                                        onChange={valueChangeHandler} onBlur={saveProperties} />
+                                </Grid>
+                            </Grid>
+                        </Fieldset>
                     </Grid> :
                     type === 'tableSelect' ?
-                        // 表格選取 - 來源代碼、欄位映射、條件過濾
-                        <>
-                            <Grid item xs={12}>
-                                <TextField name="source" label="表格選取 - 來源代碼" size="small" fullWidth
-                                    value={source ?? ''} onChange={valueChangeHandler}
-                                    onBlur={saveProperties} />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <PropertiesMappingField name="mappedStateProps" label="表格選取 - 欄位映射" size="small" fullWidth
-                                    multiline minRows={5} maxRows={8} value={mappedStateProps ?? ''}
-                                    disabled={disabled} onChange={mappingChangeHandler} />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField name="filterBy" label="表格選取 - 條件過濾" size="small" fullWidth
-                                    multiline minRows={5} maxRows={8} value={filterBy ?? ''}
-                                    disabled={disabled} onChange={valueChangeHandler} onBlur={saveProperties} />
-                            </Grid>
-                        </> : null
+                        // 表格選取設定
+                        <Grid item xs={12}>
+                            <Fieldset title='表格選取設定'>
+                                <Grid container spacing={2}>
+                                    {/* 來源代碼 */}
+                                    <Grid item xs={12}>
+                                        <TextField name='source' label='來源代碼' size='small' fullWidth
+                                            value={source ?? ''} onChange={valueChangeHandler}
+                                            onBlur={saveProperties} />
+                                    </Grid>
+
+                                    {/* 欄位映射 */}
+                                    <Grid item xs={12}>
+                                        <PropertiesMappingField name='mappedStateProps' label='欄位映射' size='small' fullWidth
+                                            multiline minRows={5} maxRows={8} value={mappedStateProps ?? ''}
+                                            disabled={disabled} onChange={mappingChangeHandler} />
+                                    </Grid>
+
+                                    {/* 過濾條件 */}
+                                    <Grid item xs={12}>
+                                        <TextField name='filterBy' label='過濾條件' size='small' fullWidth
+                                            multiline minRows={5} maxRows={8} value={filterBy ?? ''}
+                                            disabled={disabled} onChange={valueChangeHandler} onBlur={saveProperties} />
+                                    </Grid>
+                                </Grid>
+                            </Fieldset>
+                        </Grid> : null
             }
 
             {/* 預設值 */}
             <Grid item xs={12}>
                 {/* 藉由指定 key 值, 達到切換欄位時自動 reset 元件狀態 */}
-                <MultiTypeTextField key={uuid} name="defaultValue" label="預設值" size="small" fullWidth
+                <MultiTypeTextField key={uuid} name='defaultValue' label='預設值' size='small' fullWidth
                     value={defaultValue ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             {/* 欄位註腳 */}
             <Grid item xs={12}>
-                <TextField name="helper" label="註腳" size="small" fullWidth
+                <TextField name='helper' label='註腳' size='small' fullWidth
                     value={helper ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             {/* 唯讀 & 必填 */}
             <Grid item xs={12}>
-                <FormControlLabel name="disabled" label="唯讀" control={<Checkbox checked={disabled ?? false}
-                    onChange={checkboxChangeHandler} />} />
+                <FormControlLabel name='disabled' label='唯讀'
+                    control={<Checkbox size='small' checked={disabled ?? false}
+                        onChange={checkboxChangeHandler} />} />
 
-                <FormControlLabel name="required" label="必填" control={<Checkbox checked={required ?? false}
-                    onChange={checkboxChangeHandler} />} />
+                <FormControlLabel name='required' label='必填'
+                    control={<Checkbox size='small' checked={required ?? false}
+                        onChange={checkboxChangeHandler} />} />
             </Grid>
 
             { /* 唯讀條件 */
                 !disabled &&
                 <Grid item xs={12}>
-                    <TextField name="disabledWhen" label="唯讀條件" size="small" fullWidth
+                    <TextField name='disabledWhen' label='唯讀條件' size='small' fullWidth
                         multiline minRows={5} maxRows={8} value={disabledWhen ?? ''}
                         disabled={disabled}
                         onChange={valueChangeHandler} onBlur={saveProperties} />
@@ -216,7 +271,7 @@ export default React.memo(styled(props => {
             { /* 必填條件 */
                 !required &&
                 <Grid item xs={12}>
-                    <TextField name="requiredWhen" label="必填條件" size="small" fullWidth
+                    <TextField name='requiredWhen' label='必填條件' size='small' fullWidth
                         multiline minRows={5} maxRows={8} value={requiredWhen ?? ''}
                         disabled={required}
                         onChange={valueChangeHandler} onBlur={saveProperties} />
@@ -225,12 +280,12 @@ export default React.memo(styled(props => {
 
             {/* 全域變數 / 映射變數 */}
             <Grid item xs={12}>
-                <FormControlLabel name="isContextStateProp" label="全域變數"
-                    control={<Checkbox checked={isContextStateProp ?? false}
+                <FormControlLabel name='isContextStateProp' label='全域變數'
+                    control={<Checkbox size='small' checked={isContextStateProp ?? false}
                         onChange={checkboxChangeHandler} />} />
 
-                <FormControlLabel name="isMappedStateProp" label="映射變數"
-                    control={<Checkbox checked={isMappedStateProp ?? false}
+                <FormControlLabel name='isMappedStateProp' label='映射變數'
+                    control={<Checkbox size='small' checked={isMappedStateProp ?? false}
                         onChange={checkboxChangeHandler} />} />
             </Grid>
 
@@ -240,9 +295,5 @@ export default React.memo(styled(props => {
         </Grid>
     );
 })`
-    .divider-title {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
+    
 `);

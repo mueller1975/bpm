@@ -53,9 +53,9 @@ export default React.memo(styled(props => {
                     </div>
                 }
 
-                <Scrollable className="scrollable" onScroll={scrollHandler}>
+                {/* <Scrollable className="scrollable" onScroll={scrollHandler}> */}
                     {props.children}
-                </Scrollable>
+                {/* </Scrollable> */}
             </fieldset>
 
             <FormHelperText>{!error ? helper : error}</FormHelperText>
