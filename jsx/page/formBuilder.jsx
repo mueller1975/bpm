@@ -9,6 +9,7 @@ import { PreferencesContextProvider } from 'Context/PreferencesContext.jsx';
 import { StyledSnackbarProvider } from 'Components';
 import globalStyles from './lib/globalStyles';
 import { GlobalStyles } from '@mui/material';
+import { ConfirmDialogContextProvider } from 'Context/ConfirmDialogContext.jsx';
 
 const theme = createAppTheme(DARK, NORMAL, NORMAL);
 const gStyles = globalStyles(theme.palette.mode); // global theme styles
@@ -20,11 +21,13 @@ const Page = React.memo(props => (
 
         <RecoilRoot>
             <ServiceContextProvider>
-                <PreferencesContextProvider>
-                    <StyledSnackbarProvider>
-                        <FormBuilder />
-                    </StyledSnackbarProvider>
-                </PreferencesContextProvider>
+                <ConfirmDialogContextProvider>
+                    <PreferencesContextProvider>
+                        <StyledSnackbarProvider>
+                            <FormBuilder />
+                        </StyledSnackbarProvider>
+                    </PreferencesContextProvider>
+                </ConfirmDialogContextProvider>
             </ServiceContextProvider>
         </RecoilRoot>
     </ThemeProvider>

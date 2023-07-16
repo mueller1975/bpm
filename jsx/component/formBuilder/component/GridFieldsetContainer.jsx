@@ -10,6 +10,7 @@ import { fieldsetState } from '../context/FormStates';
 import { propertiesState } from '../context/PropertiesState';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
+import ConfirmDialog from 'Component/ConfirmDialog.jsx';
 
 export default React.memo(styled(props => {
     const { uuid: fieldsetUUID, noBorder = false, title = '無標題', formId, formUUID,
@@ -41,6 +42,10 @@ export default React.memo(styled(props => {
         setFieldsetProperties([formUUID, fieldsetUUID]);
     };
 
+    const deleteFieldset = () => {
+
+    }
+
     let gridContainer = useMemo(() => (
         // NOT available 時, "隱藏" Grid 而非 return null, 因欄位的狀態為 uncontrolled
         <Grid container spacing={gridSpacing} className={`gridContainer`}>
@@ -58,7 +63,7 @@ export default React.memo(styled(props => {
     ), [fields]);
 
     const actions = [
-        { action: () => console.log(1), icon: <DeleteIcon color="error" /> },
+        { action: () => deleteFieldset, icon: <DeleteIcon color="error" /> },
         { action: editProperties, icon: <EditIcon color="warning" /> },
     ];
 

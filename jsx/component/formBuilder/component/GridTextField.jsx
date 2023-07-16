@@ -25,7 +25,7 @@ export default React.memo(props => {
 
                         inputProps={{ readOnly, required }}
 
-                        defaultValue={defaultValue}
+                        // defaultValue={defaultValue}
                         helperText={helper}
                         className={className}
                     />

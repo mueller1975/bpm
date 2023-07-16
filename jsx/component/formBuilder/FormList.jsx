@@ -17,6 +17,7 @@ import FormListItem from './FormListItem.jsx';
 import { allFormsState } from './context/FormStates';
 import { fieldPropertiesState, fieldsetPropertiesState, formPropertiesState } from './context/PropertiesState';
 import { useNotification } from 'Hook/useTools.jsx';
+import { expandedFormsState } from './context/BuilderStates';
 
 const AnimatedList = animated(List);
 const AnimatedIconButton = animated(IconButton);
@@ -29,6 +30,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
 
     const [allForms, setAllForms] = useRecoilState(allFormsState);
     const resetAllForms = useResetRecoilState(allFormsState);
+    const resetExpandedForms = useResetRecoilState(expandedFormsState);
     const resetFormProperties = useResetRecoilState(formPropertiesState);
     const resetFieldsetProperties = useResetRecoilState(fieldsetPropertiesState);
     const resetFieldProperties = useResetRecoilState(fieldPropertiesState);
@@ -81,6 +83,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
     const save = useCallback(e => {
         e.stopPropagation();
         resetAllForms();
+        resetExpandedForms(); // 清除展開 form accordion
     }, []);
 
     const deleteAll = useCallback(e => {
@@ -89,6 +92,7 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
         resetFieldsetProperties();
         resetFieldProperties();
         setAllForms([]);
+        resetExpandedForms(); // 清除展開 form accordion
     }, []);
 
     const saveToCache = useCallback(e => {
