@@ -30,9 +30,9 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const accordionRefs = useRef([]);
 
     // 新增表單
-    const addForm = useCallback((e, afterFormUUID) => {
+    const addForm = useCallback((e, afterUUID) => {
         e.stopPropagation();
-        createForm({ afterFormUUID, form: {} });
+        createForm({ afterUUID, form: {} });
     }, []);
 
     // 在 FormList 點擊表單時, 自動 scroll 至該表單位置

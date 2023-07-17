@@ -38,17 +38,6 @@ export const allFormsState = atom({
     ]
 });
 
-export const allFormMapState = selector({
-    key: 'allFormMapState',
-    get: ({ get }) => {
-        console.log('GET allFormMapState...........');
-
-        const allForms = get(allFormsState);
-        const formMap = {};
-
-    }
-});
-
 export const formState = selectorFamily({
     key: 'formState',
     get: ([formUUID]) => ({ get }) => {
@@ -56,14 +45,14 @@ export const formState = selectorFamily({
         const allForms = get(allFormsState);
         return allForms.find(form => form.uuid === formUUID);
     },
-    set: ([formUUID]) => ({ set, get }, { afterFormUUID, form = {} }) => {
+    set: ([formUUID]) => ({ set, get }, { afterUUID, form = {} }) => {
         console.warn('[formState] SET: uuid =>', formUUID);
-        console.warn('[formState] SET:', { afterFormUUID, form });
+        console.warn('[formState] SET:', { afterUUID, form });
 
         let allForms = get(allFormsState);
 
         if (formUUID) { // 既有的 form 以 partial update 更新
-            let idx = allForms.findIndex(f => f.uuid === formUUID);
+            let idx = allForms.findIndex(({ uuid }) => uuid === formUUID);
             let oldForm = allForms[idx];
             form = { ...oldForm, ...form }; // partial update
 
@@ -75,13 +64,13 @@ export const formState = selectorFamily({
             form.icon = DEFAULT_ICON_NAME;
             form.components = [];
 
-            if (!afterFormUUID) { // 未指定則放到第一個位置
+            if (!afterUUID) { // 未指定則放到第一個位置
                 allForms = [form, ...allForms];
             } else {
-                let afterIdx = allForms.findIndex(f => f.uuid === afterFormUUID);
+                let afterIdx = allForms.findIndex(({ uuid }) => uuid === afterUUID);
 
                 if (afterIdx < 0) {
-                    throw `找不到指定 UUID [${afterFormUUID}] 的 Form`;
+                    throw `找不到指定 UUID [${afterUUID}] 的 Form`;
                 } else {
                     allForms = [...allForms.slice(0, afterIdx + 1), form, ...allForms.slice(afterIdx + 1)];
                 }
@@ -117,10 +106,15 @@ export const fieldsetState = selectorFamily({
             console.log('[fieldsetState] SET:', components);
 
         } else { // 無 fieldsetUUID 值, 代表新增 fieldset
-            fieldset.uuid = uuidv4();
-            fieldset.type = "fieldset";
-            fieldset.cols = DEFAULT_GRID_COLS;
-            fieldset.fields = [];
+            // fieldset.uuid = uuidv4();
+            // fieldset.type = "fieldset";
+            // fieldset.cols = DEFAULT_GRID_COLS;
+            // fieldset.fields = [];
+
+            fieldset = {
+                ...fieldset, uuid: uuidv4(), type: 'fieldset',
+                cols: DEFAULT_GRID_COLS, fields: []
+            };
 
             if (!afterUUID) { // 未指定則放到第一個位置
                 components = [fieldset, ...components];
@@ -161,16 +155,34 @@ export const fieldState = selectorFamily({
 
         return field;
     },
-    set: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get, set }, newValue) => {
+    set: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get, set }, { afterUUID, field = {} }) => {
         console.log(`[fieldState] SET:`, formUUID, fieldsetUUID, fieldUUID);
 
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
         let fields = fieldset.fields;
-        let idx = fields.findIndex(({ uuid }) => uuid === fieldUUID);
-        let field = { ...fieldset.fields[idx], ...newValue };
 
-        fields = [...fields];
-        fields[idx] = field;
+        if (fieldUUID) { // 既有的 field 以 partial update 更新
+            let idx = fields.findIndex(({ uuid }) => uuid === fieldUUID);
+            field = { ...fields[idx], ...field };
+            fields = [...fields];
+            fields[idx] = field;
+        } else { // 無 fieldUUID 值, 代表新增 field
+            field = { label: '新增欄位', ...field, uuid: uuidv4() };
+
+            console.error({field})
+
+            if (!afterUUID) {  // 未指定則放到第一個位置
+                fields = [field, ...fields];
+            } else {
+                let afterIdx = fields.findIndex(({ uuid }) => uuid === afterUUID);
+
+                if (afterIdx < 0) {
+                    throw `找不到指定 UUID [${afterUUID}] 的 Field`;
+                } else {
+                    fields = [...fields.slice(0, afterIdx + 1), field, ...fields.slice(afterIdx + 1)];
+                }
+            }
+        }
 
         set(fieldsetState([formUUID, fieldsetUUID]), { fieldset: { fields } });
     },

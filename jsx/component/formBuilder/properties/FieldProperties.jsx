@@ -42,7 +42,7 @@ const FIELD_TYPE_MENUS = FIELD_TYPES.map(({ code, name }) => <MenuItem key={code
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
     const fieldHierarchy = useRecoilValue(propsHierarchyState('FIELD'));
-    const [field, updateFieldState] = useRecoilState(fieldState(fieldHierarchy));
+    const [field, updateField] = useRecoilState(fieldState(fieldHierarchy));
 
     const [newField, setNewField] = useState(field);
     const { uuid, name, label, defaultValue, type, helper, disabled = false,
@@ -71,7 +71,7 @@ export default React.memo(styled(props => {
         console.log({ field, newField })
         if (!isEqual(field, newField)) {
             console.log(`Field Properties SAVED [${name}]:`, JSON.stringify(newField));
-            updateFieldState({ ...newField });
+            updateField({ field: newField });
         }
     }, [field, newField]);
 
@@ -104,7 +104,7 @@ export default React.memo(styled(props => {
     // 映射欄位值變動
     const mappingChangeHandler = e => {
         let newFieldState = valueChangeHandler(e);
-        updateFieldState(newFieldState); // 更新 state
+        updateField(newFieldState); // 更新 state
     }
 
     // 勾選欄位值變動
@@ -134,7 +134,7 @@ export default React.memo(styled(props => {
 
         let newFieldState = { ...newField, [name]: checked, ...dependentFields };
         setNewField(newFieldState);
-        updateFieldState(newFieldState); // 更新 state
+        updateField(newFieldState); // 更新 state
     };
 
     return (
@@ -239,7 +239,7 @@ export default React.memo(styled(props => {
             }
 
             {/* 預設值 */}
-            <Grid item xs={12}>                
+            <Grid item xs={12}>
                 <MultiTypeTextField name='defaultValue' label='預設值' size='small' fullWidth
                     value={defaultValue ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />

@@ -6,7 +6,7 @@ import React, { useMemo, useEffect, useContext, useCallback } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import AddComponentButton from '../AddComponentButton.jsx';
-import { fieldsetState, formState } from '../context/FormStates';
+import { fieldState, fieldsetState, formState } from '../context/FormStates';
 import { propsHierarchyState } from '../context/PropsHierarchyState.js';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
@@ -20,15 +20,11 @@ export default React.memo(styled(props => {
 
     const [form, updateForm] = useRecoilState(formState([formUUID]));
     const [fieldset, updateFieldset] = useRecoilState(fieldsetState([formUUID, fieldsetUUID]));
-    const { fields } = fieldset;
-
-    console.log({ fieldset })
-
+    const createField = useSetRecoilState(fieldState([formUUID, fieldsetUUID,])); // [2] 為空值代表新增 field
     const setFieldsetHierarchy = useSetRecoilState(propsHierarchyState('FIELDSET'));
 
+    const { fields } = fieldset;
     const gridSpacing = 1.5;
-
-    console.log({ fields })
 
     useEffect(() => {
         if (formUUID && fieldsetUUID) {
@@ -37,9 +33,9 @@ export default React.memo(styled(props => {
     }, []);
 
     // 新增欄位
-    const addField = () => {
-        let field = { uuid: uuidv4(), name: "", label: '新增欄位', };
-        updateFieldset({ fieldset: { fields: [...fields, field] } });
+    const addField = e => {
+        e.stopPropagation();
+        createField({});
     }
 
     // 編輯屬性

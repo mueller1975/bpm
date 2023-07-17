@@ -8,7 +8,7 @@ import { jiggle } from '../../styled/Animations.jsx';
 import { useSetRecoilState } from 'recoil';
 import { propsHierarchyState } from '../context/PropsHierarchyState.js';
 import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
-import { fieldsetState } from '../context/FormStates';
+import { fieldsetState, fieldState } from '../context/FormStates';
 import { useRecoilState } from 'recoil';
 
 export default React.memo(styled(props => {
@@ -16,6 +16,7 @@ export default React.memo(styled(props => {
     const setFieldHierarchy = useSetRecoilState(propsHierarchyState('FIELD'));
 
     const [fieldset, updateFieldset] = useRecoilState(fieldsetState(hierarchy));
+    const createField = useSetRecoilState(fieldState([hierarchy[0], hierarchy[1],])); // [2] 為空值代表新增欄位
     const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
 
     // 編輯欄位屬性
@@ -25,13 +26,18 @@ export default React.memo(styled(props => {
         setFieldHierarchy(hierarchy);
     }, [hierarchy]);
 
+    const addField = useCallback(e => {
+        e.stopPropagation();
+        createField({ afterUUID: hierarchy[2] });
+    }, []);
+
     // 刪除欄位
     const doDeleteField = useCallback(() => {
-        const [, , uuid] = hierarchy;
-        let fields = fieldset.fields.filter(field => field.uuid !== uuid);
+        const [, , fieldUUID] = hierarchy;
+        let fields = fieldset.fields.filter(({ uuid }) => uuid !== fieldUUID);
         updateFieldset({ fieldset: { fields } });
         closeConfirmDialog();
-    });
+    }, [fieldset]);
 
     // 確認刪除欄位
     const confirmDeleteField = useCallback(e => {
@@ -48,7 +54,7 @@ export default React.memo(styled(props => {
         <Grid item className={`MT-ComponentGrid ${className}`} {...cols}>
             <div className="fieldActions">
                 <Fab size="small" onClick={confirmDeleteField}><DeleteIcon color="error" /></Fab>
-                <Fab size="small"><AddIcon color="success" /></Fab>
+                <Fab size="small" onClick={addField}><AddIcon color="success" /></Fab>
                 <Fab size="small" onClick={editProperties}><EditIcon color="warning" /></Fab>
             </div>
 

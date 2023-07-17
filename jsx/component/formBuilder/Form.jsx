@@ -9,8 +9,8 @@ import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx'
 export default React.memo(styled(React.forwardRef(({ uuid, id, components, className }, ref) => {
     const createFieldset = useSetRecoilState(fieldsetState([uuid,])); // [1] 元素空值, 代表新增 fieldset
 
-    const addFieldset = useCallback(afterUUID => {
-        console.log({ afterUUID })
+    const addFieldset = useCallback((e, afterUUID) => {
+        e.stopPropagation();
         createFieldset({ afterUUID });
     }, []);
 
@@ -27,7 +27,7 @@ export default React.memo(styled(React.forwardRef(({ uuid, id, components, class
                     return (
                         <React.Fragment key={component.uuid}>
                             <GridFieldsetContainer className="formComponent" formId={id} formUUID={uuid} {...component} />
-                            <AddComponentButton className="formComponent" onClick={() => addFieldset(component.uuid)} />
+                            <AddComponentButton className="formComponent" onClick={e => addFieldset(e, component.uuid)} />
                         </React.Fragment>
                     );
                 case 'divider':
@@ -44,7 +44,7 @@ export default React.memo(styled(React.forwardRef(({ uuid, id, components, class
 
     return (
         <form id={id} ref={ref} autoComplete="off" className={className}>
-            <AddComponentButton className="formComponent" onClick={() => addFieldset()} />
+            <AddComponentButton className="formComponent" onClick={addFieldset} />
             {formComponents}
         </form>
     );
