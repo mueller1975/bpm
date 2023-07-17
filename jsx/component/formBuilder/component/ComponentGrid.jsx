@@ -6,24 +6,50 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { jiggle } from '../../styled/Animations.jsx';
 import { useSetRecoilState } from 'recoil';
-import { propertiesState } from '../context/PropertiesState.js';
+import { propsHierarchyState } from '../context/PropsHierarchyState.js';
+import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
+import { fieldsetState } from '../context/FormStates';
+import { useRecoilState } from 'recoil';
 
 export default React.memo(styled(props => {
     const { hierarchy, className, children, cols } = props;
-    const setFieldProperties = useSetRecoilState(propertiesState('FIELD'));
+    const setFieldHierarchy = useSetRecoilState(propsHierarchyState('FIELD'));
 
-    const editFieldProperties = useCallback(e => {
+    const [fieldset, updateFieldset] = useRecoilState(fieldsetState(hierarchy));
+    const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
+
+    // 編輯欄位屬性
+    const editProperties = useCallback(e => {
         e.stopPropagation();
         console.log('EDITing field:', hierarchy, '=>', props);
-        setFieldProperties(hierarchy);
+        setFieldHierarchy(hierarchy);
     }, [hierarchy]);
+
+    // 刪除欄位
+    const doDeleteField = useCallback(() => {
+        const [, , uuid] = hierarchy;
+        let fields = fieldset.fields.filter(field => field.uuid !== uuid);
+        updateFieldset({ fieldset: { fields } });
+        closeConfirmDialog();
+    });
+
+    // 確認刪除欄位
+    const confirmDeleteField = useCallback(e => {
+        e.stopPropagation();
+
+        setConfirmDialog({
+            title: '刪除欄位確認', content: '刪除後無法復原，您確定要刪除欄位？', open: true, severity: 'fatal',
+            onConfirm: doDeleteField,
+            onCancel: () => true
+        });
+    }, [doDeleteField]);
 
     return (
         <Grid item className={`MT-ComponentGrid ${className}`} {...cols}>
             <div className="fieldActions">
-                <Fab size="small"><DeleteIcon color="error" /></Fab>
+                <Fab size="small" onClick={confirmDeleteField}><DeleteIcon color="error" /></Fab>
                 <Fab size="small"><AddIcon color="success" /></Fab>
-                <Fab size="small" onClick={editFieldProperties}><EditIcon color="warning" /></Fab>
+                <Fab size="small" onClick={editProperties}><EditIcon color="warning" /></Fab>
             </div>
 
             {

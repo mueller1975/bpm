@@ -21,7 +21,7 @@ export default React.memo(styled(props => {
 
     // value 變更
     useEffect(() => {
-        const { computedBy } = value;
+        const { computedBy } = value ?? '';
 
         // 由 value 解析出 type & inputValue
         const [newType, newInputValue] = computedBy == undefined ? ['text', value] : ['computedBy', computedBy];

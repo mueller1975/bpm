@@ -5,6 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 const MPB_FORMS_API = "./service/config/mpbForms4Lab";
 const FETCH_FORM_API = () => fetch(MPB_FORMS_API, { redirect: 'manual' });
 const DEFAULT_ICON_NAME = "QuestionMarkIcon";
+const DEFAULT_GRID_COLS = {
+    xs: 12,
+    sm: 6,
+    md: 4,
+    lg: 3
+};
 
 export const allFormsState = atom({
     key: "allFormsState",
@@ -45,19 +51,19 @@ export const allFormMapState = selector({
 
 export const formState = selectorFamily({
     key: 'formState',
-    get: uuid => ({ get }) => {
-        console.warn('[formState] GET:', uuid);
+    get: ([formUUID]) => ({ get }) => {
+        console.warn('[formState] GET:', formUUID);
         const allForms = get(allFormsState);
-        return allForms.find(form => form.uuid === uuid);
+        return allForms.find(form => form.uuid === formUUID);
     },
-    set: uuid => ({ set, get }, { afterFormUUID, form }) => {
-        console.warn('[formState] SET: uuid =>', uuid);
+    set: ([formUUID]) => ({ set, get }, { afterFormUUID, form = {} }) => {
+        console.warn('[formState] SET: uuid =>', formUUID);
         console.warn('[formState] SET:', { afterFormUUID, form });
 
         let allForms = get(allFormsState);
 
-        if (uuid) { // 既有的 form 以 partial update 更新
-            let idx = allForms.findIndex(f => f.uuid === uuid);
+        if (formUUID) { // 既有的 form 以 partial update 更新
+            let idx = allForms.findIndex(f => f.uuid === formUUID);
             let oldForm = allForms[idx];
             form = { ...oldForm, ...form }; // partial update
 
@@ -95,22 +101,41 @@ export const fieldsetState = selectorFamily({
             return {};
         }
 
-        let form = get(formState(formUUID));
+        let form = get(formState([formUUID]));
         return !form ? {} : form.components.find(({ uuid }) => uuid === fieldsetUUID);
     },
-    set: ([formUUID, fieldsetUUID]) => ({ get, set }, newFieldset) => {
-        let form = get(formState(formUUID));
-        // console.log('[fieldsetState] SET:', form);
-        // let fieldset = form.components.find(({ uuid }) => uuid === fieldsetUUID);
-        // let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
-        let idx = form.components.findIndex(({ uuid }) => uuid === fieldsetUUID);
-        let fieldset = { ...form.components[idx], ...newFieldset };
-        let components = [...form.components];
-        components[idx] = fieldset;
+    set: ([formUUID, fieldsetUUID]) => ({ get, set }, { afterUUID, fieldset = {} }) => {
+        let form = get(formState([formUUID]));
+        let components = form.components;
 
-        console.log('[fieldsetState] SET:', components);
+        if (fieldsetUUID) { // 既有的 fieldset 以 partial update 更新
+            let idx = components.findIndex(({ uuid }) => uuid === fieldsetUUID);
+            fieldset = { ...components[idx], ...fieldset };
+            components = [...components];
+            components[idx] = fieldset;
 
-        set(formState(formUUID), { form: { components } });
+            console.log('[fieldsetState] SET:', components);
+
+        } else { // 無 fieldsetUUID 值, 代表新增 fieldset
+            fieldset.uuid = uuidv4();
+            fieldset.type = "fieldset";
+            fieldset.cols = DEFAULT_GRID_COLS;
+            fieldset.fields = [];
+
+            if (!afterUUID) { // 未指定則放到第一個位置
+                components = [fieldset, ...components];
+            } else {
+                let afterIdx = components.findIndex(({ uuid }) => uuid === afterUUID);
+
+                if (afterIdx < 0) {
+                    throw `找不到指定 UUID [${afterUUID}] 的 Fieldset`;
+                } else {
+                    components = [...components.slice(0, afterIdx + 1), fieldset, ...components.slice(afterIdx + 1)];
+                }
+            }
+        }
+
+        set(formState([formUUID]), { form: { components } });
     },
 });
 
@@ -138,7 +163,7 @@ export const fieldState = selectorFamily({
     },
     set: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get, set }, newValue) => {
         console.log(`[fieldState] SET:`, formUUID, fieldsetUUID, fieldUUID);
-        
+
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
         let fields = fieldset.fields;
         let idx = fields.findIndex(({ uuid }) => uuid === fieldUUID);
@@ -147,7 +172,7 @@ export const fieldState = selectorFamily({
         fields = [...fields];
         fields[idx] = field;
 
-        set(fieldsetState([formUUID, fieldsetUUID]), { fields });
+        set(fieldsetState([formUUID, fieldsetUUID]), { fieldset: { fields } });
     },
 });
 

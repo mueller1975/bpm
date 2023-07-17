@@ -1,17 +1,16 @@
-import { Grid, MenuItem, TextField } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
 import { formState } from '../context/FormStates';
-import { propertiesState } from '../context/PropertiesState';
+import { propsHierarchyState } from '../context/PropsHierarchyState';
 import { ICON_MENU } from '../lib/formUI.jsx';
 
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
-    // const formProperties = useRecoilValue(formPropertiesState);
-    const formProperties = useRecoilValue(propertiesState('FORM'));
-    const [form, updateFormState] = useRecoilState(formState(formProperties?.uuid));
+    const formHierarchy = useRecoilValue(propsHierarchyState('FORM'));
+    const [form, updateFormState] = useRecoilState(formState(formHierarchy));
 
     const [newForm, setNewForm] = useState(form);
     const { uuid, id, title, icon, editableWhen } = newForm || {};
@@ -20,14 +19,19 @@ export default React.memo(styled(props => {
 
     useEffect(() => {
         setNewForm({ ...form });
-        console.log({ formProperties })
-        onEdit(Boolean(formProperties?.uuid));
+        console.log({ formHierarchy })
 
-        if (formProperties?.inputFocused) {
+        // true/false: 可否編輯 (展開/縮合 accordion)
+        let editable = Boolean(formHierarchy.length > 0);
+        onEdit(editable);
+
+        // if (formHierarchy?.inputFocused) {
+        if (editable) {
+            console.log({ editable })
             // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
-            setTimeout(() => inputRef.current.focus());
+            setTimeout(() => inputRef.current.focus(), 500);
         }
-    }, [formProperties]);
+    }, [formHierarchy]);
 
     const saveProperties = useCallback(() => {
         if (!isEqual(form, newForm)) {
@@ -41,7 +45,8 @@ export default React.memo(styled(props => {
     };
 
     return (
-        <Grid container spacing={2} className={`MT-FormProperties ${className}`}>
+        // 藉由指定 key 值, 達到切換表單時自動 reset 元件
+        <Grid key={uuid} container spacing={2} className={`MT-FormProperties ${className}`}>
             <Grid item xs={12}>
                 <TextField name="uuid" label="UUID" size="small" fullWidth disabled
                     value={uuid ?? ''} />

@@ -15,7 +15,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import FormListItem from './FormListItem.jsx';
 import { allFormsState } from './context/FormStates';
-import { fieldPropertiesState, fieldsetPropertiesState, formPropertiesState } from './context/PropertiesState';
+import { fieldHierarchyState, fieldsetHierarchyState, formHierarchyState } from './context/PropsHierarchyState.js';
 import { useNotification } from 'Hook/useTools.jsx';
 import { expandedFormsState } from './context/BuilderStates';
 
@@ -31,9 +31,9 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
     const [allForms, setAllForms] = useRecoilState(allFormsState);
     const resetAllForms = useResetRecoilState(allFormsState);
     const resetExpandedForms = useResetRecoilState(expandedFormsState);
-    const resetFormProperties = useResetRecoilState(formPropertiesState);
-    const resetFieldsetProperties = useResetRecoilState(fieldsetPropertiesState);
-    const resetFieldProperties = useResetRecoilState(fieldPropertiesState);
+    const resetFormProperties = useResetRecoilState(formHierarchyState);
+    const resetFieldsetProperties = useResetRecoilState(fieldsetHierarchyState);
+    const resetFieldProperties = useResetRecoilState(fieldHierarchyState);
 
     const theme = useTheme();
     const underMD = useMediaQuery(theme.breakpoints.down('md'));

@@ -2,25 +2,29 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useContext, useCallback } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import AddComponentButton from '../AddComponentButton.jsx';
-import { fieldsetState } from '../context/FormStates';
-import { propertiesState } from '../context/PropertiesState';
+import { fieldsetState, formState } from '../context/FormStates';
+import { propsHierarchyState } from '../context/PropsHierarchyState.js';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
-import ConfirmDialog from 'Component/ConfirmDialog.jsx';
+import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
 
 export default React.memo(styled(props => {
-    const { uuid: fieldsetUUID, noBorder = false, title = '無標題', formId, formUUID,
-        fields: fields3, cols, available: parentAvailable = true, className } = props;
+    const { formUUID, uuid: fieldsetUUID, noBorder = false, title = '無標題', formId,
+        cols, available: parentAvailable = true, className } = props;
 
+    const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
+
+    const [form, updateForm] = useRecoilState(formState([formUUID]));
     const [fieldset, updateFieldset] = useRecoilState(fieldsetState([formUUID, fieldsetUUID]));
     const { fields } = fieldset;
+
     console.log({ fieldset })
 
-    const setFieldsetProperties = useSetRecoilState(propertiesState('FIELDSET'));
+    const setFieldsetHierarchy = useSetRecoilState(propsHierarchyState('FIELDSET'));
 
     const gridSpacing = 1.5;
 
@@ -32,19 +36,34 @@ export default React.memo(styled(props => {
         }
     }, []);
 
+    // 新增欄位
     const addField = () => {
         let field = { uuid: uuidv4(), name: "", label: '新增欄位', };
-        // update2([...fields, field]);
-        updateFieldset({ fields: [...fields, field] });
+        updateFieldset({ fieldset: { fields: [...fields, field] } });
     }
 
-    const editProperties = () => {
-        setFieldsetProperties([formUUID, fieldsetUUID]);
-    };
+    // 編輯屬性
+    const editProperties = useCallback(() => {
+        setFieldsetHierarchy([formUUID, fieldsetUUID]);
+    }, []);
 
-    const deleteFieldset = () => {
+    // 刪除欄位群
+    const doDeleteFieldset = useCallback(() => {
+        let components = form.components.filter(({ uuid }) => uuid !== fieldsetUUID);
+        updateForm({ form: { components } });
+        closeConfirmDialog();
+    }, [form]);
 
-    }
+    // 確認刪除欄位群
+    const confirmDeleteFieldset = useCallback(e => {
+        e.stopPropagation();
+
+        setConfirmDialog({
+            title: '刪除欄位群確認', content: '刪除後無法復原，您確定要刪除欄位群？', open: true, severity: 'fatal',
+            onConfirm: doDeleteFieldset,
+            onCancel: () => true
+        });
+    }, [doDeleteFieldset]);
 
     let gridContainer = useMemo(() => (
         // NOT available 時, "隱藏" Grid 而非 return null, 因欄位的狀態為 uncontrolled
@@ -63,7 +82,7 @@ export default React.memo(styled(props => {
     ), [fields]);
 
     const actions = [
-        { action: () => deleteFieldset, icon: <DeleteIcon color="error" /> },
+        { action: confirmDeleteFieldset, icon: <DeleteIcon color="error" /> },
         { action: editProperties, icon: <EditIcon color="warning" /> },
     ];
 

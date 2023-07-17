@@ -5,12 +5,12 @@ import { styled } from '@mui/material/styles';
 import React, { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { jiggle } from "../styled/Animations.jsx";
-import { formPropertiesState } from "./context/PropertiesState.js";
+import { formHierarchyState } from "./context/PropertiesState.js";
 
 export default React.memo(styled(props => {
     const { form, open, anchorEl, className } = props;
 
-    const setFormProperties = useSetRecoilState(formPropertiesState);
+    const setFormProperties = useSetRecoilState(formHierarchyState);
 
     // 編輯表單屬性
     const editForm = useCallback(e => {

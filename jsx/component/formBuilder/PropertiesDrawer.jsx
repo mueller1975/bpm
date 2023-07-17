@@ -42,7 +42,8 @@ export default React.memo(styled(props => {
         <SwipeableDrawer className={`MT-PropertiesDrawer ${className}`}
             variant={docked ? 'permanent' : 'temporary'}
             anchor="right" open={open} onOpen={openDrawer} onClose={claseDrawer}
-            PaperProps={{ className: 'drawer-paper' }} SlideProps={{ mountOnEnter: true }}
+            PaperProps={{ className: `MT-PropertiesDrawer drawer-paper ${className}` }}
+            SlideProps={{ mountOnEnter: true }}
             SwipeAreaProps={{
                 onClick: touchEdgeHandler,
                 className: `MT-PropertiesDrawer ${className} menuAnchor`
@@ -111,24 +112,6 @@ export default React.memo(styled(props => {
             }
         }
 
-        .drawer-paper {
-            width: 100%;
-            max-width: 360px;
-            box-sizing: border-box;
-            background: linear-gradient(-45deg,rgb(2 28 2 / 90%),rgb(35 49 34 / 90%),rgb(2 28 2 / 90%));
-        }
-
-        .header {
-            position: sticky;
-            top: 0;
-            background: #09160b;
-            z-index: 2;
-        }
-
-        .toolbar {
-            padding-left: 8px;
-        }
-
         &.menuAnchor {
             background: rgb(3 39 6 / 62%);
 
@@ -139,25 +122,44 @@ export default React.memo(styled(props => {
             }
         }
 
-        .content {
-            .summary {
-                color: rgba(255, 255, 255, 0.7);
-                background-color: rgb(2 28 2);
-                cursor: default !important;
+        &.drawer-paper {
+            width: 100%;
+            max-width: 360px;
+            box-sizing: border-box;
+            background: linear-gradient(-45deg,rgb(2 28 2 / 90%),rgb(35 49 34 / 90%),rgb(2 28 2 / 90%));
 
-                >.MuiAccordionSummary-content {
-                    gap: 4px;
+            >.header {
+                position: sticky;
+                top: 0;
+                background: #09160b;
+                z-index: 2;
+    
+                >.toolbar {
+                    padding-left: 8px;
                 }
             }
-
-            .summary[aria-expanded=true] {
-                color: #ffa726;
-            }
-
-            .details {
-                background-color: #102411;
-                padding: 16px;
+            
+            >.content {
+                .summary {
+                    color: rgba(255, 255, 255, 0.7);
+                    background-color: rgb(2 28 2);
+                    cursor: default !important;
+    
+                    >.MuiAccordionSummary-content {
+                        gap: 4px;
+                    }
+                }
+    
+                .summary[aria-expanded=true] {
+                    color: #ffa726;
+                }
+    
+                .details {
+                    background-color: #102411;
+                    padding: 16px;
+                }
             }
         }
+
     }
 `);

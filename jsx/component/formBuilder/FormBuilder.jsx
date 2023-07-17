@@ -10,13 +10,13 @@ import FormList from './FormList.jsx';
 import PropertiesDrawer from './PropertiesDrawer.jsx';
 import { expandedFormsState, targetFormUUIDState } from './context/BuilderStates';
 import { allFormUUIDsState, allFormsState, formState } from './context/FormStates';
-import { propertiesState } from "./context/PropertiesState";
+import { propsHierarchyState } from "./context/PropsHierarchyState.js";
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
-    const allForms = useRecoilValue(allFormsState);
-    const allFormUUIDs = useRecoilValue(allFormUUIDsState);
-    const setFormProperties = useSetRecoilState(propertiesState('FORM'));
+    const allForms = useRecoilValue(allFormsState); // 所有表單
+    const allFormUUIDs = useRecoilValue(allFormUUIDsState); // 所有表單 UUID
+    const setFormHierarchy = useSetRecoilState(propsHierarchyState('FORM'));
 
     const setTargetFormUUID = useSetRecoilState(targetFormUUIDState);
     const [expandedForms, setExpandedForms] = useRecoilState(expandedFormsState);
@@ -24,24 +24,22 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerDocked, setDrawerDocked] = useState(true);
 
-    const createFormState = useSetRecoilState(formState()); // formState() 不帶參數 uuid 值則為新增 form
+    const createForm = useSetRecoilState(formState([])); // formState() 帶空 array 參數值則為新增 form
 
     const containerRef = useRef();
     const accordionRefs = useRef([]);
 
-    console.log({ allForms })
-
     // 新增表單
     const addForm = useCallback((e, afterFormUUID) => {
-        console.log('add form......')
         e.stopPropagation();
-        createFormState({ afterFormUUID, form: {} });
-    });
+        createForm({ afterFormUUID, form: {} });
+    }, []);
 
-    // Form List: click form 時, 自動 scroll 至該 form 位置
+    // 在 FormList 點擊表單時, 自動 scroll 至該表單位置
     const formItemClickedHandler = useCallback(formUUID => {
         console.log({ formUUID })
-        setFormProperties({ uuid: formUUID, inputFocused: false }); // inputFocused: 是否立即 focus 在屬性欄位
+        // setFormHierarchy({ uuid: formUUID, inputFocused: false }); // inputFocused: 是否立即 focus 在屬性欄位
+        setFormHierarchy([formUUID]);
 
         let index = allFormUUIDs.indexOf(formUUID);
 

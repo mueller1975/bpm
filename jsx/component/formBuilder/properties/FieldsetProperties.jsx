@@ -4,12 +4,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
 import { fieldsetState } from '../context/FormStates';
-import { propertiesState } from '../context/PropertiesState';
+import { propsHierarchyState } from '../context/PropsHierarchyState';
 
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
-    const fieldsetProperties = useRecoilValue(propertiesState('FIELDSET'));
-    const [fieldset, updateFieldsetState] = useRecoilState(fieldsetState(fieldsetProperties));
+    const fieldsetHierarchy = useRecoilValue(propsHierarchyState('FIELDSET'));
+    const [fieldset, updateFieldset] = useRecoilState(fieldsetState(fieldsetHierarchy));
 
     const [newFieldset, setNewFieldset] = useState(fieldset);
     const { uuid, title, availableWhen, editableWhen } = newFieldset || {};
@@ -17,18 +17,23 @@ export default React.memo(styled(props => {
     const inputRef = useRef();
 
     useEffect(() => {
-        console.log('.............', { fieldsetProperties }, fieldset)
+        console.log('.............', { fieldsetProperties: fieldsetHierarchy }, fieldset)
         setNewFieldset({ ...fieldset });
-        console.log({ fieldsetProperties })
-        onEdit(fieldsetProperties.length > 0);
+        console.log({ fieldsetProperties: fieldsetHierarchy })
 
-        // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
-        setTimeout(() => inputRef.current.focus());
-    }, [fieldsetProperties]);
+        // true/false: 可否編輯 (展開/縮合 accordion)
+        let editable = fieldsetHierarchy.length > 0;
+        onEdit(editable);
+
+        if (editable) {
+            // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
+            setTimeout(() => inputRef.current.focus());
+        }
+    }, [fieldsetHierarchy]);
 
     const saveProperties = useCallback(() => {
         if (!isEqual(fieldset, newFieldset)) {
-            updateFieldsetState({ ...newFieldset });
+            updateFieldset({ fieldset: newFieldset });
         }
     }, [fieldset, newFieldset]);
 
@@ -38,7 +43,8 @@ export default React.memo(styled(props => {
     };
 
     return (
-        <Grid container spacing={2} className={`MT-FieldsetProperties ${className}`}>
+        // 藉由指定 key 值, 達到切換欄位群時自動 reset 元件
+        <Grid key={uuid} container spacing={2} className={`MT-FieldsetProperties ${className}`}>
             <Grid item xs={12}>
                 <TextField name="uuid" label="UUID" size="small" fullWidth disabled
                     value={uuid ?? ''} />

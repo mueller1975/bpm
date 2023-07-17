@@ -192,13 +192,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             <ConfirmDialog open={alertDlgOpen} title="資料過時警告" titleIcon={ErrorOutlineIcon} onConfirm={closeAlertDlg} confirmText="我知道了"
                 severity="warn" content={['本 MPB 單資料內容已「被其他使用者異動」！', '請直接離開並「刷新列表資料」後再重新開啟本單。']} />
 
-            {/* dialog 右下角 form component 全展開/縮合鈕 */}
-            <ActionBar>
-                <SpringTransition2 ref={springRef} effect="slideDown" items={buttons} keys={({ key }) => key} bounce={2}>
-                    {button => button}
-                </SpringTransition2>
-            </ActionBar>
-
             {/* form list 區塊 */}
             <div className="menu">
                 {/* form list */}
@@ -212,13 +205,23 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             </div>
 
             {/* all forms 區塊*/}
-            <div className="content" ref={containerRef}>
-                {
-                    !mpbData ? <Loading message="MPB 資料載入中..." /> :
-                        <FormContent containerRef={containerRef} formData={mpbData}
-                            checkedForms={checkedForms} expandedForms={expandedForms}
-                            targetFormId={targetFormId} onFormToggle={formToggleHandler} />
-                }
+            <div className="container" ref={containerRef}>
+                <div className="content">
+                    {
+                        !mpbData ? <Loading message="MPB 資料載入中..." /> :
+                            <FormContent containerRef={containerRef} formData={mpbData}
+                                checkedForms={checkedForms} expandedForms={expandedForms}
+                                targetFormId={targetFormId} onFormToggle={formToggleHandler} />
+                    }
+                </div>
+
+                {/* dialog 右下角 form component 全展開/縮合鈕 */}
+                <ActionBar>
+                    <SpringTransition2 ref={springRef} effect="slideDown" items={buttons} keys={({ key }) => key} bounce={2}>
+                        {button => button}
+                    </SpringTransition2>
+                </ActionBar>
+
             </div>
         </Paper>
     );
@@ -252,13 +255,30 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             overflow: hidden auto;
         }
 
-        .content {
+        // .content {
+        //     position: relative;
+        //     width: 100%;
+        //     flex-grow: 1;
+        //     overflow: hidden auto;
+        //     padding-right: 12px;
+        //     padding-bottom: 30px;
+        // }
+
+        >.container {
+            flex-grow: 1;
             position: relative;
             width: 100%;
-            flex-grow: 1;
-            overflow: hidden auto;
-            padding-right: 12px;
-            padding-bottom: 30px;
+            height: 100%;
+            overflow: hidden;
+
+            >.content {
+                width: 100%;
+                height: 100%;                
+                overflow: hidden auto;
+                padding-right: 12px;
+                padding-bottom: 30px;
+                box-sizing: border-box;
+            }
         }
 }
 `);

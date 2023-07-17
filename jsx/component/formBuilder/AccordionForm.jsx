@@ -7,18 +7,24 @@ import { Accordion, AccordionDetails, AccordionSummary, Fab, Typography } from '
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { useSlideSpring } from 'Hook/useAnimations.jsx';
-import React, { useCallback, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import React, { useCallback, useEffect, useContext } from 'react';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 import { blink, jiggle } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
-import { propertiesState } from "./context/PropertiesState.js";
+import { propsHierarchyState } from "./context/PropsHierarchyState.js";
 import { getIconComponent } from './lib/formUI.jsx';
+import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
+import { allFormsState } from "./context/FormStates";
 
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, selected, onChange, onCreate, expanded, data, className, containerRef } = props;
-    const setFormProperties = useSetRecoilState(propertiesState('FORM'));
+
+    const setFormHierarchy = useSetRecoilState(propsHierarchyState('FORM'));
+    const [allForms, setAllForms] = useRecoilState(allFormsState);
+
+    const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
 
     const { uuid, id, title, icon, components, } = form;
     const SummaryIcon = getIconComponent(icon);
@@ -27,7 +33,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     useEffect(() => {
         if (!id) {
-            setFormProperties({ uuid });
+            setFormHierarchy([uuid]);
             onCreate(uuid);
         }
     }, []);
@@ -40,18 +46,30 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         rootMargin: '-4px 0px 0px 0px',
     });
 
+    // 編輯表單屬性
     const editForm = useCallback(e => {
         e.stopPropagation();
-        console.log({ form })
-        setFormProperties({ uuid, inputFocused: true });
-    }, [form]);
+        // setFormHierarchy({ uuid, inputFocused: true });
+        setFormHierarchy([uuid]);
+    }, []);
 
-    const deleteForm = useCallback(e => {
+    // 刪除表單
+    const doDeleteForm = useCallback(() => {
+        const newForms = allForms.filter(form => form.uuid !== uuid);
+        setAllForms(newForms);
+        closeConfirmDialog();
+    }, [allForms]);
+
+    // 確認刪除表單
+    const confirmDeleteForm = useCallback(e => {
         e.stopPropagation();
 
-    }, [form]);
-
-    // console.log(title, '=>', entry?.isIntersecting, entry?.intersectionRatio)
+        setConfirmDialog({
+            title: '刪除表單確認', content: '刪除後無法復原，您確定要刪除表單？', open: true, severity: 'fatal',
+            onConfirm: doDeleteForm,
+            onCancel: () => true
+        });
+    }, [doDeleteForm]);
 
     return (
         <AnimatedAccordion key={id} ref={ref} style={animProps} onChange={formToggleHandler} expanded={expanded}
@@ -73,7 +91,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
                 {/* Form 動作列按鈕 */}
                 <div className="formActions">
-                    <Fab size="small" color="error" onClick={deleteForm}><DeleteIcon /></Fab>
+                    <Fab size="small" color="error" onClick={confirmDeleteForm}><DeleteIcon /></Fab>
                     <Fab size="small" color="warning" onClick={editForm}><EditIcon /></Fab>
                 </div>
             </AccordionSummary>

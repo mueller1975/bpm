@@ -7,38 +7,11 @@ import { jiggle } from '../../styled/Animations.jsx';
 export default React.memo(styled(props => {
     const { title, noBorder = false, icon, hidden = false, helper, error, className,
         onScrollLeft, onScrollRight, actions, ...others } = props;
-    const [leftScrollerHidden, setLeftScrollerHidden] = useState(true);
-    const [rightScrollerHidden, setRightScrollerHidden] = useState(true);
-
-    const scrollHandler = useCallback(e => {
-        // console.log(e)
-
-        let clientWidth = e?.clientWidth;
-        let scrollWidth = e?.scrollWidth;
-        let scrollLeft = e?.scrollLeft;
-
-        if (scrollLeft == 0) {
-            // setLeftScrollerHidden(true);
-        } else {
-            // setLeftScrollerHidden(false);
-            // debugger
-        }
-
-        if ((clientWidth + scrollLeft) == scrollWidth) {
-            // setRightScrollerHidden(true);
-        } else if ((clientWidth + scrollLeft) < scrollWidth) {
-            // setRightScrollerHidden(false);
-        }
-
-        // console.log({ clientWidth, scrollLeft, scrollWidth })
-    }, []);
 
     return (
         <FormControl className={`MT-Fieldset ${className} ${hidden ? 'hidden' : ''}`} error={Boolean(error)}>
             {/* 不可使用 tag name 來調 fieldset & legend 的 style, 否則會影響到 children 的 fieldset & legend style  */}
             <fieldset {...others} className={`fieldset ${error ? 'error' : ''}`}>
-                <div className={`scroller left ${leftScrollerHidden ? 'hidden' : ''}`} onClick={onScrollLeft} />
-                <div className={`scroller right ${rightScrollerHidden ? 'hidden' : ''}`} onClick={onScrollRight} />
 
                 <legend className="legend">
                     <Typography>{title}</Typography>
@@ -53,9 +26,9 @@ export default React.memo(styled(props => {
                     </div>
                 }
 
-                {/* <Scrollable className="scrollable" onScroll={scrollHandler}> */}
+                <div className="content">
                     {props.children}
-                {/* </Scrollable> */}
+                </div>
             </fieldset>
 
             <FormHelperText>{!error ? helper : error}</FormHelperText>
@@ -139,31 +112,9 @@ export default React.memo(styled(props => {
                 }
             }
 
-            .scroller {
-                position: absolute;
-                height: calc(100% - 15px);
-                width: 20px;
-                top: 14px;
-                z-index: 3;
-                transition: all .3s;
-                
-                &:hover {
-                    background: rgb(160 88 40 / 24%);
-                }
-
-                &:active {
-                    background: rgb(160 88 40 / 50%);
-                }
-                
-                &.left {
-                    left: 3px;
-                    border-radius: 4px 0 0 4px;
-                }
-
-                &.right {
-                    right: 3px;
-                    border-radius: 0 4px 4px 0;
-                }
+            >.content {
+                overflow: auto hidden;
+                padding-top: 6px;
             }
         }
     }

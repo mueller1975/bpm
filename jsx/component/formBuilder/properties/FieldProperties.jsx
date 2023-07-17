@@ -12,7 +12,7 @@ import Fieldset from '../component/Fieldset.jsx';
 import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
 import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
 import { fieldState } from '../context/FormStates';
-import { propertiesState } from '../context/PropertiesState';
+import { propsHierarchyState } from '../context/PropsHierarchyState.js';
 
 // Popover 位置
 const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
@@ -41,8 +41,8 @@ const FIELD_TYPE_MENUS = FIELD_TYPES.map(({ code, name }) => <MenuItem key={code
 
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
-    const fieldProperties = useRecoilValue(propertiesState('FIELD'));
-    const [field, updateFieldState] = useRecoilState(fieldState(fieldProperties));
+    const fieldHierarchy = useRecoilValue(propsHierarchyState('FIELD'));
+    const [field, updateFieldState] = useRecoilState(fieldState(fieldHierarchy));
 
     const [newField, setNewField] = useState(field);
     const { uuid, name, label, defaultValue, type, helper, disabled = false,
@@ -53,12 +53,17 @@ export default React.memo(styled(props => {
     const inputRef = useRef();
 
     useEffect(() => {
-        setNewField({ ...field }); // fieldProperties 改變時, 代表切換編輯的欄位
-        onEdit(fieldProperties.length > 0);
+        setNewField({ ...field }); // fieldHierarchy 改變時, 代表切換編輯的欄位
 
-        // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
-        setTimeout(() => inputRef.current.focus());
-    }, [fieldProperties]);
+        // true/false: 可否編輯 (展開/縮合 accordion)
+        let editable = fieldHierarchy.length > 0;
+        onEdit(editable);
+
+        if (editable) {
+            // 須在下一 render 才 focus, 否則可能會被其他 UI 搶走 focus
+            setTimeout(() => inputRef.current.focus());
+        }
+    }, [fieldHierarchy]);
 
     // 更新 state
     const saveProperties = useCallback(() => {
@@ -133,7 +138,8 @@ export default React.memo(styled(props => {
     };
 
     return (
-        <Grid container spacing={2} className={`MT-FieldProperties ${className}`}>
+        // 藉由指定 key 值, 達到切換欄位時自動 reset 元件
+        <Grid key={uuid} container spacing={2} className={`MT-FieldProperties ${className}`}>
 
             {/* uuid */}
             <Grid item xs={12}>
@@ -233,9 +239,8 @@ export default React.memo(styled(props => {
             }
 
             {/* 預設值 */}
-            <Grid item xs={12}>
-                {/* 藉由指定 key 值, 達到切換欄位時自動 reset 元件狀態 */}
-                <MultiTypeTextField key={uuid} name='defaultValue' label='預設值' size='small' fullWidth
+            <Grid item xs={12}>                
+                <MultiTypeTextField name='defaultValue' label='預設值' size='small' fullWidth
                     value={defaultValue ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>

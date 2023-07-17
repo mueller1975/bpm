@@ -2,38 +2,17 @@ import { Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 import AddComponentButton from './AddComponentButton.jsx';
-import { formState } from './context/FormStates';
+import { fieldsetState } from './context/FormStates';
 import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx';
 
 export default React.memo(styled(React.forwardRef(({ uuid, id, components, className }, ref) => {
-    const updateForm = useSetRecoilState(formState(uuid));
+    const createFieldset = useSetRecoilState(fieldsetState([uuid,])); // [1] 元素空值, 代表新增 fieldset
 
-    const addFormComponent = useCallback(afterUUID => {
-        let fieldset = {
-            uuid: uuidv4(),
-            type: "fieldset",
-            cols: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3
-            },
-            fields: []
-        };
-
-        let newComponents;
-
-        if (afterUUID) {
-            let idx = components.findIndex(f => f.uuid === afterUUID);
-            newComponents = [...components.slice(0, idx + 1), fieldset, ...components.slice(idx + 1)];
-        } else {
-            newComponents = [fieldset, ...components];
-        }
-
-        updateForm({ form: { uuid, components: newComponents } });
-    }, [components]);
+    const addFieldset = useCallback(afterUUID => {
+        console.log({ afterUUID })
+        createFieldset({ afterUUID });
+    }, []);
 
     const formComponents = useMemo(() => {
         if (!components) {
@@ -48,7 +27,7 @@ export default React.memo(styled(React.forwardRef(({ uuid, id, components, class
                     return (
                         <React.Fragment key={component.uuid}>
                             <GridFieldsetContainer className="formComponent" formId={id} formUUID={uuid} {...component} />
-                            <AddComponentButton className="formComponent" onClick={() => addFormComponent(component.uuid)} />
+                            <AddComponentButton className="formComponent" onClick={() => addFieldset(component.uuid)} />
                         </React.Fragment>
                     );
                 case 'divider':
@@ -65,7 +44,7 @@ export default React.memo(styled(React.forwardRef(({ uuid, id, components, class
 
     return (
         <form id={id} ref={ref} autoComplete="off" className={className}>
-            <AddComponentButton className="formComponent" onClick={addFormComponent} />
+            <AddComponentButton className="formComponent" onClick={() => addFieldset()} />
             {formComponents}
         </form>
     );
