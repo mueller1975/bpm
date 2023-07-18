@@ -29,22 +29,22 @@ export const propsHierarchyState = selectorFamily({
                 throw `不援的 type [${type}]`;
         }
     },
-    set: type => ({ get, set, reset }, newValue) => {
+    set: type => ({ get, set, reset }, hierarchy) => {
         switch (type) {
             case 'FORM':
-                set(formHierarchyState, newValue);
+                set(formHierarchyState, hierarchy);
                 reset(fieldsetHierarchyState);
                 reset(fieldHierarchyState);
                 break;
             case 'FIELDSET':
                 reset(formHierarchyState);
-                set(fieldsetHierarchyState, newValue);
+                set(fieldsetHierarchyState, hierarchy);
                 reset(fieldHierarchyState);
                 break;
             case 'FIELD':
                 reset(formHierarchyState);
                 reset(fieldsetHierarchyState);
-                set(fieldHierarchyState, newValue);
+                set(fieldHierarchyState, hierarchy);
                 break;
             case 'RESET_ALL':
                 reset(formHierarchyState);

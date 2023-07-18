@@ -1,25 +1,26 @@
 import { Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { isEqual } from 'underscore';
 import { fieldsetState } from '../context/FormStates';
 import { propsHierarchyState } from '../context/PropsHierarchyState';
+import { newlyDeletedUUIDState } from '../context/BuilderStates';
 
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
     const fieldsetHierarchy = useRecoilValue(propsHierarchyState('FIELDSET'));
+    const resetFieldsetHierarchy = useResetRecoilState(propsHierarchyState('FIELDSET'));
     const [fieldset, updateFieldset] = useRecoilState(fieldsetState(fieldsetHierarchy));
+    const newlyDeletedUUID = useRecoilValue(newlyDeletedUUIDState);
 
-    const [newFieldset, setNewFieldset] = useState(fieldset);
-    const { uuid, title, availableWhen, editableWhen } = newFieldset || {};
+    const [newFieldset, setNewFieldset] = useState(fieldset ?? {});
+    const { uuid, title, availableWhen, editableWhen } = newFieldset;
 
     const inputRef = useRef();
 
     useEffect(() => {
-        console.log('.............', { fieldsetProperties: fieldsetHierarchy }, fieldset)
         setNewFieldset({ ...fieldset });
-        console.log({ fieldsetProperties: fieldsetHierarchy })
 
         // true/false: 可否編輯 (展開/縮合 accordion)
         let editable = fieldsetHierarchy.length > 0;
@@ -30,6 +31,13 @@ export default React.memo(styled(props => {
             setTimeout(() => inputRef.current.focus());
         }
     }, [fieldsetHierarchy]);
+
+    useEffect(() => {
+        // 如正編輯屬性的 fieldset 被刪除, 則 reset
+        if (newlyDeletedUUID && fieldsetHierarchy[1] === newlyDeletedUUID) {
+            resetFieldsetHierarchy();
+        }
+    }, [newlyDeletedUUID, fieldsetHierarchy]);
 
     const saveProperties = useCallback(() => {
         if (!isEqual(fieldset, newFieldset)) {

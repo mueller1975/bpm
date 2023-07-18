@@ -34,9 +34,9 @@ export default React.memo(styled(props => {
         docked && onOpen(false); // 不長駐時同時關閉 drawer
     }, [docked]);
 
-    const expandForm = expanded => setFormExpanded(expanded); // 表單屬性 Accordion 開合
-    const expandFieldset = expanded => setFieldsetExpanded(expanded); // 欄位群屬性 Accordion 開合
-    const expandField = expanded => setFieldExpanded(expanded); // 欄位屬性 Accordion 開合
+    const expandForm = useCallback(expanded => setFormExpanded(expanded), []); // 表單屬性 Accordion 開合
+    const expandFieldset = useCallback(expanded => setFieldsetExpanded(expanded), []); // 欄位群屬性 Accordion 開合
+    const expandField = useCallback(expanded => setFieldExpanded(expanded), []); // 欄位屬性 Accordion 開合
 
     return (
         <SwipeableDrawer className={`MT-PropertiesDrawer ${className}`}

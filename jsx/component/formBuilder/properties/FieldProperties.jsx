@@ -1,8 +1,5 @@
 import {
-    Checkbox,
-    Divider,
-    FormControlLabel,
-    Grid, MenuItem, TextField
+    Checkbox, FormControlLabel, Grid, MenuItem, TextField
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -44,7 +41,7 @@ export default React.memo(styled(props => {
     const fieldHierarchy = useRecoilValue(propsHierarchyState('FIELD'));
     const [field, updateField] = useRecoilState(fieldState(fieldHierarchy));
 
-    const [newField, setNewField] = useState(field);
+    const [newField, setNewField] = useState(field ?? {});
     const { uuid, name, label, defaultValue, type, helper, disabled = false,
         configCode, source, isContextStateProp, isMappedStateProp, mappedStateProps,
         filterBy, computedBy, menuDependsOn, freeSolo = false, disabledWhenMenuIsEmpty = false,
@@ -53,6 +50,8 @@ export default React.memo(styled(props => {
     const inputRef = useRef();
 
     useEffect(() => {
+        console.log('Field Hierarchy CHANGED:', fieldHierarchy);
+
         setNewField({ ...field }); // fieldHierarchy 改變時, 代表切換編輯的欄位
 
         // true/false: 可否編輯 (展開/縮合 accordion)
@@ -104,7 +103,7 @@ export default React.memo(styled(props => {
     // 映射欄位值變動
     const mappingChangeHandler = e => {
         let newFieldState = valueChangeHandler(e);
-        updateField(newFieldState); // 更新 state
+        updateField({ field: newFieldState }); // 更新 state
     }
 
     // 勾選欄位值變動
@@ -134,7 +133,7 @@ export default React.memo(styled(props => {
 
         let newFieldState = { ...newField, [name]: checked, ...dependentFields };
         setNewField(newFieldState);
-        updateField(newFieldState); // 更新 state
+        updateField({ field: newFieldState }); // 更新 state
     };
 
     return (
@@ -202,7 +201,7 @@ export default React.memo(styled(props => {
                                 {/* 選單相依於欄位變數名稱 */}
                                 <Grid item xs={12}>
                                     <MultiTypeTextField name='menuDependsOn' label='選單相依於欄位變數名稱'
-                                        size='small' fullWidth
+                                        size='small' fullWidth value={menuDependsOn ?? ''}
                                         onChange={valueChangeHandler} onBlur={saveProperties} />
                                 </Grid>
                             </Grid>

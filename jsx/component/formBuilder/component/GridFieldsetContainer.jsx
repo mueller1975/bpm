@@ -2,41 +2,35 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useMemo, useEffect, useContext, useCallback } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
+import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
+import React, { useCallback, useMemo } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import AddComponentButton from '../AddComponentButton.jsx';
 import { fieldState, fieldsetState, formState } from '../context/FormStates';
 import { propsHierarchyState } from '../context/PropsHierarchyState.js';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
-import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
+import { newlyDeletedUUIDState } from "../context/BuilderStates";
+
+const FIELDSET_GRID_SPACING = 1.5;
 
 export default React.memo(styled(props => {
     const { formUUID, uuid: fieldsetUUID, noBorder = false, title = '無標題', formId,
-        cols, available: parentAvailable = true, className } = props;
+        cols, className } = props;
 
     const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
 
     const [form, updateForm] = useRecoilState(formState([formUUID]));
-    const [fieldset, updateFieldset] = useRecoilState(fieldsetState([formUUID, fieldsetUUID]));
+    const fieldset = useRecoilValue(fieldsetState([formUUID, fieldsetUUID]));
     const createField = useSetRecoilState(fieldState([formUUID, fieldsetUUID,])); // [2] 為空值代表新增 field
     const setFieldsetHierarchy = useSetRecoilState(propsHierarchyState('FIELDSET'));
-
-    const { fields } = fieldset;
-    const gridSpacing = 1.5;
-
-    useEffect(() => {
-        if (formUUID && fieldsetUUID) {
-            editProperties();
-        }
-    }, []);
+    const setNewlyDeletedUUID = useSetRecoilState(newlyDeletedUUIDState); // 設定剛刪除的元件 UUID
 
     // 新增欄位
-    const addField = e => {
+    const addField = useCallback(e => {
         e.stopPropagation();
         createField({});
-    }
+    }, []);
 
     // 編輯屬性
     const editProperties = useCallback(() => {
@@ -47,6 +41,7 @@ export default React.memo(styled(props => {
     const doDeleteFieldset = useCallback(() => {
         let components = form.components.filter(({ uuid }) => uuid !== fieldsetUUID);
         updateForm({ form: { components } });
+        setNewlyDeletedUUID(fieldsetUUID);
         closeConfirmDialog();
     }, [form]);
 
@@ -57,32 +52,29 @@ export default React.memo(styled(props => {
         setConfirmDialog({
             title: '刪除欄位群確認', content: '刪除後無法復原，您確定要刪除欄位群？', open: true, severity: 'fatal',
             onConfirm: doDeleteFieldset,
-            onCancel: () => true
+            onCancel: () => true, // for Cancel button to show up
         });
     }, [doDeleteFieldset]);
 
     let gridContainer = useMemo(() => (
         // NOT available 時, "隱藏" Grid 而非 return null, 因欄位的狀態為 uncontrolled
-        <Grid container spacing={gridSpacing} className={`gridContainer`}>
+        <Grid container spacing={FIELDSET_GRID_SPACING} className={`gridContainer`}>
             <Grid item {...cols}>
                 <AddComponentButton onClick={addField} />
             </Grid>
 
             {
-                fields.map((field, idx) => {
-                    let { uuid, name } = field;
-                    return generateField({ cols, field, formId, hierarchy: [formUUID, fieldsetUUID, uuid] });
-                })
+                fieldset.fields.map(field =>
+                    generateField({ cols, field, formId, hierarchy: [formUUID, fieldsetUUID, field.uuid] }))
             }
         </Grid>
-    ), [fields]);
+    ), [fieldset.fields]);
 
-    const actions = [
+    const actions = useMemo(() => [
         { action: confirmDeleteFieldset, icon: <DeleteIcon color="error" /> },
         { action: editProperties, icon: <EditIcon color="warning" /> },
-    ];
+    ], [confirmDeleteFieldset]);
 
-    // return !title ? gridContainer :
     return (
         <Fieldset title={title} noBorder={noBorder} className={`MT-GridFieldsetContainer ${className}`} actions={actions}>
             {gridContainer}

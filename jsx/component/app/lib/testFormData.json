@@ -1,1 +1,95 @@
-{}
+{
+    "main": {
+        "mpbNo": "2023060001",
+        "mpbVersion": "1",
+        "forkedMpbNo": null,
+        "forkedMpbVersion": null,
+        "mpbStatus": "PENDING",
+        "approvalStatus": "PENDING",
+        "creationTime": "2023-05-31 22:46:59",
+        "applyTime": "2023-06-01 13:46:50",
+        "closeTime": null,
+        "creatorName": "蔡佳燐",
+        "creator": "ur04192",
+        "initialMpbNo": null,
+        "postProductNo": null,
+        "mpbSource": null
+    },
+    "designCard": {
+        "productCode": null,
+        "productId": null,
+        "conductorCode": null,
+        "conductorId": null,
+        "wireQuantity": null,
+        "voltageCode": null,
+        "voltageId": null,
+        "specCode": null,
+        "specId": null
+    },
+    "productOrder": {
+        "mpbName": "New born",
+        "salesNoticeNo": null,
+        "salesNoticeLineNo": null,
+        "salesmanName": null,
+        "salesman": null,
+        "salesmanDeptName": null,
+        "clientNo": null,
+        "clientName": null
+    },
+    "outerConductor": {
+        "print": null,
+        "printSpacing": null,
+        "printHeight": null,
+        "printWidth": null,
+        "semiConductingMaterial": null
+    },
+    "coreWire": {
+        "wireColor": null
+    },
+    "remainingLength": {
+        "startLength": null,
+        "endLength": null,
+        "assignedLength": null
+    },
+    "endProductPrint": {
+        "printMethod": null,
+        "centralPrint": "N",
+        "printFiles": null,
+        "printSpacing": null,
+        "printContinuous": "N",
+        "printContinuousUpper": null,
+        "stripColorCondition": null,
+        "stripColor": null,
+        "stripWidth": null,
+        "printCertification": "N",
+        "printLabel": null
+    },
+    "packagingRequirements": {
+        "axisNo": "N",
+        "axisInterval": null,
+        "axisLenthUpper": null,
+        "ironBushing": "N",
+        "protectPlate": "N",
+        "packAxisColor": null,
+        "packAxisPlate": "N",
+        "packAxisTriangle": "N",
+        "wAxisPack": "N",
+        "wAxisContract": "N",
+        "wAxisSerial": "N",
+        "wAxisPackFile": null,
+        "plasticPackFile": null,
+        "pullRing": "N",
+        "heatShrinkSleeve": "N",
+        "others": null
+    },
+    "report": {
+        "shipmentReport": "N",
+        "shipmentReportAttachments": null,
+        "qaRecord": "N",
+        "qaRecordAttachments": null
+    },
+    "specialTag": {
+        "needSpecialTag": "N",
+        "attachments": null
+    }
+}

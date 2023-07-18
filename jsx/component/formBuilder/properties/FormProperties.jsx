@@ -1,19 +1,22 @@
 import { Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { isEqual } from 'underscore';
 import { formState } from '../context/FormStates';
 import { propsHierarchyState } from '../context/PropsHierarchyState';
 import { ICON_MENU } from '../lib/formUI.jsx';
+import { newlyDeletedUUIDState } from '../context/BuilderStates';
 
 export default React.memo(styled(props => {
     const { onEdit, className } = props;
     const formHierarchy = useRecoilValue(propsHierarchyState('FORM'));
+    const resetFormHierarchy = useResetRecoilState(propsHierarchyState('FORM'));
     const [form, updateFormState] = useRecoilState(formState(formHierarchy));
+    const newlyDeletedUUID = useRecoilValue(newlyDeletedUUIDState);
 
-    const [newForm, setNewForm] = useState(form);
-    const { uuid, id, title, icon, editableWhen } = newForm || {};
+    const [newForm, setNewForm] = useState(form ?? {});
+    const { uuid, id, title, icon, editableWhen } = newForm;
 
     const inputRef = useRef();
 
@@ -33,7 +36,16 @@ export default React.memo(styled(props => {
         }
     }, [formHierarchy]);
 
+    useEffect(() => {
+        // 如正編輯屬性的 form 被刪除, 則 reset
+        if (newlyDeletedUUID && formHierarchy[0] === newlyDeletedUUID) {
+            resetFormHierarchy();
+        }
+    }, [newlyDeletedUUID, formHierarchy]);
+
     const saveProperties = useCallback(() => {
+        console.log("Saving form properties...")
+
         if (!isEqual(form, newForm)) {
             updateFormState({ form: { ...newForm } });
         }

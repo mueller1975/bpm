@@ -15,6 +15,7 @@ import { propsHierarchyState } from "./context/PropsHierarchyState.js";
 import { getIconComponent } from './lib/formUI.jsx';
 import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
 import { allFormsState } from "./context/FormStates";
+import { newlyDeletedUUIDState } from "./context/BuilderStates";
 
 const AnimatedAccordion = animated(Accordion);
 
@@ -23,6 +24,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     const setFormHierarchy = useSetRecoilState(propsHierarchyState('FORM'));
     const [allForms, setAllForms] = useRecoilState(allFormsState);
+    const setNewlyDeletedUUID = useSetRecoilState(newlyDeletedUUIDState); // 設定剛刪除的元件 UUID
 
     const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
 
@@ -33,8 +35,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     useEffect(() => {
         if (!id) {
-            setFormHierarchy([uuid]);
-            onCreate(uuid);
+            // setFormHierarchy([uuid]);
+            // onCreate(uuid); // 自動 scroll 至新產生的 form
         }
     }, []);
 
@@ -49,7 +51,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     // 編輯表單屬性
     const editForm = useCallback(e => {
         e.stopPropagation();
-        // setFormHierarchy({ uuid, inputFocused: true });
         setFormHierarchy([uuid]);
     }, []);
 
@@ -57,6 +58,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const doDeleteForm = useCallback(() => {
         const newForms = allForms.filter(form => form.uuid !== uuid);
         setAllForms(newForms);
+        setNewlyDeletedUUID(uuid);
         closeConfirmDialog();
     }, [allForms]);
 

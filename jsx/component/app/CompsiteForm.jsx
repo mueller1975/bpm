@@ -45,6 +45,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     const { showError } = useNotification();
 
+    console.log({ CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES })
+
     // hook 查詢 MPB 澄清單
     const { execute: queryForm, pending } = useQueryFormById(result => {
         const { timestamp, flowUserTask } = result;
@@ -254,15 +256,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         .list {
             overflow: hidden auto;
         }
-
-        // .content {
-        //     position: relative;
-        //     width: 100%;
-        //     flex-grow: 1;
-        //     overflow: hidden auto;
-        //     padding-right: 12px;
-        //     padding-bottom: 30px;
-        // }
 
         >.container {
             flex-grow: 1;

@@ -1,6 +1,8 @@
 import { atom, selector, selectorFamily } from "recoil";
 import { sortBy } from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
+import { propsHierarchyState } from "./PropsHierarchyState";
+import { newlyCreatedFormUUIDState } from "./BuilderStates";
 
 const MPB_FORMS_API = "./service/config/mpbForms4Lab";
 const FETCH_FORM_API = () => fetch(MPB_FORMS_API, { redirect: 'manual' });
@@ -41,14 +43,20 @@ export const allFormsState = atom({
 export const formState = selectorFamily({
     key: 'formState',
     get: ([formUUID]) => ({ get }) => {
-        console.warn('[formState] GET:', formUUID);
+        if (!formUUID) {
+            console.warn(`[formState] GET =>`, { formUUID });
+            return null;
+        }
+
         const allForms = get(allFormsState);
-        return allForms.find(form => form.uuid === formUUID);
+        let form = allForms.find(({ uuid }) => uuid === formUUID);
+
+        if(!form) {
+            console.error('[formState] GET:', form);
+        }
+        return form;
     },
     set: ([formUUID]) => ({ set, get }, { afterUUID, form = {} }) => {
-        console.warn('[formState] SET: uuid =>', formUUID);
-        console.warn('[formState] SET:', { afterUUID, form });
-
         let allForms = get(allFormsState);
 
         if (formUUID) { // 既有的 form 以 partial update 更新
@@ -59,10 +67,10 @@ export const formState = selectorFamily({
             allForms = [...allForms];
             allForms[idx] = form;
         } else { // 新增的 form 傳入的 uuid 是 undefined
-            form.uuid = uuidv4();
-            form.order = allForms.length + 1;
-            form.icon = DEFAULT_ICON_NAME;
-            form.components = [];
+            form = {
+                title: '新增表單', ...form, uuid: uuidv4(),
+                icon: DEFAULT_ICON_NAME, components: []
+            };
 
             if (!afterUUID) { // 未指定則放到第一個位置
                 allForms = [form, ...allForms];
@@ -75,6 +83,9 @@ export const formState = selectorFamily({
                     allForms = [...allForms.slice(0, afterIdx + 1), form, ...allForms.slice(afterIdx + 1)];
                 }
             }
+
+            set(propsHierarchyState('FORM'), [form.uuid]); // 開啟 form 屬性編輯 accordion
+            set(newlyCreatedFormUUIDState, form.uuid); // 觸發 FormBuilder 自動點擊新增的表單
         }
 
         set(allFormsState, allForms);
@@ -84,10 +95,10 @@ export const formState = selectorFamily({
 export const fieldsetState = selectorFamily({
     key: 'fieldsetState',
     get: ([formUUID, fieldsetUUID]) => ({ get }) => {
-        console.log('[fieldsetState] GET:', formUUID, fieldsetUUID);
 
         if (!formUUID || !fieldsetUUID) {
-            return {};
+            console.warn(`[fieldsetState] GET =>`, { formUUID, fieldsetUUID });
+            return null;
         }
 
         let form = get(formState([formUUID]));
@@ -95,6 +106,12 @@ export const fieldsetState = selectorFamily({
     },
     set: ([formUUID, fieldsetUUID]) => ({ get, set }, { afterUUID, fieldset = {} }) => {
         let form = get(formState([formUUID]));
+
+        if (!form) {
+            console.warn(`[fieldsetState] SET => get(formState([formUUID])):`, form);
+            return;
+        }
+
         let components = form.components;
 
         if (fieldsetUUID) { // 既有的 fieldset 以 partial update 更新
@@ -102,15 +119,7 @@ export const fieldsetState = selectorFamily({
             fieldset = { ...components[idx], ...fieldset };
             components = [...components];
             components[idx] = fieldset;
-
-            console.log('[fieldsetState] SET:', components);
-
         } else { // 無 fieldsetUUID 值, 代表新增 fieldset
-            // fieldset.uuid = uuidv4();
-            // fieldset.type = "fieldset";
-            // fieldset.cols = DEFAULT_GRID_COLS;
-            // fieldset.fields = [];
-
             fieldset = {
                 ...fieldset, uuid: uuidv4(), type: 'fieldset',
                 cols: DEFAULT_GRID_COLS, fields: []
@@ -127,6 +136,8 @@ export const fieldsetState = selectorFamily({
                     components = [...components.slice(0, afterIdx + 1), fieldset, ...components.slice(afterIdx + 1)];
                 }
             }
+
+            set(propsHierarchyState('FIELDSET'), [formUUID, fieldset.uuid]); // 開啟 fieldset 屬性編輯 accordion
         }
 
         set(formState([formUUID]), { form: { components } });
@@ -139,26 +150,27 @@ export const fieldState = selectorFamily({
         console.log('[fieldState] GET hierarchy:', formUUID, fieldsetUUID, fieldUUID);
 
         if (!formUUID || !fieldsetUUID || !fieldUUID) {
-            return {};
+            console.warn(`[fieldState] GET:`, { formUUID, fieldsetUUID, fieldUUID });
+            return null;
         }
 
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
-        console.log('[fieldState] GET fieldset:', fieldset);
-
         let field = fieldset.fields?.find(({ uuid }) => uuid === fieldUUID);
 
         if (!field) {
             console.error('[fieldState] GET field:', field);
-        } else {
-            console.log('[fieldState] GET field:', field);
         }
 
         return field;
     },
     set: ([formUUID, fieldsetUUID, fieldUUID]) => ({ get, set }, { afterUUID, field = {} }) => {
-        console.log(`[fieldState] SET:`, formUUID, fieldsetUUID, fieldUUID);
-
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
+
+        if (!fieldset) {
+            console.warn(`[fieldState] SET => fieldset:`, fieldset);
+            return;
+        }
+
         let fields = fieldset.fields;
 
         if (fieldUUID) { // 既有的 field 以 partial update 更新
@@ -168,8 +180,6 @@ export const fieldState = selectorFamily({
             fields[idx] = field;
         } else { // 無 fieldUUID 值, 代表新增 field
             field = { label: '新增欄位', ...field, uuid: uuidv4() };
-
-            console.error({field})
 
             if (!afterUUID) {  // 未指定則放到第一個位置
                 fields = [field, ...fields];
@@ -182,6 +192,8 @@ export const fieldState = selectorFamily({
                     fields = [...fields.slice(0, afterIdx + 1), field, ...fields.slice(afterIdx + 1)];
                 }
             }
+
+            set(propsHierarchyState('FIELD'), [formUUID, fieldsetUUID, field.uuid]); // 開啟 field 屬性編輯 accordion
         }
 
         set(fieldsetState([formUUID, fieldsetUUID]), { fieldset: { fields } });

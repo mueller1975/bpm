@@ -1,49 +1,46 @@
 import { Divider, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Loading from 'Component/Loading.jsx';
-import React, { Suspense, useCallback, useRef, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import AddComponentButton from './AddComponentButton.jsx';
 import BuilderActions from './BuilderActions.jsx';
 import FormContent from './FormContent.jsx';
 import FormList from './FormList.jsx';
 import PropertiesDrawer from './PropertiesDrawer.jsx';
-import { expandedFormsState, targetFormUUIDState } from './context/BuilderStates';
+import { expandedFormsState, newlyCreatedFormUUIDState, propertiesDrawerState, targetFormUUIDState } from './context/BuilderStates';
 import { allFormUUIDsState, allFormsState, formState } from './context/FormStates';
 import { propsHierarchyState } from "./context/PropsHierarchyState.js";
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
+
     const allForms = useRecoilValue(allFormsState); // 所有表單
     const allFormUUIDs = useRecoilValue(allFormUUIDsState); // 所有表單 UUID
-    const setFormHierarchy = useSetRecoilState(propsHierarchyState('FORM'));
-
-    const setTargetFormUUID = useSetRecoilState(targetFormUUIDState);
-    const [expandedForms, setExpandedForms] = useRecoilState(expandedFormsState);
-
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [drawerDocked, setDrawerDocked] = useState(true);
-
+    const setFormHierarchy = useSetRecoilState(propsHierarchyState('FORM')); // 屬性編輯 form hierarchy ([form uuid])
+    const setTargetFormUUID = useSetRecoilState(targetFormUUIDState); // 點擊的 form uuid
+    const [expandedForms, setExpandedForms] = useRecoilState(expandedFormsState); // 展開狀態的 form uuid
+    const newlyCreatedFormUUID = useRecoilValue(newlyCreatedFormUUIDState); // 新建立的 form UUID, 在 FormStates 指定
+    const [drawerState, setDrawerState] = useRecoilState(propertiesDrawerState); // 屬性編輯 drawer 狀態
     const createForm = useSetRecoilState(formState([])); // formState() 帶空 array 參數值則為新增 form
 
     const containerRef = useRef();
     const accordionRefs = useRef([]);
 
+    useEffect(() => {
+        // 有新表單建立時, 自動執行點擊該新表單
+        newlyCreatedFormUUID && formClickedHandler(newlyCreatedFormUUID);
+    }, [newlyCreatedFormUUID]);
+
     // 新增表單
     const addForm = useCallback((e, afterUUID) => {
         e.stopPropagation();
-        createForm({ afterUUID, form: {} });
+        createForm({ afterUUID });
     }, []);
 
     // 在 FormList 點擊表單時, 自動 scroll 至該表單位置
-    const formItemClickedHandler = useCallback(formUUID => {
-        console.log({ formUUID })
-        // setFormHierarchy({ uuid: formUUID, inputFocused: false }); // inputFocused: 是否立即 focus 在屬性欄位
-        setFormHierarchy([formUUID]);
-
-        let index = allFormUUIDs.indexOf(formUUID);
-
-        console.log({ index })
+    const formClickedHandler = useCallback(formUUID => {
+        setFormHierarchy([formUUID]); // 開啟編輯 form accordion
         setTargetFormUUID(formUUID);
 
         // 自動展開點擊的 form
@@ -51,13 +48,14 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             setExpandedForms([...expandedForms, formUUID]);
         }
 
+        // 自動 scroll 至 form
+        let index = allFormUUIDs.indexOf(formUUID);
         let elm = accordionRefs.current[index];
-        elm.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
-        // setTimeout(() => setTargetFormId(undefined), 3000); // 移除 animation, 避免連續再按沒反應
+        elm.scrollIntoView({ behavior: 'smooth' });
     }, [allFormUUIDs, expandedForms]);
 
-    const drawerOpenHandler = useCallback(open => setDrawerOpen(open), []);
-    const drawerDockHandler = useCallback(docked => setDrawerDocked(docked), []);
+    const drawerOpenHandler = useCallback(open => setDrawerState({ open, docked: false }), []);
+    const drawerDockHandler = useCallback(docked => setDrawerState({ open: docked, docked }), []);
 
     return (
         <Suspense fallback={<Loading />}>
@@ -65,7 +63,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
                 {/* 表單列表區塊 */}
                 <div className="menu">
-                    <FormList forms={allForms} onItemClick={formItemClickedHandler} />
+                    <FormList forms={allForms} onItemClick={formClickedHandler} />
                 </div>
 
                 {/* 左 Resizer */}
@@ -79,7 +77,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
                         {/* 所有表單 */}
                         <FormContent refs={accordionRefs} containerRef={containerRef}
-                            onAdd={addForm} onCreate={formItemClickedHandler} />
+                            onAdd={addForm} onCreate={formClickedHandler} />
                     </div>
 
                     {/* dialog 右下角 form component 全展開/縮合鈕 */}
@@ -87,11 +85,11 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 </div>
 
                 {/* 右 Resizer */
-                    !drawerDocked ? null : <Divider orientation='vertical' className="resizer right" />
+                    !drawerState.docked ? null : <Divider orientation='vertical' className="resizer right" />
                 }
 
                 {/* 屬性編輯區塊 */}
-                <PropertiesDrawer className="drawer" open={drawerOpen} docked={drawerDocked}
+                <PropertiesDrawer className="drawer" open={drawerState.open} docked={drawerState.docked}
                     onOpen={drawerOpenHandler} onDock={drawerDockHandler} />
             </Paper>
         </Suspense>
