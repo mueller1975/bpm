@@ -1,24 +1,24 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { SpringTransition2 } from 'Animations';
 import AnimatedFab from 'Component/AnimatedFab.jsx';
 import { ConfirmDialog, lazyWithRefForwarding, Loading } from 'Components';
 import { useNotification } from 'Hook/useTools.jsx';
 import { merge } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import ActionBar from './ActionBar.jsx';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { checkedFormsState, expandedFormsState, targetFormUUIDState } from './context/BuilderStates';
 import { formContextState } from './context/FormContextStates';
-import { allFormIdsState, allFormsState, formDataState } from './context/FormStates';
+import { allFormIdsState, allFormsState, allFormUUIDsState, formDataState } from './context/FormStates';
 import { flowUserTaskState, userState } from './context/UserStates';
-import { getFormFieldValues, jsonToObject } from './lib/form';
+import FormActions from './FormActions.jsx';
+import FormContent from './FormContent.jsx';
+import { getFormFieldValues, getInitialFormData, jsonToObject } from './lib/form';
 import testFormData from './lib/testFormData.json';
 import { useQueryFormById } from './lib/useFetchAPI';
-import { Paper } from '@mui/material';
-import FormContent from './FormContent.jsx';
-import { getInitialFormData } from './lib/form';
+import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
 
 const FormList = lazyWithRefForwarding(React.lazy(() => import("./FormList.jsx")));
 
@@ -27,17 +27,17 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     const allForms = useRecoilValue(allFormsState);
     const allFormIds = useRecoilValue(allFormIdsState);
-
-    const [mpbData, setMpbData] = useState();
-    const [targetFormId, setTargetFormId] = useState();
-    const [expandedForms, setExpandedForms] = useState([allFormIds[0]]); // 展開的 form
-    const [checkedForms, setCheckedForms] = useState([...allFormIds]); // 勾選的 form
-    const [alertDlgOpen, setAlertDlgOpen] = useState(false); // 告警 dialog 狀態
-
+    const allFormUUIDs = useRecoilValue(allFormUUIDsState);
+    const [targetFormUUID, setTargetFormUUID] = useRecoilState(targetFormUUIDState);
+    const [expandedForms, setExpandedForms] = useRecoilState(expandedFormsState); // 展開的 form
+    const [checkedForms, setCheckedForms] = useRecoilState(checkedFormsState); // 勾選的 form
     const user = useRecoilValue(userState);
     const resetFormContext = useResetRecoilState(formContextState);
     const setFormContext = useSetRecoilState(formContextState);
     const setFlowUserTask = useSetRecoilState(flowUserTaskState);
+
+    const [alertDlgOpen, setAlertDlgOpen] = useState(false); // 告警 dialog 狀態
+    const [mpbData, setMpbData] = useState();
 
     const [CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES] = useRecoilValue(formDataState);
     const accordionRefs = useRef([]);
@@ -47,6 +47,21 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     console.log({ CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES })
 
+    // targetFormUUID 變更時動作
+    useEffect(() => {
+        if (targetFormUUID) {
+            // 1. 自動展開點擊的 form
+            if (!expandedForms.includes(targetFormUUID)) {
+                setExpandedForms([...expandedForms, targetFormUUID]);
+            }
+
+            // 2. 自動 scroll 至 form
+            let index = allFormUUIDs.indexOf(targetFormUUID);
+            let elm = accordionRefs.current[index];
+            elm.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [targetFormUUID]);
+
     // hook 查詢 MPB 澄清單
     const { execute: queryForm, pending } = useQueryFormById(result => {
         const { timestamp, flowUserTask } = result;
@@ -55,9 +70,9 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         flowUserTask(flowUserTask); // 設定使用者 user task 資訊
     }, showError);
 
-    useEffect(() => {
-        setCheckedForms([...allFormIds]);
-    }, [allFormIds]);
+    // useEffect(() => {
+    //     setCheckedForms([...allFormIds]);
+    // }, [allFormIds]);
 
     useEffect(() => {
         if (!data?.id) {
@@ -132,45 +147,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     // 關閉告警 dialog
     const closeAlertDlg = useCallback(() => setAlertDlgOpen(false), []);
 
-    // 展開所有 form
-    const collapseAll = useCallback(() => setExpandedForms([]), []);
-
-    // 縮合所有 form
-    const expandAll = useCallback(() => setExpandedForms([...allFormIds]), [allFormIds]);
-
-    // Form List: check/uncheck all
-    const checkAllHandler = useCallback((e, checked) => {
-        checked ? setCheckedForms([...allFormIds]) : setCheckedForms([allFormIds[0]]); // 全不勾時, 保留勾選第一個 form
-    }, []);
-
-    // Form List: check/uncheck Form
-    const formItemCheckHandler = useCallback((formId, checked) => {
-        let ids = checked ? checkedForms.concat(formId) : checkedForms.filter(id => formId != id);
-        setCheckedForms(ids.length == 0 ? [formId] : ids);
-    }, [checkedForms]);
-
-    // 展開/縮合個別 form
-    const formToggleHandler = useCallback((formId, expanded) => {
-        let ids = expanded ? expandedForms.concat(formId) : expandedForms.filter(id => formId != id);
-        setExpandedForms(ids);
-    }, [expandedForms]);
-
-    // Form List: click form 時, 自動 scroll 至該 form 位置
-    const formItemClickedHandler = useCallback(formId => {
-        let index = allFormIds.indexOf(formId);
-
-        setTargetFormId(formId);
-
-        // 自動展開點擊的 form
-        if (expandedForms.indexOf(formId) < 0) {
-            formToggleHandler(formId, true);
-        }
-
-        accordionRefs.current[index]?.scrollIntoView({ behavior: 'smooth' }); // scroll 至 form
-        // setTimeout(() => setTargetFormId(undefined), 3000); // 移除 animation, 避免連續再按沒反應
-    }, [formToggleHandler]);
-
-
     // 載入測試資料
     const loadTestMpbData = useCallback(() => {
         // 保存原來 main form 裡的資料 (因含表單狀態及申請、填寫人資訊)
@@ -183,11 +159,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         });
     }, []);
 
-    const buttons = useMemo(() => [
-        <AnimatedFab key="collapse" color="success" size="medium" onClick={collapseAll}><ExpandLessIcon color="inherit" /></AnimatedFab>,
-        <AnimatedFab key="expand" color="primary" size="medium" onClick={expandAll}><ExpandMoreIcon color="inherit" /></AnimatedFab>
-    ], [expandAll]);
-
     return (
         <Paper ref={ref} className={`MT-CompositeForm ${className}`}>
             {/* 告警 dialog */}
@@ -197,11 +168,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
             {/* form list 區塊 */}
             <div className="menu">
                 {/* form list */}
-                <FormList className="list"
-                    forms={allForms} checkedForms={checkedForms}
-                    onItemCheck={formItemCheckHandler}
-                    onItemClick={formItemClickedHandler}
-                    onAllCheck={checkAllHandler}
+                <FormList forms={allForms}
                     onLoadData={loadTestMpbData} // 載入測試資料
                 />
             </div>
@@ -211,19 +178,13 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 <div className="content">
                     {
                         !mpbData ? <Loading message="MPB 資料載入中..." /> :
-                            <FormContent containerRef={containerRef} formData={mpbData}
-                                checkedForms={checkedForms} expandedForms={expandedForms}
-                                targetFormId={targetFormId} onFormToggle={formToggleHandler} />
+                            <FormContent refs={accordionRefs} containerRef={containerRef}
+                                formData={mpbData} />
                     }
                 </div>
 
                 {/* dialog 右下角 form component 全展開/縮合鈕 */}
-                <ActionBar>
-                    <SpringTransition2 ref={springRef} effect="slideDown" items={buttons} keys={({ key }) => key} bounce={2}>
-                        {button => button}
-                    </SpringTransition2>
-                </ActionBar>
-
+                <FormActions ref={springRef} className="actions" />
             </div>
         </Paper>
     );
@@ -271,6 +232,12 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 padding-right: 12px;
                 padding-bottom: 30px;
                 box-sizing: border-box;
+            }
+
+            >.actions {
+                position: absolute;
+                right: 24px;
+                bottom: 8px;
             }
         }
 }

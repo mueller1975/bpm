@@ -1,43 +1,38 @@
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
-    AppBar, IconButton, List, ListItemText, SpeedDial, SpeedDialAction, SpeedDialIcon,
-    Toolbar, Typography
+    AppBar, List
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { animated, config, useSpring } from '@react-spring/web';
-import { useNotification } from 'Hook/useTools.jsx';
-import React, { useEffect, useMemo, useState } from 'react';
-import FormListItem from './FormListItem.jsx';
-import { useSetRecoilState } from 'recoil';
-import { allFormsState, loadDBForms } from './context/FormStates';
-import StorageIcon from '@mui/icons-material/Storage';
+import React, { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { formListCollapsedSelector } from './context/BuilderStates';
+import FormListActions from './formList/FormListActions.jsx';
+import FormListItem from './formList/FormListItem.jsx';
+import FormListToolbar from './formList/FormListToolbar.jsx';
 
 const AnimatedList = animated(List);
-const AnimatedIconButton = animated(IconButton);
-const AnimatedListItemText = animated(ListItemText);
 const springConfig = { friction: 8, tension: 120 };
 
-export default React.memo(styled(({ forms, onItemClick, onLoadData, className }) => {
-    const [collapsed, setCollapsed] = useState(true);
+export default React.memo(styled(({ forms, onLoadData, className }) => {
+    const [collapsed, setCollapsed] = useRecoilState(formListCollapsedSelector);
     const [firstExpanded, setFirstExpanded] = useState(false);
-    const setAllForms = useSetRecoilState(allFormsState);
 
     const theme = useTheme();
     const underMD = useMediaQuery(theme.breakpoints.down('md'));
     const underSM = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const { showSuccess, showWarning } = useNotification();
-
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
-    };
+    useEffect(() => {
+        setTimeout(() => {
+            setFirstExpanded(true);
+            setCollapsed(false);
+        }, 1000);
+    }, []);
 
     const collapseProps = useSpring({
         // delay: !firstExpanded ? 3000 : 0,
         immediate: !firstExpanded,
-        from: { width: 68, zIndex: 0 },
+        from: { width: 108, zIndex: 0 },
         to: { width: 180, zIndex: 1, },
         reverse: collapsed,
         config: springConfig
@@ -62,53 +57,24 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
         config: config.wobbly
     });
 
-    useEffect(() => {
-        setTimeout(() => {
-            setFirstExpanded(true);
-            setCollapsed(false);
-        }, 1000);
-    }, []);
-
-    const loadFromDB = async() => {
-        let forms = await loadDBForms();
-        setAllForms(forms);
-    };
-
-    const actions = useMemo(() => [
-        { key: 'loadFromDB', icon: <StorageIcon />, tooltipTitle: <Typography variant='subtitle1'>讀取 DB 表單</Typography>, onClick: loadFromDB },
-    ], []);
-
     return (
         <div className={`MT-FormList ${className}`}>
             <AnimatedList dense={underMD} style={collapseProps} className="list">
+                {/* 表單清單 toolbar */}
                 <AppBar position="relative">
-                    <Toolbar disableGutters variant="dense" className="toolbar">
-                        <AnimatedIconButton disabled={underSM} onClick={toggleCollapsed} style={hideProps}>
-                            <ArrowBackIosIcon />
-                        </AnimatedIconButton>
-
-                        <AnimatedIconButton disabled={underSM} onClick={toggleCollapsed} className="overlapped" style={showProps}>
-                            <ArrowForwardIosIcon />
-                        </AnimatedIconButton>
-
-                        {/* 文字 */}
-                        <AnimatedListItemText primary="表單分區" primaryTypographyProps={{ color: "textSecondary" }} style={hideProps} />
-                    </Toolbar>
+                    <FormListToolbar showProps={showProps} hideProps={hideProps} disabled={underSM} />
                 </AppBar>
 
                 {/* 各 form 區塊 */
                     forms.map(form =>
                         <FormListItem key={form.uuid} form={form} tooltipDisabled={!collapsed && !underSM}
-                            showProps={showProps} hideProps={hideProps} onClick={onItemClick} />
+                            showProps={showProps} hideProps={hideProps} />
                     )
                 }
             </AnimatedList>
 
-            <SpeedDial icon={<SpeedDialIcon />} ariaLabel="表單動作" direction="up" hidden={collapsed}
-                FabProps={{ size: 'medium', color: 'warning' }} className="actions">
-
-                {actions.map(action => <SpeedDialAction {...action} />)}
-            </SpeedDial>
+            {/* 表單清單動作按鈕 */}
+            <FormListActions hidden={collapsed} className="actions" />
         </div>
     );
 })`
@@ -125,53 +91,12 @@ export default React.memo(styled(({ forms, onItemClick, onLoadData, className })
             position: absolute;
             right: 16px;
             bottom: 16px;
-            
-            >button {
-                color: #fff;
-            }
         }
 
         >.list {
             padding: 0;
             height: 100%;
             overflow: hidden auto;
-
-            .toolbar {
-                background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#f6f6f6' : '#10162a'};
-                padding-left: 8px;
-        
-                >.overlapped {
-                    position: absolute;
-                }
-            }
-        
-            .iconWrapper {
-                position: relative;
-                align-items: center;
-        
-                .overlapped {
-                    position: absolute;
-                }
-            }
-        
-            .MuiListItemIcon-root {
-                min-width: 40px;
-            }
-        
-            .MuiListItemButton-root {
-                transition: background-color .3s;
-            }
-        
-            .MuiListItemText-primary {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                // max-width: 120px;
-            }
-        
-            .addItemButton {
-                padding: 8px;
-            }
         }
     }
 `);

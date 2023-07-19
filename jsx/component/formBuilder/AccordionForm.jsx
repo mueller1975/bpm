@@ -20,7 +20,7 @@ import { newlyDeletedUUIDState } from "./context/BuilderStates";
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
-    const { form, selected, onChange, onCreate, expanded, data, className, containerRef } = props;
+    const { form, selected, onChange, expanded, data, className, containerRef } = props;
 
     const setFormHierarchy = useSetRecoilState(propsHierarchyState('FORM'));
     const [allForms, setAllForms] = useRecoilState(allFormsState);
@@ -32,13 +32,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const SummaryIcon = getIconComponent(icon);
 
     const formToggleHandler = useCallback((e, expanded) => onChange(uuid, expanded), [onChange]);
-
-    useEffect(() => {
-        if (!id) {
-            // setFormHierarchy([uuid]);
-            // onCreate(uuid); // 自動 scroll 至新產生的 form
-        }
-    }, []);
 
     const animProps = useSlideSpring();
 

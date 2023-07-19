@@ -5,15 +5,18 @@ import {
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
 import { stringToColor } from 'Tools';
-import React, { useMemo, useRef } from 'react';
-import { getIconComponent } from './lib/formUI.jsx';
+import React, { useMemo, useRef, useCallback } from 'react';
+import { getIconComponent } from '../lib/formUI.jsx';
+import { targetFormUUIDState } from '../context/BuilderStates';
+import { useSetRecoilState } from 'recoil';
 
 const AnimatedAvatar = animated(Avatar);
 const AnimatedListItemText = animated(ListItemText);
 
 export default React.memo(styled(props => {
-    const { form, tooltipDisabled = true, showProps, hideProps,
-        onClick, className } = props;
+    const { form, tooltipDisabled = true, showProps, hideProps, className } = props;
+
+    const setTargetFormUUID = useSetRecoilState(targetFormUUIDState);
     const itemRef = useRef();
 
     const { uuid, id, title, icon } = form;
@@ -21,21 +24,25 @@ export default React.memo(styled(props => {
     const AnimatedItemIcon = useMemo(() => animated(getIconComponent(icon)), [icon]);
     const formColor = id ? stringToColor(id) : '#fff'; // 個別 form 圖示顏色
 
+    const itemClickHandler = useCallback(e => setTargetFormUUID(uuid), []);
+
     return (
-        <React.Fragment key={uuid}>
+        <>
             <ListItem disablePadding component="div" className={`MT-FormListItem ${className}`}>
 
                 <Tooltip arrow disableHoverListener={tooltipDisabled || !title} placement="right"
                     title={<Typography variant="subtitle2">{title}</Typography>}>
 
-                    <ListItemButton onClick={() => onClick && onClick(uuid)} ref={itemRef}>
+                    <ListItemButton onClick={itemClickHandler} ref={itemRef}>
                         <ListItemIcon>
                             <div className="iconWrapper">
                                 {/* form icon */}
                                 <AnimatedItemIcon sx={{ color: formColor }} style={hideProps} />
 
                                 {/* form 名稱第一個字 */}
-                                <AnimatedAvatar className="itemAvatar overlapped" sx={{ bgcolor: `${formColor}40` }} style={showProps}>
+                                <AnimatedAvatar className="itemAvatar overlapped"
+                                    sx={{ bgcolor: `${formColor}40` }} style={showProps}>
+
                                     <Typography color="textPrimary">{title?.substring(0, 1)}</Typography>
                                 </AnimatedAvatar>
                             </div>
@@ -43,15 +50,12 @@ export default React.memo(styled(props => {
 
                         {/* form 名稱 */}
                         <AnimatedListItemText primary={title} style={hideProps} />
-
-                        {/* form 動作 - Deprectated */}
-                        {/* <FormListItemActions form={form} open={actionsOpen} anchorEl={itemRef?.current} /> */}
                     </ListItemButton>
                 </Tooltip>
             </ListItem>
 
             <Divider />
-        </React.Fragment>
+        </>
     );
 })`
     &.MT-FormListItem {
@@ -76,8 +80,12 @@ export default React.memo(styled(props => {
             top: 0;
             width: 36px;
             height: 36px;
-            // background-color: rgb(54 89 116 / 52%);
+        }
+
+        .MuiListItemText-primary {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
-
 `);

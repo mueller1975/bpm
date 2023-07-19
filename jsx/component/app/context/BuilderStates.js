@@ -1,4 +1,5 @@
 import { atom, selector } from "recoil";
+import { allFormUUIDsState } from "./FormStates";
 
 // 表單清單狀態
 export const formListState = atom({
@@ -36,9 +37,20 @@ export const expandedFormsState = atom({
     default: []
 });
 
-// 剛刪除的元件 UUID (form/fieldset/field)
-// FormProperties/FieldsetProperties/FieldProperties 中若正編輯該元件, 則 reset
-export const newlyDeletedUUIDState = atom({
-    key: 'newlyDeletedUUIDState',
-    default: null
-})
+// FormList 中勾選的表單
+export const checkedFormsState = atom({
+    key: 'checkedFormsState',
+    default: [],
+    effects: [
+        ({ getLoadable, setSelf }) => {
+            let loadable = getLoadable(allFormUUIDsState);
+
+            switch (loadable.state) {
+                case 'hasValue':
+                    setSelf(loadable.contents);
+                    break;
+                default:
+            }
+        }
+    ]
+});

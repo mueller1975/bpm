@@ -1,8 +1,8 @@
 import { atom, selector, selectorFamily } from "recoil";
 import { sortBy } from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
+import { targetFormUUIDState } from "./BuilderStates";
 import { propsHierarchyState } from "./PropsHierarchyState";
-import { newlyCreatedFormUUIDState } from "./BuilderStates";
 
 const MPB_FORMS_API = "./service/config/mpbForms4Lab";
 const FETCH_FORM_API = () => fetch(MPB_FORMS_API, { redirect: 'manual' });
@@ -51,7 +51,7 @@ export const formState = selectorFamily({
         const allForms = get(allFormsState);
         let form = allForms.find(({ uuid }) => uuid === formUUID);
 
-        if(!form) {
+        if (!form) {
             console.error('[formState] GET:', form);
         }
         return form;
@@ -84,8 +84,8 @@ export const formState = selectorFamily({
                 }
             }
 
-            set(propsHierarchyState('FORM'), [form.uuid]); // 開啟 form 屬性編輯 accordion
-            set(newlyCreatedFormUUIDState, form.uuid); // 觸發 FormBuilder 自動點擊新增的表單
+            set(propsHierarchyState('FORM'), [form.uuid]); // 新增 form => 開啟 form 屬性編輯 accordion
+            set(targetFormUUIDState, form.uuid); // 觸發 FormBuilder 自動點擊新增的表單
         }
 
         set(allFormsState, allForms);
@@ -137,7 +137,7 @@ export const fieldsetState = selectorFamily({
                 }
             }
 
-            set(propsHierarchyState('FIELDSET'), [formUUID, fieldset.uuid]); // 開啟 fieldset 屬性編輯 accordion
+            set(propsHierarchyState('FIELDSET'), [formUUID, fieldset.uuid]); // 新增 fieldset => 開啟 fieldset 屬性編輯 accordion
         }
 
         set(formState([formUUID]), { form: { components } });
@@ -155,7 +155,7 @@ export const fieldState = selectorFamily({
         }
 
         let fieldset = get(fieldsetState([formUUID, fieldsetUUID]));
-        let field = fieldset.fields?.find(({ uuid }) => uuid === fieldUUID);
+        let field = fieldset?.fields?.find(({ uuid }) => uuid === fieldUUID);
 
         if (!field) {
             console.error('[fieldState] GET field:', field);
@@ -193,7 +193,7 @@ export const fieldState = selectorFamily({
                 }
             }
 
-            set(propsHierarchyState('FIELD'), [formUUID, fieldsetUUID, field.uuid]); // 開啟 field 屬性編輯 accordion
+            set(propsHierarchyState('FIELD'), [formUUID, fieldsetUUID, field.uuid]); // 新增 field => 開啟 field 屬性編輯 accordion
         }
 
         set(fieldsetState([formUUID, fieldsetUUID]), { fieldset: { fields } });

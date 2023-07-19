@@ -10,6 +10,7 @@ import { createRoot } from 'react-dom/client';
 import { RecoilRoot } from 'recoil';
 import { createAppTheme, DARK, NORMAL } from 'Themes';
 import globalStyles from './lib/globalStyles';
+import { ConfirmDialogContextProvider } from 'Context/ConfirmDialogContext.jsx';
 
 const theme = createAppTheme(DARK, NORMAL, NORMAL);
 const gStyles = globalStyles(theme.palette.mode); // global theme styles
@@ -21,12 +22,13 @@ const Page = React.memo(props => (
 
         <RecoilRoot>
             <ServiceContextProvider>
-                <PreferencesContextProvider>
-                    <StyledSnackbarProvider>
-                        <App />
-                        {/* <MPBForm /> */}
-                    </StyledSnackbarProvider>
-                </PreferencesContextProvider>
+                <ConfirmDialogContextProvider>
+                    <PreferencesContextProvider>
+                        <StyledSnackbarProvider>
+                            <App />
+                        </StyledSnackbarProvider>
+                    </PreferencesContextProvider>
+                </ConfirmDialogContextProvider>
             </ServiceContextProvider>
         </RecoilRoot>
     </ThemeProvider>

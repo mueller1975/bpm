@@ -1,58 +1,41 @@
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/material/styles';
-import { SpringTransition2 } from 'Animations';
-import AnimatedFab from 'Component/AnimatedFab.jsx';
-import { ConfirmDialog, lazyWithRefForwarding, Loading } from 'Components';
-import { useNotification } from 'Hook/useTools.jsx';
-import { merge } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import ActionBar from './ActionBar.jsx';
-import { formContextState } from './context/FormContextStates';
-import { allFormIdsState, allFormsState, formDataState } from './context/FormStates';
-import { flowUserTaskState, userState } from './context/UserStates';
-import { getFormFieldValues, jsonToObject } from './lib/form';
-import testFormData from './lib/testFormData.json';
-import { useQueryFormById } from './lib/useFetchAPI';
-import { Paper } from '@mui/material';
+import React, { useCallback } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import AccordionForm from './AccordionForm.jsx';
-
-// const AccordionForm = lazyWithRefForwarding(React.lazy(() => import("./AccordionForm.jsx")));
+import { checkedFormsState, expandedFormsState, targetFormUUIDState } from './context/BuilderStates';
+import { allFormsState } from './context/FormStates';
 
 export default React.memo(styled(props => {
-    const { mpbData: formData, readOnly, containerRef, onFormToggle,
-        checkedForms, expandedForms, targetFormId, className } = props;
+    const { refs, containerRef, className } = props;
 
     const allForms = useRecoilValue(allFormsState);
-    const allFormIds = useRecoilValue(allFormIdsState);
+    const targetFormUUID = useRecoilValue(targetFormUUIDState);
+    const [expandedForms, setExpandedForms] = useRecoilState(expandedFormsState);
+    const checkedForms = useRecoilValue(checkedFormsState);
 
-    const accordionRefs = useRef([]);
+    // 展開/縮合個別 form
+    const onToggleForm = useCallback((formUUID, expanded) => {
+        let uuids = expanded ? expandedForms.concat(formUUID) :
+            expandedForms.filter(uuid => formUUID != uuid);
 
-    console.log('###########', allForms, allFormIds)
-    return allForms.map((form, index) => {
-        const formId = form.id;
+        setExpandedForms(uuids);
+    }, [expandedForms]);
 
-        if (formData) {
-            // console.log('form', formId, 'DATA:', mpbData[formId]);
-        }
+    {/* 所有表單 accordion */ }
+    const accordionForms = allForms.map((form, index) =>
+        <AccordionForm key={form.uuid}
+            uuid={form.uuid}
+            ref={elm => refs.current[index] = elm}
+            containerRef={containerRef}
+            selected={form.uuid == targetFormUUID}
+            checked={checkedForms.includes(form.uuid)}
+            onChange={onToggleForm}
+            expanded={expandedForms.includes(form.uuid)}
+            form={form}
+        />
+    );
 
-        return (
-            <AccordionForm key={form.uuid}
-                form={form}
-                readOnly={readOnly}
-                ref={elm => accordionRefs.current[index] = elm}
-                containerRef={containerRef}
-                selected={formId == targetFormId}
-                hidden={checkedForms.indexOf(formId) < 0}
-                onChange={onFormToggle}
-                expanded={expandedForms.indexOf(formId) > -1}
-
-                data={formData?.[formId]}                
-            />
-        )
-    });
+    return accordionForms;
 })`
 
 `);

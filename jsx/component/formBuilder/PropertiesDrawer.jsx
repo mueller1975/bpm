@@ -9,9 +9,9 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useState } from 'react';
-import FieldProperties from './properties/FieldProperties.jsx';
-import FieldsetProperties from './properties/FieldsetProperties.jsx';
-import FormProperties from './properties/FormProperties.jsx';
+import FieldProperties from './propertiesDrawer/FieldProperties.jsx';
+import FieldsetProperties from './propertiesDrawer/FieldsetProperties.jsx';
+import FormProperties from './propertiesDrawer/FormProperties.jsx';
 
 export default React.memo(styled(props => {
     const { open, docked, onOpen, onDock, className } = props;
