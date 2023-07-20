@@ -14,7 +14,7 @@ export default React.memo(styled(props => {
     const { hierarchy, className, children, cols } = props;
     const [formUUID, fieldsetUUID, fieldUUID] = hierarchy;
 
-    const setFieldHierarchy = useSetRecoilState(propsHierarchyState('FIELD'));
+    const [propsHierarchy, setPropsHierarchy] = useRecoilState(propsHierarchyState('FIELD'));
     const [fieldset, updateFieldset] = useRecoilState(fieldsetState(hierarchy));
     const createField = useSetRecoilState(fieldState([formUUID, fieldsetUUID,])); // [2] 為空值代表新增欄位
     const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
@@ -22,7 +22,7 @@ export default React.memo(styled(props => {
     // 編輯欄位屬性
     const editProperties = useCallback(e => {
         e && e.stopPropagation();
-        setFieldHierarchy(hierarchy);
+        setPropsHierarchy(hierarchy);
     }, []);
 
     // 新增欄位
@@ -45,21 +45,23 @@ export default React.memo(styled(props => {
         setConfirmDialog({
             title: '刪除欄位確認', content: '刪除後無法復原，您確定要刪除欄位？', open: true, severity: 'fatal',
             onConfirm: doDeleteField,
-            onCancel: () => true
+            onCancel: () => true, // for cancel button to show up
         });
     }, [doDeleteField]);
 
     return (
         <Grid item className={`MT-ComponentGrid ${className}`} {...cols}>
-            <div className="fieldActions">
-                <Fab size="small" onClick={confirmDeleteField}><DeleteIcon color="error" /></Fab>
-                <Fab size="small" onClick={addField}><AddIcon color="success" /></Fab>
-                <Fab size="small" onClick={editProperties}><EditIcon color="warning" /></Fab>
-            </div>
+            <div className={fieldUUID === propsHierarchy[2] ? 'editing' : ''}>
+                <div className="fieldActions">
+                    <Fab size="small" onClick={confirmDeleteField}><DeleteIcon color="error" /></Fab>
+                    <Fab size="small" onClick={addField}><AddIcon color="success" /></Fab>
+                    <Fab size="small" onClick={editProperties}><EditIcon color="warning" /></Fab>
+                </div>
 
-            {
-                children(props)
-            }
+                {
+                    children(props)
+                }
+            </div>
         </Grid>
     );
 })`
@@ -73,10 +75,16 @@ export default React.memo(styled(props => {
             }
         }
 
+        >.editing {
+            border: 1px dashed #94f579;
+            border-radius: 4px;
+            padding: 4px;
+        }
+
         .fieldActions {
             position: absolute;
             top: 16px;
-            right: 0;
+            right: 5px;
             display: flex;
             gap: 4px;
             justify-content: flex-end;

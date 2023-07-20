@@ -6,23 +6,23 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Fab, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { animated } from '@react-spring/web';
+import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
 import { useSlideSpring } from 'Hook/useAnimations.jsx';
-import React, { useCallback, useEffect, useContext } from 'react';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import React, { useCallback } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { blink, jiggle } from '../styled/Animations.jsx';
 import Form from './Form.jsx';
-import { propsHierarchyState } from "./context/PropsHierarchyState.js";
-import { getIconComponent } from './lib/formUI.jsx';
-import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
-import { allFormsState } from "./context/FormStates";
 import { newlyDeletedUUIDState } from "./context/BuilderStates";
+import { allFormsState } from "./context/FormStates";
+import { propsHierarchyState } from "./context/PropsHierarchyState";
+import { getIconComponent } from './lib/formUI.jsx';
 
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, selected, onChange, expanded, data, className, containerRef } = props;
 
-    const setFormHierarchy = useSetRecoilState(propsHierarchyState('FORM'));
+    const [propsHierarchy, setPropsHierarchy] = useRecoilState(propsHierarchyState('FORM'));
     const [allForms, setAllForms] = useRecoilState(allFormsState);
     const setNewlyDeletedUUID = useSetRecoilState(newlyDeletedUUIDState); // 設定剛刪除的元件 UUID
 
@@ -44,7 +44,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     // 編輯表單屬性
     const editForm = useCallback(e => {
         e.stopPropagation();
-        setFormHierarchy([uuid]);
+        setPropsHierarchy([uuid]);
     }, []);
 
     // 刪除表單
@@ -68,7 +68,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
     return (
         <AnimatedAccordion key={id} ref={ref} style={animProps} onChange={formToggleHandler} expanded={expanded}
-            className={`${className} ${selected ? 'selected' : ''}`}>
+            className={`MT-AccordionForm ${className} ${selected ? 'selected' : ''} ${uuid === propsHierarchy[0] ? 'editing' : ''}`}>
 
             <AccordionSummary ref={iRef} expandIcon={<ExpandMoreIcon />}
                 // accordion 標題 highlighted 條件
@@ -97,97 +97,105 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         </AnimatedAccordion>
     );
 }))`
-    position: relative;
-    box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#72777f 8px 8px 8px 0px' : '#121212 8px 8px 8px 0px'};
-    background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(250 250 250)' : 'rgb(27 33 43)'};
 
-    &.hidden {
-        margin: 0;
-        content-visibility: hidden;
-    }
+    &.MT-AccordionForm {
+        position: relative;
+        box-shadow: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#72777f 8px 8px 8px 0px' : '#121212 8px 8px 8px 0px'};
+        background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(250 250 250)' : 'rgb(27 33 43)'};
 
-    &.selected {
-        animation: ${css`${blink} 300ms 3 linear forwards`};
-    }
-
-    &.readOnly {
-        background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(242 242 242)' : 'rgb(35 42 54)'};        
-    }
-
-    &:hover {
-        background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(255 255 255)' : 'rgb(24 30 39)'};
-    }
-
-    &.Mui-expanded:not(.hidden):first-of-type {
-        // margin-top: 0 !important;
-    }
-
-    &.Mui-expanded {
-        margin: 20px 0;
-    }
-
-    .MuiAccordionSummary-root {
-        position: sticky;
-        top: 0;
-        z-index: 3;
-
-        &.intersected {
-            z-index: 9999;
-            background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;        
+        &.editing {
+            border: 1px dashed #94f579;
+            padding: 4px;
+            border-radius: 4px;
         }
 
-        :hover {
-            .formActions {
-                opacity: 1;
+        &.hidden {
+            margin: 0;
+            content-visibility: hidden;
+        }
+
+        &.selected {
+            animation: ${css`${blink} 300ms 3 linear forwards`};
+        }
+
+        &.readOnly {
+            background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(242 242 242)' : 'rgb(35 42 54)'};        
+        }
+
+        &:hover {
+            background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgb(255 255 255)' : 'rgb(24 30 39)'};
+        }
+
+        &.Mui-expanded:not(.hidden):first-of-type {
+            // margin-top: 0 !important;
+        }
+
+        &.Mui-expanded {
+            margin: 20px 0;
+        }
+
+        .MuiAccordionSummary-root {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+
+            &.intersected {
+                z-index: 9999;
+                background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#ffb69a' : '#4a74ad'} !important;        
             }
-        }
 
-        .formActions {
-            opacity: 0;
-            position: absolute;
-            right: 60px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: opacity .8s;
+            :hover {
+                .formActions {
+                    opacity: 1;
+                }
+            }
 
-            >button {
-                transition: all .8s;
-                color: lightgray;
+            .formActions {
+                opacity: 0;
+                position: absolute;
+                right: 60px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: opacity .8s;
 
-                :hover {
-                    color: white;
-                    animation: ${jiggle} .15s 3;
+                >button {
+                    transition: all .8s;
+                    color: lightgray;
+
+                    :hover {
+                        color: white;
+                        animation: ${jiggle} .15s 3;
+                    }
                 }
             }
         }
-    }
 
-    .MuiAccordionSummary-root.Mui-expanded {
-        min-height: auto !important;
-        background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#efffb47d' : '#111522a1'};
-        transition: background .5s;
-    }
+        .MuiAccordionSummary-root.Mui-expanded {
+            min-height: auto !important;
+            background: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#efffb47d' : '#111522a1'};
+            transition: background .5s;
+        }
 
-    .MuiAccordionSummary-content {
-        align-items: center;
-        
-        &.Mui-expanded {
-            margin: 12px 0; 
+        .MuiAccordionSummary-content {
+            align-items: center;
+            
+            &.Mui-expanded {
+                margin: 12px 0; 
+            }
+        }
+
+        .MuiAccordionDetails-root {
+            padding: 16px;
+        }
+
+        .summaryIcon {
+            margin-right: 8px;
+            color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#12b118' : '#9edba1'};
+
+            &.disabled {
+                color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgba(0, 0, 0, 0.26)' : 'rgba(255, 255, 255, 0.3)'};
+            }
         }
     }
-
-    .MuiAccordionDetails-root {
-        padding: 16px;
-    }
-
-    .summaryIcon {
-        margin-right: 8px;
-        color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#12b118' : '#9edba1'};
-
-        &.disabled {
-            color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? 'rgba(0, 0, 0, 0.26)' : 'rgba(255, 255, 255, 0.3)'};
-        }
-    }
-
 `);

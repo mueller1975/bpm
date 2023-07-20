@@ -8,7 +8,8 @@ import { stringToColor } from 'Tools';
 import React, { useMemo, useRef, useCallback } from 'react';
 import { getIconComponent } from '../lib/formUI.jsx';
 import { targetFormUUIDState } from '../context/BuilderStates';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { propsHierarchyState } from "../context/PropsHierarchyState";
 
 const AnimatedAvatar = animated(Avatar);
 const AnimatedListItemText = animated(ListItemText);
@@ -16,6 +17,7 @@ const AnimatedListItemText = animated(ListItemText);
 export default React.memo(styled(props => {
     const { form, tooltipDisabled = true, showProps, hideProps, className } = props;
 
+    const propsHierarchy = useRecoilValue(propsHierarchyState('FORM'));
     const setTargetFormUUID = useSetRecoilState(targetFormUUIDState);
     const itemRef = useRef();
 
@@ -33,7 +35,7 @@ export default React.memo(styled(props => {
                 <Tooltip arrow disableHoverListener={tooltipDisabled || !title} placement="right"
                     title={<Typography variant="subtitle2">{title}</Typography>}>
 
-                    <ListItemButton onClick={itemClickHandler} ref={itemRef}>
+                    <ListItemButton onClick={itemClickHandler} ref={itemRef} className={uuid === propsHierarchy[0] ? 'editing' : ''}>
                         <ListItemIcon>
                             <div className="iconWrapper">
                                 {/* form icon */}
@@ -44,21 +46,22 @@ export default React.memo(styled(props => {
                                     sx={{ bgcolor: `${formColor}40` }} style={showProps}>
 
                                     <Typography color="textPrimary">{title?.substring(0, 1)}</Typography>
-                                </AnimatedAvatar>
-                            </div>
-                        </ListItemIcon>
+                                </AnimatedAvatar >
+                            </div >
+                        </ListItemIcon >
 
                         {/* form 名稱 */}
-                        <AnimatedListItemText primary={title} style={hideProps} />
-                    </ListItemButton>
-                </Tooltip>
-            </ListItem>
+                        < AnimatedListItemText primary={title} style={hideProps} />
+                    </ListItemButton >
+                </Tooltip >
+            </ListItem >
 
             <Divider />
         </>
     );
 })`
     &.MT-FormListItem {
+        
         .iconWrapper {
             position: relative;
             align-items: center;
@@ -74,6 +77,10 @@ export default React.memo(styled(props => {
     
         .MuiListItemButton-root {
             transition: background-color .3s;
+
+            &.editing {
+                background-color: #517b45;
+            }
         }
 
         .itemAvatar {

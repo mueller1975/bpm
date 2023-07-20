@@ -23,7 +23,7 @@ export default React.memo(styled(props => {
     const [form, updateForm] = useRecoilState(formState([formUUID]));
     const fieldset = useRecoilValue(fieldsetState([formUUID, fieldsetUUID]));
     const createField = useSetRecoilState(fieldState([formUUID, fieldsetUUID,])); // [2] 為空值代表新增 field
-    const setFieldsetHierarchy = useSetRecoilState(propsHierarchyState('FIELDSET'));
+    const [propsHierarchy, setPropsHierarchy] = useRecoilState(propsHierarchyState('FIELDSET'));
     const setNewlyDeletedUUID = useSetRecoilState(newlyDeletedUUIDState); // 設定剛刪除的元件 UUID
 
     // 新增欄位
@@ -34,7 +34,7 @@ export default React.memo(styled(props => {
 
     // 編輯屬性
     const editProperties = useCallback(() => {
-        setFieldsetHierarchy([formUUID, fieldsetUUID]);
+        setPropsHierarchy([formUUID, fieldsetUUID]);
     }, []);
 
     // 刪除欄位群
@@ -76,12 +76,19 @@ export default React.memo(styled(props => {
     ], [confirmDeleteFieldset]);
 
     return (
-        <Fieldset title={title} noBorder={noBorder} className={`MT-GridFieldsetContainer ${className}`} actions={actions}>
+        <Fieldset title={title} noBorder={noBorder} actions={actions}
+            className={`MT-GridFieldsetContainer ${className} ${fieldsetUUID === propsHierarchy[1] ? 'editing' : ''}`}>
             {gridContainer}
         </Fieldset>
     );
 })`
     &.MT-GridFieldsetContainer {
+        &.editing {
+            border: 1px dashed #a4ff8e;
+            border-radius: 4px;
+            padding: 4px;
+        }
+
         .gridContainer {
             padding-top: 6px;
         }
