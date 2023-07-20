@@ -15,9 +15,6 @@ const ATTACHMENT_DOWNLOAD_URL = "service/mpb/attachment" // 附件下載 url
 const DOCUMENT_URL = 'service/mpb/document'; // 華新格式文件下載 url
 const FLOW_USER_TASKS_URL = 'service/flow/tasks'; // 查詢表單使用者流程 tasks
 
-// 自動生成頁面 url
-const AUTO_GENERATE_URL = '/mdf-node/meta/VoucherList/rd_osc_autogenerate8List?domainKey=wlrd&busiObj=rd_osc_autogenerate1'
-
 /**
  * 澄清單保存/提交/審批
  * @param {*} param0 

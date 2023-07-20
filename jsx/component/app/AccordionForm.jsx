@@ -17,9 +17,9 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const { form, readOnly = false, containerRef, selected, hidden = false,
         onChange, expanded, className } = props;
 
-    const { id, title, icon, components, data ,editableWhen} = form;
+    const { uuid, id, title, icon, components, data, editableWhen } = form;
 
-    const formToggleHandler = useCallback((e, expanded) => onChange(id, expanded), [onChange]);
+    const formToggleHandler = useCallback((e, expanded) => onChange(uuid, expanded), [onChange]);
 
     // console.log('form accordion:', id)
 

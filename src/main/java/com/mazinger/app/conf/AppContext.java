@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 應用系統設定
  * 
- * @author ur04192
+ * @author Mueller Tsai
  */
 @Configuration
 @ComponentScan("com.mazinger")

@@ -28,9 +28,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
     const allForms = useRecoilValue(allFormsState);
     const allFormIds = useRecoilValue(allFormIdsState);
     const allFormUUIDs = useRecoilValue(allFormUUIDsState);
-    const [targetFormUUID, setTargetFormUUID] = useRecoilState(targetFormUUIDState);
+    const targetFormUUID = useRecoilValue(targetFormUUIDState);
     const [expandedForms, setExpandedForms] = useRecoilState(expandedFormsState); // 展開的 form
-    const [checkedForms, setCheckedForms] = useRecoilState(checkedFormsState); // 勾選的 form
     const user = useRecoilValue(userState);
     const resetFormContext = useResetRecoilState(formContextState);
     const setFormContext = useSetRecoilState(formContextState);
@@ -67,12 +66,8 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         const { timestamp, flowUserTask } = result;
         timestamp != data.timestamp && setAlertDlgOpen(true); // 資料過時, 顯示告警
 
-        flowUserTask(flowUserTask); // 設定使用者 user task 資訊
+        setFlowUserTask(flowUserTask); // 設定使用者 user task 資訊
     }, showError);
-
-    // useEffect(() => {
-    //     setCheckedForms([...allFormIds]);
-    // }, [allFormIds]);
 
     useEffect(() => {
         if (!data?.id) {
@@ -179,7 +174,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                     {
                         !mpbData ? <Loading message="MPB 資料載入中..." /> :
                             <FormContent refs={accordionRefs} containerRef={containerRef}
-                                formData={mpbData} />
+                                formData={mpbData} readOnly={readOnly} />
                     }
                 </div>
 

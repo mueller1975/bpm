@@ -6,7 +6,7 @@ import { checkedFormsState, expandedFormsState, targetFormUUIDState } from './co
 import { allFormsState } from './context/FormStates';
 
 export default React.memo(styled(props => {
-    const { refs, containerRef, className } = props;
+    const { refs, containerRef, readOnly = false, className } = props;
 
     const allForms = useRecoilValue(allFormsState);
     const targetFormUUID = useRecoilValue(targetFormUUIDState);
@@ -15,9 +15,8 @@ export default React.memo(styled(props => {
 
     // 展開/縮合個別 form
     const onToggleForm = useCallback((formUUID, expanded) => {
-        let uuids = expanded ? expandedForms.concat(formUUID) :
+        let uuids = expanded ? [...expandedForms, formUUID] :
             expandedForms.filter(uuid => formUUID != uuid);
-
         setExpandedForms(uuids);
     }, [expandedForms]);
 
@@ -27,8 +26,9 @@ export default React.memo(styled(props => {
             uuid={form.uuid}
             ref={elm => refs.current[index] = elm}
             containerRef={containerRef}
+            readOnly={readOnly}
             selected={form.uuid == targetFormUUID}
-            checked={checkedForms.includes(form.uuid)}
+            hidden={!checkedForms.includes(form.uuid)}
             onChange={onToggleForm}
             expanded={expandedForms.includes(form.uuid)}
             form={form}

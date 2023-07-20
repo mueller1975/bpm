@@ -34,7 +34,7 @@ export const targetFormUUIDState = atom({
 // FormContent 裡展開的 form accordion
 export const expandedFormsState = atom({
     key: 'expandedForms',
-    default: []
+    default: [],
 });
 
 // FormList 中勾選的表單

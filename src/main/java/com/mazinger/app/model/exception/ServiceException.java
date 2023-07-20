@@ -3,7 +3,7 @@ package com.mazinger.app.model.exception;
 /**
  * Model Service Exception
  * 
- * @author ur04192, 2019.05.14
+ * @author Mueller Tsai, 2019.05.14
  */
 public class ServiceException extends Exception {
 
