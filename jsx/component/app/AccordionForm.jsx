@@ -14,14 +14,14 @@ import { getIconComponent } from './lib/formUI.jsx';
 const AnimatedAccordion = animated(Accordion);
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
-    const { form, readOnly = false, containerRef, selected, hidden = false,
+    const { form, data, readOnly = false, containerRef, selected, hidden = false,
         onChange, expanded, className } = props;
 
-    const { uuid, id, title, icon, components, data, editableWhen } = form;
+    const { uuid, id, title, icon, components, editableWhen } = form;
 
     const formToggleHandler = useCallback((e, expanded) => onChange(uuid, expanded), [onChange]);
 
-    // console.log('form accordion:', id)
+    console.log('【AccordionForm】', id, '=>', data)
 
     const animProps = useSlideSpring({
         reverse: hidden

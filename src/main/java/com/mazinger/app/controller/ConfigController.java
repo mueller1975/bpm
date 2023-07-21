@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mazinger.app.model.dto.ResponseVO;
 import com.mazinger.app.model.entity.Config;
 import com.mazinger.app.model.exception.ServiceException;
 import com.mazinger.app.model.service.ConfigService;
+import com.mazinger.web.ServiceResponseDTO;
 
 @RestController
 @RequestMapping("/service/config")
@@ -39,7 +39,7 @@ public class ConfigController {
 	@GetMapping("/mpbForms4Lab")
 	public Object getMpbFormsForLab() throws ServiceException {
 		Collection<?> voList = configService.getConfigsByCategory("MPB_FORM_LAB");
-		return ResponseVO.succeed(voList);
+		return ServiceResponseDTO.succeed(voList);
 	}
 
 	@GetMapping("/{category}")

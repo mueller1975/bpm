@@ -6,12 +6,13 @@ import { generateField } from '../lib/formUI.jsx';
 import Conditional from './Conditional.jsx';
 import Fieldset from './Fieldset.jsx';
 
+const GRID_SPACING = 1.5;
+
 export default React.memo(styled(props => {
     const { noBorder = false, title, formId, formData, editable, fields, cols, available: parentAvailable = true, className } = props;
     const [hidden, setHidden] = useState(false);
 
-    // const gridSpacing = title ? 2 : 1.5;
-    const gridSpacing = 1.5;
+    console.log('【GridFieldsetContainer】', formId, '=>', formData);
 
     let gridContainer = (
         <Conditional {...props}>
@@ -25,7 +26,7 @@ export default React.memo(styled(props => {
 
                     return (
                         // NOT available 時, "隱藏" Grid 而非 return null, 因欄位的狀態為 uncontrolled
-                        <Grid container spacing={gridSpacing} className={`gridContainer ${!title ? className : ''} ${hidden ? 'hidden' : ''}`}
+                        <Grid container spacing={GRID_SPACING} className={`gridContainer ${!title ? className : ''} ${hidden ? 'hidden' : ''}`}
                         // sx={{ display: hidden ? 'none' : 'flex' }}
                         // sx={{ contentVisibility: hidden ? 'hidden' : 'visibile' }}
                         >
@@ -33,10 +34,13 @@ export default React.memo(styled(props => {
                                 fields.map((field, idx) => {
                                     let { uuid, name, defaultValue } = field;
 
+                                    console.log({ formData })
+
                                     // let value = formData ? (jsonToObject(formData[name]) || '') : defaultValue ?? '';
                                     let value = (formData ? jsonToObject(formData[name]) : defaultValue) ?? '';
                                     let disabled = field.disabled || !editable;
 
+                                    console.log('【field】', name, '=>', value)
                                     return generateField({
                                         cols,
                                         formId,

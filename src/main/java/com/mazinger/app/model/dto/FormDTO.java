@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-import com.mazinger.bpm.model.FlowUserTask;
-
 import lombok.Data;
 
 @Data
@@ -56,7 +54,10 @@ public class FormDTO implements Serializable {
 
     private Date timestamp;
 
-    // Flowable user task
-    private FlowUserTask flowUserTask;
+    public static FormDTO mock(String id) {
+        FormDTO form = new FormDTO();
+        form.setId(id);
 
+        return form;
+    }
 }

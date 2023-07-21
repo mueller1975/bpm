@@ -5,6 +5,8 @@ import { ComponentGroup, GridFieldsetContainer } from './lib/formComponents.jsx'
 
 export default React.memo(styled(React.forwardRef(({ id, editable, data, components, className }, ref) => {
 
+    console.log('【Form】', id, '=>', data);
+    
     const formComponents = useMemo(() => {
         if (!components) {
             return undefined;
@@ -26,7 +28,7 @@ export default React.memo(styled(React.forwardRef(({ id, editable, data, compone
         });
 
         return formComponents;
-    }, [components, editable]);
+    }, [components, editable, data]);
 
     return (
         <form id={id} ref={ref} autoComplete="off" className={className}>

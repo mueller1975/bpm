@@ -63,8 +63,8 @@ export const useConfirmDialog = () => {
     const { state, dispatch } = useContext(ConfirmDialogContext);
     const setDialog = useCallback(dialog => dispatch({ type: SET_STATE, payload: dialog }), []);
 
-    const openDialog = useCallback(({ title, content, severity = 'info' }) =>
-        dispatch({ type: SET_STATE, payload: { title, content, severity, open: true } })
+    const openDialog = useCallback(({ title, content, severity = 'info', confirmText, cancelText }) =>
+        dispatch({ type: SET_STATE, payload: { title, content, severity, open: true, confirmText, cancelText } })
         , []);
 
     const closeDialog = useCallback(() => dispatch({ type: RESET_STATE }), []);

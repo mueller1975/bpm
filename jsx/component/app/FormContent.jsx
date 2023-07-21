@@ -6,13 +6,14 @@ import { checkedFormsState, expandedFormsState, targetFormUUIDState } from './co
 import { allFormsState } from './context/FormStates';
 
 export default React.memo(styled(props => {
-    const { refs, containerRef, readOnly = false, className } = props;
+    const { refs, containerRef, readOnly = false, data, className } = props;
 
     const allForms = useRecoilValue(allFormsState);
     const targetFormUUID = useRecoilValue(targetFormUUIDState);
     const [expandedForms, setExpandedForms] = useRecoilState(expandedFormsState);
     const checkedForms = useRecoilValue(checkedFormsState);
 
+    console.log('【FormContent】', data);
     // 展開/縮合個別 form
     const onToggleForm = useCallback((formUUID, expanded) => {
         let uuids = expanded ? [...expandedForms, formUUID] :
@@ -22,7 +23,8 @@ export default React.memo(styled(props => {
 
     {/* 所有表單 accordion */ }
     const accordionForms = allForms.map((form, index) =>
-        <AccordionForm key={form.uuid}
+        <AccordionForm
+            key={form.uuid}
             uuid={form.uuid}
             ref={elm => refs.current[index] = elm}
             containerRef={containerRef}
@@ -32,6 +34,7 @@ export default React.memo(styled(props => {
             onChange={onToggleForm}
             expanded={expandedForms.includes(form.uuid)}
             form={form}
+            data={data[form.id]}
         />
     );
 

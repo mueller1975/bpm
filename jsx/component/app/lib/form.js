@@ -1,6 +1,21 @@
-import * as U from './formJsonUtils.js';
+import * as U from './formJsonUtils';
+import { fetchFormConfigs } from './api';
+import { sortBy } from 'lodash';
 
 const allFormFields = [], allFormIds = [], allL4FormFields = [];
+
+/**
+ * 查詢後端表單設定
+ * @returns 
+ */
+export const loadDBForms = async () => {
+    let response = await fetchFormConfigs();
+    let vo = await response.json();
+    let forms = vo.data.map(({ value }) => value);
+
+    forms = sortBy(forms, "order");
+    return forms;
+};
 
 /**
  * 表單基本資料
@@ -24,6 +39,30 @@ export const getInitialFormData = ({ user: { empId, name, deptId, deptName } }) 
     applyTime: null, // 提交時間
     closeTime: null, // 審批完成時間
 });
+
+export const computeValues = (forms, context) => {
+    let values = {};
+
+    Object.entries(forms).forEach(([formId, props]) => {
+        let formValues = {};
+
+        Object.entries(props).forEach(([prop, value]) => {
+            const { computedBy } = value;
+
+            if (computedBy) {
+                let func = new Function(['context'], `const {_} = context; return ${computedBy};`);
+                value = func(context);
+                console.log(prop, '=>', value);
+            }
+
+            formValues[prop] = value;
+        });
+
+        values[formId] = formValues;
+    });
+
+    return values;
+};
 
 /**
  * Convert JSON string to js object

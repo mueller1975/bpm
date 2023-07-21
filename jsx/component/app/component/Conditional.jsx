@@ -45,7 +45,7 @@ export default React.memo(props => {
     // console.log('formId:', formId, ', editable:', editable)
 
     const renderProps = { available, required, disabled, editable };
-    console.log(`${formId}.${name}`, renderProps)
+    // console.log(`${formId}.${name}`, renderProps)
 
     const children = typeof props.children == 'function' ? props.children(renderProps) : props.children;
     return children;

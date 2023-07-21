@@ -14,3 +14,10 @@ export const flowUserTaskState = atom({
         formPrivileges: ['EDIT']
     }
 });
+
+export const userFormPrivilegesSelector = selector({
+    key: 'userFormPrivilegesSelector',
+    get: ({ get }) => get(flowUserTaskState).formPrivileges,
+    set: ({ get, set }, formPrivileges) =>
+        set(flowUserTaskState, { ...get(flowUserTaskState), formPrivileges })
+})

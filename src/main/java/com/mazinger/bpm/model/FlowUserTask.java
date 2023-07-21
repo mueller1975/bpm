@@ -25,4 +25,15 @@ public class FlowUserTask {
 
     // 使用者表單權限
     private EnumSet<FormPrivilegeEnum> formPrivileges;
+
+    public static FlowUserTask mock(String assignee) {
+        FlowUserTask userTask = new FlowUserTask();
+        userTask.setAssignee(assignee);
+        userTask.setFormPrivileges(
+                EnumSet.of(
+                        FormPrivilegeEnum.EDIT,
+                        FormPrivilegeEnum.APPROVE));
+
+        return userTask;
+    }
 }

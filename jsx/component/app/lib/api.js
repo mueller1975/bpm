@@ -2,6 +2,7 @@ import { CSRF_HEADER, CSRF_TOKEN } from 'Config';
 import { MAX_FILE_MB, MAX_UPLOAD_FILE_MB } from './formConsts';
 
 // API URLs
+const FORM_CONFIGS_API = "./service/config/mpbForms4Lab";
 const DATA_FETCH_URL = "service/mpb/query"; // 資料查詢
 // const CRUD_API_URL = "service/mpb"; // 資料儲存、刪除、提交 (舊)
 const CRUD_API_URL = "service/flow"; // 資料儲存、刪除、提交、加會簽、會簽 (新: with Flowable BPM)
@@ -14,6 +15,12 @@ const ACTION_LOGS_URL = "service/mpb/logs"; // 查詢執行動作 logs
 const ATTACHMENT_DOWNLOAD_URL = "service/mpb/attachment" // 附件下載 url
 const DOCUMENT_URL = 'service/mpb/document'; // 華新格式文件下載 url
 const FLOW_USER_TASKS_URL = 'service/flow/tasks'; // 查詢表單使用者流程 tasks
+
+/**
+ * 查詢表單設
+ * @returns
+ */
+export const fetchFormConfigs = () => fetch(FORM_CONFIGS_API, { redirect: 'manual' });
 
 /**
  * 澄清單保存/提交/審批
@@ -41,7 +48,7 @@ export const fetchSubmitForm = ({ submitOptions, formData }) => {
         ...mpbData?.productOrder
     };
 
-    console.log({form})
+    console.log({ form })
 
     let data = { form, action, notice, comments, flowTaskId, formUpdateNeeded };
     const params = JSON.stringify(data);
