@@ -13,7 +13,7 @@ export default React.memo(styled(props => {
             <fieldset {...others} className={`fieldset ${error ? 'error' : ''}`}>
 
                 <legend className="legend">
-                    <Typography>{title}</Typography>
+                    <Typography>{title || '無標題'}</Typography>
                     {icon}
                 </legend>
 

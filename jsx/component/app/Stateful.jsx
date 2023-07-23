@@ -5,25 +5,22 @@ import { formContextState } from './context/FormContextStates';
 import { formDataState } from './context/FormStates';
 import { flowUserTaskState, userState } from './context/UserStates';
 import { computeValues, getInitialFormData } from './lib/form';
+import { jsonToObject } from './lib/form';
 
-export default React.memo(({ isNew, flowUserTask, form, children }) => {
-    const [formData, setFormData] = useState({
-        productOrder: {
-            productName: '海底電纜'
-        }
-    });
+export default React.memo(({ isNew, data, flowUserTask, children }) => {
+    const [formData, setFormData] = useState(data);
 
     const setFlowUserTask = useSetRecoilState(flowUserTaskState);
     const [CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES] = useRecoilValue(formDataState);
     const setFormContext = useSetRecoilState(formContextState);
     const user = useRecoilValue(userState);
 
-    console.log({ CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES })
+    console.log('(Stateful)', { formData });
 
     // 使用者流程權限資訊變更時動作
     useEffect(() => {
-        console.log('【Stateful】', { flowUserTask });
-        setFlowUserTask(flowUserTask); // 設定使用者流程權限
+        console.log('(Stateful)', { flowUserTask });
+        setFlowUserTask(flowUserTask); // 設定使用者流程權限 state
     }, [flowUserTask]);
 
     useEffect(() => {
@@ -31,23 +28,21 @@ export default React.memo(({ isNew, flowUserTask, form, children }) => {
         let ctxState = {};
 
         if (isNew) {
-            const _ = getInitialFormData({ user });
-            const defaultValues = computeValues(DEFAULT_FORM_VALUES, { _ });
-            data = merge(data, defaultValues);
-            data._ = _;
-            ctxState._ = _; // 初始資料放到 form context
-        } else {
-            data = form;
+            const _ = getInitialFormData({ user }); // 初始資料
+            const defaultFormValues = computeValues(DEFAULT_FORM_VALUES, { _ });
+            data = { ...defaultFormValues, _ };
         }
 
-        console.log({ data })
+        ctxState._ = data._; // 初始資料放到 FormContextState
+
+        console.log('(Stateful)', { data });
+
+        console.log("FormContextState 初始化開始...");
+
         // 將設定 isContextStateProp / isMappedStateProp 為 true 且有值的欄位丟到 context
-
-        console.log("MPB Context State 初始化開始...");
-
         Object.entries(CONTEXT_STATE_PROPS.forms).forEach(([formId, fields]) => {
             let formState = {};
-            let defaultFormData = data?.[formId];
+            let defaultFormData = data[formId];
 
             fields.forEach(({ name, type, defaultValue }) => {
                 let value = defaultFormData?.[name];

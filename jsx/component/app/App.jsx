@@ -9,28 +9,28 @@ import Stateful from './Stateful.jsx';
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
-    // const [data, setDtata] = useState({ id: '12345', mpbData:"{}" });
-    const [data, setDtata] = useState({});
+    // const [queryForm, setQueryForm] = useState({ id: '12345', mpbData:"{}" });
+    const [queryForm, setQueryForm] = useState({});
 
-    const isNew = !Boolean(data?.id);
+    const isNew = !Boolean(queryForm?.id);
 
     return (
         <Suspense fallback={<Loading />}>
-            <Authorizable data={data}>
+            <Authorizable queryForm={queryForm}>
                 {
                     // form: 後端回傳的表單內容
-                    ({ form, flowUserTask, readOnly }) => {
-                        console.log('【App】', { form, flowUserTask, readOnly });
+                    ({ formsetData, flowUserTask, readOnly }) => {
+                        console.log('(App)', { formsetData, flowUserTask, readOnly });
 
                         return (
-                            <Stateful isNew={isNew} flowUserTask={flowUserTask} form={form}>
+                            <Stateful isNew={isNew} data={data} flowUserTask={flowUserTask}>
                                 {
                                     // formData: 新增表單 => 初始化後的表單內容, 開啟表單 => 表單內容
                                     ({ formData }) => {
-                                        console.log('【App】', { formData });
+                                        console.log('(App)', { formData });
 
-                                        return <CompsiteForm key={data?.id} isNew={isNew} readOnly={readOnly}
-                                            data={formData} />;
+                                        return <CompsiteForm key={queryForm?.id} isNew={isNew} readOnly={readOnly}
+                                            data={formsetData} />;
                                     }
                                 }
                             </Stateful>

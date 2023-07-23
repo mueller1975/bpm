@@ -2,57 +2,73 @@ import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
 import { useNotification } from 'Hook/useTools.jsx';
 import React, { useEffect, useState } from 'react';
 import { useQueryFormById } from './lib/useFetchAPI';
+import { computeValues, getInitialFormData } from './lib/form';
+import { formDataState } from './context/FormStates';
+import { jsonToObject } from './lib/form';
+import { flowUserTaskState, userState } from './context/UserStates';
+import { useRecoilValue } from 'recoil';
+import { merge } from 'lodash';
 
 /**
- * 查詢表單資訊
+ * 查詢表單資訊（表單內容 ＆ 使用者流程權限）
  */
-export default React.memo(({ data, children }) => {
+export default React.memo(({ queryForm, children }) => {
+
+    const [readOnly, setReadOnly] = useState(true); // 表單預設唯讀
+    const [queryResponse, setQueryResponse] = useState({});
+    const user = useRecoilValue(userState);
+    const [CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES] = useRecoilValue(formDataState);
 
     const { showError } = useNotification();
-    const { openDialog, closeDialog } = useConfirmDialog();
-    const [readOnly, setReadOnly] = useState(true); // 表單唯讀
-    const [formResponse, setFormResponse] = useState({});
-    const { form, flowUserTask } = formResponse;
+    const { openDialog } = useConfirmDialog();
 
-    console.log('【Authorizable】', data);
+    console.log('(Authorizable)', { queryForm, queryResponse });
 
-    // hook 取得表單資訊
-    const { execute: queryForm, pending } = useQueryFormById(response => {
-        let editNotAllowed = false;
-
-        // 資料過時, 顯示告警
-        if (response.form.timestamp !== data.timestamp) {
-            editNotAllowed = true; // 禁止編輯表單內容
-
+    // hook 查詢後端表單資訊
+    const { execute: exQueryForm, pending } = useQueryFormById(response => {
+        // 檢查澄清單內容是否已被異動並顯示提示
+        if (response.form.timestamp !== queryForm.timestamp) {
             openDialog({
-                title: '資料過時警告',
+                title: '資料異動提示',
                 confirmText: '我知道了',
-                severity: 'warn',
+                severity: 'info',
                 content: [
-                    '本 MPB 單資料內容已「被其他使用者異動」！',
-                    '請直接離開並「刷新列表資料」後再重新開啟本單。'
+                    '本單資料內容已被其他使用者異動！',
+                    '目前開啟的內容為「異動後的最新資料」。'
                 ]
             });
         }
 
-        setReadOnly(editNotAllowed);
-        setFormResponse(response);
+        const { form, flowUserTask } = response; // 表單內容、使用者流程權限
+        const formsetData = JSON.parse(form.mpbData);
+
+        setReadOnly(false);
+        setQueryResponse({ formsetData, flowUserTask });
     }, showError);
 
-    // 查詢表單資訊
+    // 查詢後端表單資訊
     useEffect(() => {
-        if (!data.id) {
-            // 尚未儲存文件, 直接設定使用者表單權限為 EDIT
+        if (!queryForm.id) {
+
+            console.log({ DEFAULT_FORM_VALUES })
+
+            const _ = getInitialFormData({ user }); // 初始資料
+            const defaultValues = computeValues(DEFAULT_FORM_VALUES, { _ });
+            let formsetData = merge({}, defaultValues);
+            formsetData._ = _;
+
+            // 新增表單, 直接設定使用者表單權限為 EDIT
             let flowUserTask = { formPrivileges: ['EDIT'] };
-            setFormResponse({ form: {}, flowUserTask });
+            setQueryResponse({ formsetData, flowUserTask });
+            setReadOnly(false);
         } else {
-            // 非未保存文件, 檢查澄清單內容是否已被異動 & 查詢使用者表單權限
-            queryForm({ params: data.id });
+            // 非新增表單, 查詢後端表單相關資訊
+            exQueryForm({ params: queryForm.id });
         }
 
         // form 關閉時動作
         // return () => resetFormContext(); // 重置 FormContext state
     }, []);
 
-    return children({ form, flowUserTask, readOnly });
+    return children({ ...queryResponse, readOnly });
 });

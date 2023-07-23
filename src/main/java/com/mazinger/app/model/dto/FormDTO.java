@@ -57,7 +57,7 @@ public class FormDTO implements Serializable {
     public static FormDTO mock(String id) {
         FormDTO form = new FormDTO();
         form.setId(id);
-
+        form.setTimestamp(new Date());
         return form;
     }
 }
