@@ -9,8 +9,8 @@ import Stateful from './Stateful.jsx';
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
     const { className, } = props;
-    // const [queryForm, setQueryForm] = useState({ id: '12345', mpbData:"{}" });
-    const [queryForm, setQueryForm] = useState({});
+    const [queryForm, setQueryForm] = useState({ id: '12345', mpbData:'{}' });
+    // const [queryForm, setQueryForm] = useState({});
 
     const isNew = !Boolean(queryForm?.id);
 
@@ -18,17 +18,15 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         <Suspense fallback={<Loading />}>
             <Authorizable queryForm={queryForm}>
                 {
-                    // form: 後端回傳的表單內容
+                    // formsetData: 後端回傳最新表單內容
                     ({ formsetData, flowUserTask, readOnly }) => {
                         console.log('(App)', { formsetData, flowUserTask, readOnly });
 
                         return (
-                            <Stateful isNew={isNew} data={data} flowUserTask={flowUserTask}>
+                            <Stateful isNew={isNew} data={formsetData} flowUserTask={flowUserTask}>
                                 {
                                     // formData: 新增表單 => 初始化後的表單內容, 開啟表單 => 表單內容
-                                    ({ formData }) => {
-                                        console.log('(App)', { formData });
-
+                                    ({ }) => {
                                         return <CompsiteForm key={queryForm?.id} isNew={isNew} readOnly={readOnly}
                                             data={formsetData} />;
                                     }

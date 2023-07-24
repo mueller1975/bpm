@@ -8,6 +8,15 @@ CREATE TABLE IF NOT EXISTS app.leave (
 	primary key(id)
 );
 
+CREATE TABLE IF NOT EXISTS app.form (
+	id integer NOT NULL,
+	task_id varchar(40) NOT NULL,
+	task_description varchar(50),
+	data_ text,
+	timestamp_ timestamp,
+	primary key(id)
+);
+
 CREATE TABLE IF NOT EXISTS app.config (
 	code varchar(60) NOT NULL,
 	category varchar(60),

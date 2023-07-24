@@ -1,4 +1,19 @@
 {
+    "_": {
+        "creator": "mazinkaiser",
+        "creatorName": "魔神凱撒",
+        "creatorDept": "A0919",
+        "creatorDeptName": "LAB19",
+        "applicant": "mazinger",
+        "applicantName": "金剛",
+        "applicantDept": "A0919",
+        "applicantDeptName": "LAB19",
+        "approvalStatus": "UNSAVED",
+        "createTime": "2023-07-24T08:43:23.171Z",
+        "modifyTime": null,
+        "applyTime": null,
+        "completeTime": null
+    },
     "main": {
         "mpbNo": "2023060001",
         "mpbVersion": "1",
@@ -27,7 +42,7 @@
         "specId": null
     },
     "productOrder": {
-        "mpbName": "New born",
+        "productName": "New born",
         "salesNoticeNo": null,
         "salesNoticeLineNo": null,
         "salesmanName": null,

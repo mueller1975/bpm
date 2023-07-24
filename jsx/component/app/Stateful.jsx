@@ -15,7 +15,7 @@ export default React.memo(({ isNew, data, flowUserTask, children }) => {
     const setFormContext = useSetRecoilState(formContextState);
     const user = useRecoilValue(userState);
 
-    console.log('(Stateful)', { formData });
+    console.log('(Stateful)', { data });
 
     // 使用者流程權限資訊變更時動作
     useEffect(() => {
@@ -58,10 +58,10 @@ export default React.memo(({ isNew, data, flowUserTask, children }) => {
             ctxState[formId] = formState;
         });
 
-        console.log({ ctxState, formData })
+        console.log({ ctxState, data })
         setFormContext(ctxState);
         setFormData(data);
     }, [CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES])
 
-    return children({ formData });
+    return children({});
 });

@@ -4,7 +4,9 @@ export const userState = atom({
     key: 'userState',
     default: {
         empId: 'mazinger',
-        name: '金剛'
+        name: '金剛',
+        deptId: 'A0919',
+        deptName: 'LAB19'
     }
 });
 

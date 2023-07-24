@@ -37,7 +37,7 @@ export const getInitialFormData = ({ user: { empId, name, deptId, deptName } }) 
     createTime: new Date(), // 建立時間
     modifyTime: null, // 異動時間
     applyTime: null, // 提交時間
-    closeTime: null, // 審批完成時間
+    completeTime: null, // 審批完成時間
 });
 
 export const computeValues = (forms, context) => {

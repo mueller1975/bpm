@@ -8,6 +8,7 @@ import { jsonToObject } from './lib/form';
 import { flowUserTaskState, userState } from './context/UserStates';
 import { useRecoilValue } from 'recoil';
 import { merge } from 'lodash';
+import testFormData from './lib/testFormData.json';
 
 /**
  * 查詢表單資訊（表單內容 ＆ 使用者流程權限）
@@ -15,7 +16,7 @@ import { merge } from 'lodash';
 export default React.memo(({ queryForm, children }) => {
 
     const [readOnly, setReadOnly] = useState(true); // 表單預設唯讀
-    const [queryResponse, setQueryResponse] = useState({});
+    const [queryResponse, setQueryResponse] = useState({}); // 查詢表單資訊結果
     const user = useRecoilValue(userState);
     const [CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES] = useRecoilValue(formDataState);
 
@@ -40,7 +41,8 @@ export default React.memo(({ queryForm, children }) => {
         }
 
         const { form, flowUserTask } = response; // 表單內容、使用者流程權限
-        const formsetData = JSON.parse(form.mpbData);
+        // const formsetData = JSON.parse(form.data); // 取出 json string 並轉為 object
+        const formsetData = testFormData; // 測試 formset data
 
         setReadOnly(false);
         setQueryResponse({ formsetData, flowUserTask });
