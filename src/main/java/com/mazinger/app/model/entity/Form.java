@@ -25,8 +25,8 @@ public class Form {
     @Column(name = "task_description")
     private String taskDescription;
 
-    @Column(name = "data_")
-    private String data;
+    @Column(name="json_data")
+    private String jsonData;
 
     @Column(name = "timestamp_")
     private Date timestamp;

@@ -2,7 +2,7 @@ import { Autocomplete, TextField, Typography } from '@mui/material';
 import { ServiceContext } from 'Context/ServiceContext.jsx';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { formContextState, formState } from '../context/FormContextStates';
+import { globalFormContextState, formContextState } from '../context/FormContextStates';
 import ConditionalGrid from './ConditionalGrid.jsx';
 
 const ITEM_CODE_STYLE = { fontFamily: 'Monospace', lineHeight: 'normal', mr: 1 };
@@ -16,8 +16,8 @@ export default React.memo(React.forwardRef((props, ref) => {
     const [itemList, setItemList] = useState([]);
     const [inputValue, setInputValue] = useState(''); // 儲存真正資料的 input field
 
-    const formContext = useRecoilValue(formContextState);
-    const form = useRecoilValue(formState(formId));
+    const formContext = useRecoilValue(globalFormContextState);
+    const form = useRecoilValue(formContextState(formId));
 
     const { dropdowns, hierarchicalDropdowns } = useContext(ServiceContext);
     const inputRef = useRef();

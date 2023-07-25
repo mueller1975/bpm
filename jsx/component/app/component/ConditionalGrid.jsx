@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { formContextState, formErrorState, formState } from '../context/FormContextStates.js';
+import { globalFormContextState, formErrorState, formContextState } from '../context/FormContextStates.js';
 import Conditional from './Conditional.jsx';
 import FieldTooltip from './FieldTooltip.jsx';
 
@@ -19,8 +19,8 @@ export default React.memo(styled(props => {
         required, disabled, available,
         availableWhen, requiredWhen, disabledWhen, editableWhen, } = props;
 
-    const ctxState = useRecoilValue(formContextState);
-    const [form, setForm] = useRecoilState(formState(formId));
+    const ctxState = useRecoilValue(globalFormContextState);
+    const [form, setForm] = useRecoilState(formContextState(formId));
     const formError = useRecoilValue(formErrorState(formId));
 
     const computedWhenFunc = useMemo(() => computedWhen && new Function(['states'], `const {ctxState, formState} = states; return ${computedWhen}`), []);

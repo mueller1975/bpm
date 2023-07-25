@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { formContextState, formState } from '../context/FormContextStates';
+import { globalFormContextState, formContextState } from '../context/FormContextStates';
 import * as U from '../lib/formJsonUtils.js';
 import ConditionalGrid from './ConditionalGrid.jsx';
 import TableSelect from './TableSelect.jsx';
@@ -11,8 +11,8 @@ export default React.memo(props => {
         isContextStateProp = false, isMappedStateProp = false, freeSolo = false, mappedStateProps,
         className } = props;
 
-    const [formContext, setFormContext] = useRecoilState(formContextState);
-    const form = useRecoilValue(formState(formId));
+    const [formContext, setFormContext] = useRecoilState(globalFormContextState);
+    const form = useRecoilValue(formContextState(formId));
 
     let filterByFunc, filterByParams;
 

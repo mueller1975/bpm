@@ -3,7 +3,7 @@ import { CSRF_HEADER, CSRF_TOKEN } from 'Config';
 import { useResponseVO } from 'Hook/useTools.jsx';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { formContextState, formState } from '../context/FormContextStates';
+import { globalFormContextState, formContextState } from '../context/FormContextStates';
 import * as U from '../lib/formJsonUtils.js';
 import ConditionalGrid from './ConditionalGrid.jsx';
 
@@ -18,8 +18,8 @@ export default React.memo(React.forwardRef((props, ref) => {
         disabledItems, showItemCode, multiple = false,
         freeSolo = true, disabledWhenMenuIsEmpty = false, className, ...others } = props;
 
-    const formContext = useRecoilValue(formContextState);
-    const form = useRecoilValue(formState(formId));
+    const formContext = useRecoilValue(globalFormContextState);
+    const form = useRecoilValue(formContextState(formId));
 
     const prevFetchDataRef = useRef(); // 當查詢時發生在開啟下拉選單時, 須記錄 fetchData() 以判斷是否須重新 fetch data
 

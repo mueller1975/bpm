@@ -18,11 +18,11 @@ export const loadDBForms = async () => {
 };
 
 /**
- * 表單基本資料
- * @param {*} param0 
+ * 表單 meta data
+ * @param {*} user
  * @returns 
  */
-export const getInitialFormData = ({ user: { empId, name, deptId, deptName } }) => ({
+export const createFormMetaData = ({ user: { empId, name, deptId, deptName } }) => ({
     creator: empId, // 建立者工號
     creatorName: name, // 建立者姓名
     creatorDept: deptId, // 建立者部門代號
@@ -50,7 +50,7 @@ export const computeValues = (forms, context) => {
             const { computedBy } = value;
 
             if (computedBy) {
-                let func = new Function(['context'], `const {_} = context; return ${computedBy};`);
+                let func = new Function(['context'], `const { _$ } = context; return ${computedBy};`);
                 value = func(context);
                 console.log(prop, '=>', value);
             }

@@ -1,21 +1,15 @@
-import { merge } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { formContextState } from './context/FormContextStates';
+import { globalFormContextState } from './context/FormContextStates';
 import { formDataState } from './context/FormStates';
-import { flowUserTaskState, userState } from './context/UserStates';
-import { computeValues, getInitialFormData } from './lib/form';
+import { flowUserTaskState } from './context/UserStates';
 import { jsonToObject } from './lib/form';
 
-export default React.memo(({ isNew, data, flowUserTask, children }) => {
-    const [formData, setFormData] = useState(data);
+export default React.memo(({ data, flowUserTask, children }) => {
 
     const setFlowUserTask = useSetRecoilState(flowUserTaskState);
     const [CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES] = useRecoilValue(formDataState);
-    const setFormContext = useSetRecoilState(formContextState);
-    const user = useRecoilValue(userState);
-
-    console.log('(Stateful)', { data });
+    const setGlobalFormContext = useSetRecoilState(globalFormContextState);
 
     // 使用者流程權限資訊變更時動作
     useEffect(() => {
@@ -24,44 +18,36 @@ export default React.memo(({ isNew, data, flowUserTask, children }) => {
     }, [flowUserTask]);
 
     useEffect(() => {
-        let data = {};
-        let ctxState = {};
+        console.log("globalFormContextState 初始化開始...");
 
-        if (isNew) {
-            const _ = getInitialFormData({ user }); // 初始資料
-            const defaultFormValues = computeValues(DEFAULT_FORM_VALUES, { _ });
-            data = { ...defaultFormValues, _ };
-        }
+        if (data) {
+            let globalFormCtx = { _$: data._$ }; // meta data 放到 globalFormContextState
 
-        ctxState._ = data._; // 初始資料放到 FormContextState
+            console.log('(Stateful)', { data, globalFormCtx });
 
-        console.log('(Stateful)', { data });
+            // 將設定 isContextStateProp / isMappedStateProp 為 true 且有值的欄位丟到 context
+            Object.entries(CONTEXT_STATE_PROPS.forms).forEach(([formId, fields]) => {
+                let formCtx = {};
+                let formData = data[formId];
 
-        console.log("FormContextState 初始化開始...");
+                fields.forEach(({ name }) => {
+                    let value = formData?.[name];
 
-        // 將設定 isContextStateProp / isMappedStateProp 為 true 且有值的欄位丟到 context
-        Object.entries(CONTEXT_STATE_PROPS.forms).forEach(([formId, fields]) => {
-            let formState = {};
-            let defaultFormData = data[formId];
+                    if (value !== undefined) {
+                        let value2 = jsonToObject(value); // value 如為 object 型態, 必須轉為物件才可丟到 context
+                        value2 = value2 === '' ? null : value2; // 值如為空字串, 轉為 null
+                        // console.log(name, ':', value, '=======>', value2);
+                        formCtx[name] = value2;
+                    }
+                });
 
-            fields.forEach(({ name, type, defaultValue }) => {
-                let value = defaultFormData?.[name];
-
-                if (value !== undefined) {
-                    let value2 = jsonToObject(value); // value 如為 object 型態, 必須轉為物件才可丟到 context
-                    value2 = value2 === '' ? null : value2; // 值如為空字串, 轉為 null
-                    // console.log(name, ':', value, '=======>', value2);
-                    formState[name] = value2;
-                }
+                globalFormCtx[formId] = formCtx;
             });
 
-            ctxState[formId] = formState;
-        });
-
-        console.log({ ctxState, data })
-        setFormContext(ctxState);
-        setFormData(data);
-    }, [CONTEXT_STATE_PROPS, DEFAULT_FORM_VALUES])
+            console.log({ data, globalFormCtx })
+            setGlobalFormContext(globalFormCtx);
+        }
+    }, [data]);
 
     return children({});
 });

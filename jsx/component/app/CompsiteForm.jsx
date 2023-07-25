@@ -2,23 +2,17 @@ import { Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { lazyWithRefForwarding, Loading } from 'Components';
 import { useNotification } from 'Hook/useTools.jsx';
-import { merge } from 'lodash';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import React, { useEffect, useRef } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { expandedFormsState, targetFormUUIDState } from './context/BuilderStates';
-import { formContextState } from './context/FormContextStates';
-import { allFormIdsState, allFormsState, allFormUUIDsState, formDataState } from './context/FormStates';
-import { flowUserTaskState, userState } from './context/UserStates';
+import { allFormIdsState, allFormsState, allFormUUIDsState } from './context/FormStates';
 import FormActions from './FormActions.jsx';
 import FormContent from './FormContent.jsx';
-import { getFormFieldValues, getInitialFormData, jsonToObject } from './lib/form';
-import testFormData from './lib/testFormData.json';
 
 const FormList = lazyWithRefForwarding(React.lazy(() => import("./FormList.jsx")));
 
 export default React.memo(styled(React.forwardRef((props, ref) => {
-    const { isNew, data, flowUserTask, defaultData, onChange, className,
-        fullScreen, readOnly = false, springRef } = props;
+    const { isNew, data, className, readOnly = false, springRef } = props;
 
     const allForms = useRecoilValue(allFormsState);
     const allFormIds = useRecoilValue(allFormIdsState);

@@ -16,7 +16,7 @@ public class FormDTO implements Serializable {
 
     private String taskDescription;
 
-    private String data = "{}";
+    private String jsonData = "{}";
 
     private Date timestamp;
 
