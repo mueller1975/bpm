@@ -6,7 +6,7 @@ import { useAutoFullScreen, useNotification, useResponseVO } from 'Hook/useTools
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { formatMessage } from 'Tools';
-import { useConirmDialog } from 'Context/useConfirmDialog.jsx';
+import { useConirmDialog } from 'Context/ConfirmDialogContext.jsx';
 
 // form dialog 預設狀態
 const DEFAULT_FORM_OPTIONS = {
@@ -28,10 +28,11 @@ const CrudView = React.memo(React.forwardRef((props, ref) => {
         onEdit(row);
     };
 
-    
+
     return <RemoteDataTable
+        ref={ref}
         resizable
-        storageKey={viewKey}
+        storageKey={tableKey}
         options={tableOptions}
         // onSelectRow={rowClickHandler} 
         onClickRow={rowClickHandler}
