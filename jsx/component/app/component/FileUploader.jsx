@@ -80,29 +80,31 @@ export default React.memo(styled(props => {
 
     const component = (
         !(rows && Array.isArray(rows)) ? null :
-            <div className="rowContainer">
-                {
-                    rows.map((row, rowIndex) =>
-                        <EditorRow
-                            key={row._id}
-                            multiple
-                            actions={actions}
-                            columns={uploaderColumns}
-                            value={row}
-                            disabled={disabled}
-                            index={rowIndex}
-                            uploaded={uploadedIds.indexOf(row._id) > -1} // 是否已上傳過
-                            onChange={rowChangeHandler}
-                            onInsert={() => insertNewRow(rowIndex)}
-                            onDelete={() => deleteRow(rowIndex)} />
-                    )
-                }
+            <div className="editorContainer">
+                <div className="table">
+                    {
+                        rows.map((row, rowIndex) =>
+                            <EditorRow
+                                key={row._id}
+                                multiple
+                                actions={actions}
+                                columns={uploaderColumns}
+                                value={row}
+                                disabled={disabled}
+                                index={rowIndex}
+                                uploaded={uploadedIds.indexOf(row._id) > -1} // 是否已上傳過
+                                onChange={rowChangeHandler}
+                                onInsert={() => insertNewRow(rowIndex)}
+                                onDelete={() => deleteRow(rowIndex)} />
+                        )
+                    }
+                </div>
             </div>
     );
 
     return !title ? component :
         <Fieldset title={`${title} ${required ? ' *' : ''}`} noBorder={noBorder} icon={<AttachFileIcon />}
-            helper={helper} error={error} className={className}>
+            helper={helper} error={error} className={`MT-FileUploader ${className}`}>
             {
                 disabled && (!defaultValue || defaultValue.length == 0) ?
                     <Hint icon={FileDownloadOffIcon} message="無上傳附檔..." /> :
@@ -110,7 +112,15 @@ export default React.memo(styled(props => {
             }
         </Fieldset>;
 })`
-    .rowContainer {
-        display: table;
+    &.MT-FileUploader {
+
+        .editorContainer {
+            overflow: auto hidden;
+
+            >.table {
+                display: table;
+                width: 100%;
+            }        
+        }
     }
 `);

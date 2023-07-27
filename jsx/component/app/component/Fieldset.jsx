@@ -4,7 +4,7 @@ import Scrollable from 'Component/Scrollable.jsx';
 import React, { useCallback, useState } from 'react';
 
 export default React.memo(styled(props => {
-    const { title, noBorder = false, icon, hidden = false, helper, error, className,
+    const { title, noBorder = false, fullWidth = false, icon, hidden = false, helper, error, className,
         onScrollLeft, onScrollRight, ...others } = props;
     const [leftScrollerHidden, setLeftScrollerHidden] = useState(true);
     const [rightScrollerHidden, setRightScrollerHidden] = useState(true);
@@ -33,7 +33,7 @@ export default React.memo(styled(props => {
     }, []);
 
     return (
-        <FormControl className={`${className} ${hidden ? 'hidden' : ''}`} error={Boolean(error)}>
+        <FormControl className={`${className} ${hidden ? 'hidden' : ''}`} error={Boolean(error)} fullWidth>
             {/* 不可使用 tag name 來調 fieldset & legend 的 style, 否則會影響到 children 的 fieldset & legend style  */}
             <fieldset {...others} className={`fieldset ${error ? 'error' : ''}`}>
                 <div className={`scroller left ${leftScrollerHidden ? 'hidden' : ''}`} onClick={onScrollLeft} />

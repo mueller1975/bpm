@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import EditorRow from './EditorRow.jsx';
 import Fieldset from './Fieldset.jsx';
 import Hint from './Hint.jsx';
+import EditorRowDisplay from './EditorRowDisplay.jsx';
 
 // 產生新資料
 const createNewRow = columns => {
@@ -19,7 +20,11 @@ const createNewRow = columns => {
 }
 
 export default React.memo(styled(props => {
-    const { title, helper, options: { noBorder = false, columns }, defaultValue, onChange, disabled, required, error, className } = props;
+    const { title, helper, options: { noBorder = false, columns, display },
+        defaultValue, onChange, disabled, required, error, className } = props;
+
+    const { title: displayTitle, columns: displayColumns } = display ?? {};
+
     const [rows, setRows] = useState(!defaultValue || defaultValue.length == 0 ? [createNewRow(columns)] : defaultValue);
 
     // 清除未輸入任何資料的列
@@ -62,35 +67,78 @@ export default React.memo(styled(props => {
     }, [rows, columns, onChange]);
 
     return (
-        <Fieldset className={className} title={`${title} ${required ? ' *' : ''}`} noBorder={noBorder}
-            helper={helper} error={error} icon={!disabled ? <LibraryAddIcon /> : undefined}>
-
+        <Fieldset className={`MT-InlineEditor ${className}`} title={`${title} ${required ? ' *' : ''}`}
+            noBorder={noBorder} helper={helper} error={error} icon={!disabled ? <LibraryAddIcon /> : undefined}>
             {
                 disabled && (!defaultValue || defaultValue.length == 0) ?
                     <Hint icon={BlockIcon} message="無資料..." /> :
                     !(rows && Array.isArray(rows)) ? null :
                         // <Scrollable className="rowWrapper">
-                        <div className="rowContainer">
-                            {
-                                rows.map((row, rowIndex) =>
-                                    <EditorRow
-                                        key={row._id}
-                                        multiple
-                                        columns={columns}
-                                        value={row}
-                                        disabled={disabled}
-                                        index={rowIndex}
-                                        onChange={rowChangeHandler}
-                                        onInsert={() => insertNewRow(rowIndex)}
-                                        onDelete={() => deleteRow(rowIndex)} />)
+                        <>
+                            {/* 子表多筆資料編輯 */}
+                            <div className="editorContainer">
+                                <div className="table">
+                                    {
+                                        rows.map((row, rowIndex) =>
+                                            <EditorRow
+                                                key={row._id}
+                                                multiple
+                                                columns={columns}
+                                                value={row}
+                                                disabled={disabled}
+                                                index={rowIndex}
+                                                onChange={rowChangeHandler}
+                                                onInsert={() => insertNewRow(rowIndex)}
+                                                onDelete={() => deleteRow(rowIndex)}
+                                            />
+                                        )
+                                    }
+                                </div>
+                            </div>
+
+                            { /* 子表多筆資料顯示 */
+                                displayColumns &&
+                                <Fieldset title={displayTitle}>
+                                    <div className="displayContainer">
+                                        {
+                                            rows.map((row, rowIndex) =>
+                                                <EditorRowDisplay
+                                                    key={row._id}
+                                                    columns={displayColumns}
+                                                    value={row}
+                                                />
+                                            )
+                                        }
+                                    </div>
+                                </Fieldset>
                             }
-                        </div>
+                        </>
                 // </Scrollable>
             }
-        </Fieldset>
+        </Fieldset >
     );
 })`
-    .rowContainer {
-        display: table;
+    &.MT-InlineEditor {
+
+        .editorContainer {
+            overflow: auto hidden;
+
+            >.table {
+                display: table;
+                width: 100%;
+            }
+        }
+
+        .displayContainer {
+            width: 100%;
+            margin-top: 4px;
+            display: inline-flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: baseline;
+
+            .MT-EditorRowDisplayColumn {
+            }
+        }
     }
 `);
