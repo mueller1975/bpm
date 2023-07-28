@@ -5,19 +5,7 @@ import CompsiteForm from './CompsiteForm.jsx';
 import Stateful from './Stateful.jsx';
 import FormDialog from './FormDialog.jsx';
 import CrudView from './CrudView.jsx';
-
-const VIEW_KEY = "CRUD_VIEW";
-
-const tableOptions = {
-    title: "品名",
-    autoFetch: true, columns: [
-        { prop: 'code', name: '品名碼', width: 80 },
-        { prop: 'id', name: 'ID', width: 200 },
-    ],
-    serviceUrl: "service/form/list",
-    params: {},
-    size: 15, sizeOptions: [10, 15, 25, 50, 75], sortProp: "code", sortOrder: "asc",
-};
+import { VIEW_KEY, TABLE_OPTIONS } from './lib/view';
 
 export default React.memo(React.forwardRef((props, ref) => {
     // const [form, setForm] = useState({ id: '12345', jsonData: '{}' });
@@ -38,7 +26,7 @@ export default React.memo(React.forwardRef((props, ref) => {
         <>
             <FormDialog open={formOpen} formData={form} />
 
-            <CrudView tableKey={VIEW_KEY} tableOptions={tableOptions}
+            <CrudView tableKey={VIEW_KEY} tableOptions={TABLE_OPTIONS}
                 onAdd={addForm} onEdit={editForm} />
         </>
     );

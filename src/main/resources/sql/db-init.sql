@@ -10,10 +10,25 @@ CREATE TABLE IF NOT EXISTS app.leave (
 
 CREATE TABLE IF NOT EXISTS app.form (
 	id integer NOT NULL,
-	task_id varchar(40) NOT NULL,
-	task_description varchar(50),
+	
+	approval_status varchar(20),
 	json_data text,
+
+	product_category varchar(20),
+	product_no varchar(30),
+	order_no varchar(30),
+	client_no varchar(30),
+	client_name varchar(30),
+
+	apply_time timestamp,
+	complete_time timestamp,
 	timestamp_ timestamp,
+
+	creator varchar(20),
+	modifier varchar(20),
+	create_time timestamp,
+	modify_time timestamp,	
+
 	primary key(id)
 );
 

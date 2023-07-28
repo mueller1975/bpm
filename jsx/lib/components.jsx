@@ -9,7 +9,8 @@ import MaskModal from 'Component/MaskModal.jsx'
 import ProgressButton from 'Component/ProgressButton.jsx'
 import Scrollable from 'Component/Scrollable.jsx'
 import StyledSnackbarProvider from 'Component/StyledSnackbarProvider.jsx'
-import React, { Suspense } from 'react'
+import React, { Suspense } from 'react';
+import ProgressMask from 'Component/ProgressMask.jsx';
 
 export const lazyWithRefForwarding = V => {
     // const V = React.lazy(() => import(path)) // 在此 import, path 會抓不到
@@ -23,7 +24,7 @@ export const lazyWithRefForwarding = V => {
 
 export {
     ErrorBoundary, Fieldset, HideOnScroll, IconnedDialogTitle, LoadableTable, LoadableView,
-    Loading, MaskModal, ProgressButton, Scrollable, StyledSnackbarProvider
+    Loading, MaskModal, ProgressButton, Scrollable, StyledSnackbarProvider, ProgressMask
 };
 
 export const FileSelector = props => <ErrorBoundary><_FileSelector {...props} /></ErrorBoundary>

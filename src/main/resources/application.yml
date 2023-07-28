@@ -12,7 +12,7 @@ logging:
   level:
     root: INFO
     com:
-      walsin: TRACE
+      mt: debug
     
 bpm:
   datasource:    

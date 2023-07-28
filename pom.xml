@@ -11,9 +11,9 @@
 	</parent>
 	<groupId>com.mazinger</groupId>
 	<artifactId>bpm</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>bpm</name>
-	<description>Demo project for Spring Boot</description>
+	<description>BPM Project</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

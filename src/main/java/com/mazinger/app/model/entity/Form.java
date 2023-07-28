@@ -19,14 +19,26 @@ public class Form {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "task_id")
-    private String taskId;
+    @Column(name = "approval_status")
+    private String approvalStatus;
 
-    @Column(name = "task_description")
-    private String taskDescription;
-
-    @Column(name="json_data")
+    @Column(name = "json_data")
     private String jsonData;
+
+    @Column(name="product_category")
+    private String productCategory;
+
+    @Column(name="product_no")
+    private String productNo;
+
+    @Column(name="order_no")
+    private String orderNo;
+
+    @Column(name="client_no")
+    private String clientNo;
+
+    @Column(name="clientName")
+    private String clientName;
 
     @Column(name = "timestamp_")
     private Date timestamp;
