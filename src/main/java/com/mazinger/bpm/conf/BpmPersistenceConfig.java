@@ -8,7 +8,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -19,15 +19,16 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.zaxxer.hikari.HikariDataSource;
+
 @Configuration
 public class BpmPersistenceConfig {
 
     @Primary
-    @DependsOn({ "jtaTransactionManager" })
-    @Bean(initMethod = "init", destroyMethod = "close")
+    @Bean
     @ConfigurationProperties("bpm.datasource")
     DataSource bpmDataSource() {
-        return new AtomikosDataSourceBean();
+        return DataSourceBuilder.create().type(HikariDataSource.class).build();
     }
 
     @Primary // for injection into FlowableJpaAutoConfiguration

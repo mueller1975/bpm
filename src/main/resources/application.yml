@@ -15,47 +15,53 @@ logging:
       mt: debug
     
 bpm:
-  datasource:    
-    unique-resource-name: bpmDataSource
-    pool-size: 3
-    max-pool-size: 5
-    min-pool-size: 2
-    max-life-time: 120
-    max-idle-time: 60
-    borrow-connection-timeout: 60
-    # xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
-    xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
-    xa-properties:
-      user: sa
-      password: password
-      URL: jdbc:h2:file:d:\\h2\\home\\flowable;DB_CLOSE_ON_EXIT=FALSE
-      # user: flowable
-      # password: flowable@23
-      # URL: jdbc:mysql://34.80.82.226:3306/flowable?useSSL=false
+  datasource:
+    username: sa
+    password: password
+    jdbc-url: jdbc:h2:file:d:\\h2\\home\\flowable;DB_CLOSE_ON_EXIT=FALSE
+  # datasource:    
+  #   unique-resource-name: bpmDataSource
+  #   pool-size: 3
+  #   max-pool-size: 5
+  #   min-pool-size: 2
+  #   max-life-time: 120
+  #   max-idle-time: 60
+  #   borrow-connection-timeout: 60
+  #   # xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+  #   xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
+  #   xa-properties:
+  #     user: sa
+  #     password: password
+  #     URL: jdbc:h2:file:d:\\h2\\home\\flowable;DB_CLOSE_ON_EXIT=FALSE
+  #     # user: flowable
+  #     # password: flowable@23
+  #     # URL: jdbc:mysql://34.80.82.226:3306/flowable?useSSL=false
   hibernate:
     dialect: org.hibernate.dialect.H2Dialect
     format_sql: true
     show_sql: true
 ### 人員資料庫連線設定 ###
 app:
-  datasource:
-    unique-resource-name: appDataSource
-    pool-size: 3
-    max-pool-size: 5
-    min-pool-size: 2
-    max-life-time: 120
-    max-idle-time: 60
-    borrow-connection-timeout: 60
-    xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
-    xa-properties:
-      user: sa
-      password: password
-      URL: jdbc:h2:file:d:\\h2\\home\\app;INIT=RUNSCRIPT FROM 'src/main/resources/sql/db-init.sql';
   # datasource:
-  #   username: sa
-  #   password: password
-  #   jdbc-url: jdbc:h2:file:d:\\h2\\home\\app;INIT=RUNSCRIPT FROM 'src/main/resources/sql/db-init.sql';
-  #   driver-class-name: org.h2.Driver
+  #   unique-resource-name: appDataSource
+  #   pool-size: 3
+  #   max-pool-size: 5
+  #   min-pool-size: 2
+  #   max-life-time: 120
+  #   max-idle-time: 60
+  #   borrow-connection-timeout: 60
+  #   xa-data-source-class-name: org.h2.jdbcx.JdbcDataSource
+  #   xa-properties:
+  #     user: sa
+  #     password: password
+  #     URL: jdbc:h2:file:d:\\h2\\home\\app
+      # URL: jdbc:h2:file:d:\\h2\\home\\app;INIT=RUNSCRIPT FROM 'src/main/resources/sql/db-init.sql';
+  datasource:
+    username: sa
+    password: password
+    jdbc-url: jdbc:h2:file:d:\\h2\\home\\app
+    # jdbc-url: jdbc:h2:file:d:\\h2\\home\\app;INIT=RUNSCRIPT FROM 'src/main/resources/sql/db-init.sql';
+    driver-class-name: org.h2.Driver
 
 ### Hibernate 屬性設定 ###
   hibernate:
@@ -71,7 +77,7 @@ spring:
     console.enabled: true
   sql:
     init:
-      mode: ALWAYS
+      mode: NEVER
       # schema-locations:
       # - classpath:/sql/schema-test.sql
       # data-locations:      

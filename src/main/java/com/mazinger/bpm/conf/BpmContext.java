@@ -14,30 +14,30 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 @Configuration
 public class BpmContext {
 
-    @Bean
-    JtaProcessEngineConfiguration processEngineConfiguration(@Qualifier("bpmDataSource") DataSource dataSource,
-            @Qualifier("jtaTransactionManager") JtaTransactionManager transactionManager,
-            @Qualifier("bpmEntityManagerFactory") EntityManagerFactory emf) {
+    // @Bean
+    // JtaProcessEngineConfiguration processEngineConfiguration(@Qualifier("bpmDataSource") DataSource dataSource,
+    //         @Qualifier("jtaTransactionManager") JtaTransactionManager transactionManager,
+    //         @Qualifier("bpmEntityManagerFactory") EntityManagerFactory emf) {
 
-        // SpringProcessEngineConfiguration conf = new
-        // SpringProcessEngineConfiguration();
-        // conf.setDataSource(dataSource);
-        // conf.setTransactionManager(transactionManager);
-        // conf.setJpaEntityManagerFactory(emf);
-        // conf.setDatabaseSchemaUpdate(SpringProcessEngineConfiguration.DB_SCHEMA_UPDATE_FALSE);
-        // conf.setJpaHandleTransaction(false);
-        // conf.setJpaCloseEntityManager(false);
+    //     // SpringProcessEngineConfiguration conf = new
+    //     // SpringProcessEngineConfiguration();
+    //     // conf.setDataSource(dataSource);
+    //     // conf.setTransactionManager(transactionManager);
+    //     // conf.setJpaEntityManagerFactory(emf);
+    //     // conf.setDatabaseSchemaUpdate(SpringProcessEngineConfiguration.DB_SCHEMA_UPDATE_FALSE);
+    //     // conf.setJpaHandleTransaction(false);
+    //     // conf.setJpaCloseEntityManager(false);
 
-        JtaProcessEngineConfiguration conf = new JtaProcessEngineConfiguration();
-        conf.setDataSource(dataSource);
-        conf.setTransactionManager(transactionManager.getTransactionManager());
-        conf.setDatabaseSchemaUpdate(JtaProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
-        conf.setJpaEntityManagerFactory(emf);
-        conf.setJpaHandleTransaction(false);
-        conf.setJpaCloseEntityManager(false);
+    //     JtaProcessEngineConfiguration conf = new JtaProcessEngineConfiguration();
+    //     conf.setDataSource(dataSource);
+    //     conf.setTransactionManager(transactionManager.getTransactionManager());
+    //     conf.setDatabaseSchemaUpdate(JtaProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
+    //     conf.setJpaEntityManagerFactory(emf);
+    //     conf.setJpaHandleTransaction(false);
+    //     conf.setJpaCloseEntityManager(false);
 
-        return conf;
-    }
+    //     return conf;
+    // }
 
     // @Bean
     // SpringCmmnEngineConfiguration cmmnEngineConfiguration(@Qualifier("bpmDataSource") DataSource dataSource,
