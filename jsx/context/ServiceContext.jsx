@@ -5,22 +5,22 @@ import { useResponseVO } from 'Hook/useTools.jsx';
 import React, { createContext, useEffect } from 'react';
 
 // 查詢「分類」設定值
-const fetchCategoryListFunc = () => fetch("service/config?code=CATEGORY", {
+const fetchCategoryListFunc = () => fetch("http://localhost:86/bpm-service/service/config?code=CATEGORY", {
     method: 'GET', redirect: 'manual',
 });
 
 // 查詢所有「下拉清單」設定值
-const fetchDropdownsFunc = () => fetch("service/config/dropdowns", {
+const fetchDropdownsFunc = () => fetch("http://localhost:86/bpm-service/service/config/dropdowns", {
     method: 'GET', redirect: 'manual',
 });
 
 // 查詢所有「圖示下拉清單」設定值
-const fetchIconDropdownsFunc = () => fetch("service/config/iconDropdowns", {
+const fetchIconDropdownsFunc = () => fetch("http://localhost:86/bpm-service/service/config/iconDropdowns", {
     method: 'GET', redirect: 'manual',
 });
 
 // 查詢所有「階層式下拉清單」設定值
-const fetchHierarchicalDropdownsFunc = () => fetch("service/config/hierarchicalDropdowns", {
+const fetchHierarchicalDropdownsFunc = () => fetch("http://localhost:86/bpm-service/service/config/hierarchicalDropdowns", {
     method: 'GET', redirect: 'manual',
 });
 

@@ -25,4 +25,9 @@ public class PageController {
     public String app() {
         return "app";
     }
+
+    @GetMapping("/formConfig")
+    public String formConfig() {
+        return "formConfig";
+    }
 }
