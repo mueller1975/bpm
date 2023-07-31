@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { targetFormUUIDState } from "./BuilderStates";
 import { propsHierarchyState } from "./PropsHierarchyState";
 
-const MPB_FORMS_API = "./service/config/mpbForms4Lab";
+const MPB_FORMS_API = "http://localhost:86/bpm-service/service/config/mpbForms4Lab";
 const FETCH_FORM_API = () => fetch(MPB_FORMS_API, { redirect: 'manual' });
 const DEFAULT_ICON_NAME = "QuestionMarkIcon";
 const DEFAULT_GRID_COLS = {
