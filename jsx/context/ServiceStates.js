@@ -5,7 +5,7 @@ export const categoryListState = atom({
     default: [],
     effects: [
         ({ setSelf }) => {
-            let promise = fetch("service/config?code=CATEGORY", {
+            let promise = fetch("http://localhost:86/bpm-service/service/config?code=CATEGORY", {
                 method: 'GET', redirect: 'manual',
             });
 
@@ -30,7 +30,7 @@ export const allDropdownsState = atom({
     default: [],
     effects: [
         ({ setSelf }) => {
-            let promise = fetch("service/config/dropdowns", {
+            let promise = fetch("http://localhost:86/bpm-service/service/config/dropdowns", {
                 method: 'GET', redirect: 'manual',
             });
 
@@ -58,7 +58,7 @@ export const allHierarchicalDropdownsState = atom({
     default: [],
     effects: [
         ({ setSelf }) => {
-            let promise = fetch("service/config/hierarchicalDropdowns", {
+            let promise = fetch("http://localhost:86/bpm-service/service/config/hierarchicalDropdowns", {
                 method: 'GET', redirect: 'manual',
             });
 
@@ -87,7 +87,7 @@ export const allIconDropdownsState = atom({
     default: [],
     effects: [
         ({ setSelf }) => {
-            let promise = fetch("service/config/iconDropdowns", {
+            let promise = fetch("http://localhost:86/bpm-service/service/config/iconDropdowns", {
                 method: 'GET', redirect: 'manual',
             });
 

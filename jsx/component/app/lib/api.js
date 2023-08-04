@@ -2,7 +2,7 @@ import { CSRF_HEADER, CSRF_TOKEN } from 'Config';
 import { MAX_FILE_MB, MAX_UPLOAD_FILE_MB } from './formConsts';
 
 // API URLs
-const FORM_CONFIGS_API = "./service/config/mpbForms4Lab";
+const FORM_CONFIGS_API = "http://localhost:86/bpm-service/service/config/mpbForms4Lab";
 const DATA_FETCH_URL = "service/mpb/query"; // 資料查詢
 // const CRUD_API_URL = "service/mpb"; // 資料儲存、刪除、提交 (舊)
 const CRUD_API_URL = "service/flow"; // 資料儲存、刪除、提交、加會簽、會簽 (新: with Flowable BPM)
