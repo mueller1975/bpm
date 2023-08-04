@@ -258,7 +258,7 @@ const DataTable = React.memo(styled(React.forwardRef((props, ref) => {
     const clickRowHandler = useCallback(row => {
         !showCheckbox && setSelectedRowIndices([row.row_index])
         onClickRow && onClickRow(row)
-    }, []);
+    }, [onClickRow]);
 
     /* 換頁 */
     const pageChanged = useCallback((event, page) => {
