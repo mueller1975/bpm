@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
 import Fieldset from '../component/Fieldset.jsx';
 import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
+import JsonField from '../component/JsonField.jsx';
 import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
 import { fieldState } from '../context/FormStates';
 import { propsHierarchyState } from '../context/PropsHierarchyState.js';
@@ -31,6 +32,7 @@ const FIELD_TYPES = [
     { code: 'tableSelect', name: '表格選取', properties: [...COMMON_FIELD_PROPERTIES, 'source', 'filterBy'] },
     { code: 'inlineEditor', name: '子表多筆', properties: [...COMMON_FIELD_PROPERTIES] },
     { code: 'fileUploader', name: '附件', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'json', name: 'JSON', properties: [...COMMON_FIELD_PROPERTIES] },
 ];
 
 // 欄位型態 menu
@@ -45,7 +47,7 @@ export default React.memo(styled(props => {
     const { uuid, name, label, defaultValue, type, helper, disabled = false,
         configCode, source, isContextStateProp, isMappedStateProp, mappedStateProps,
         filterBy, computedBy, menuDependsOn, freeSolo = false, disabledWhenMenuIsEmpty = false,
-        required, requiredWhen, disabledWhen } = newField;
+        required, requiredWhen, disabledWhen, isDbTableColumn, cols } = newField;
 
     const inputRef = useRef();
 
@@ -78,7 +80,7 @@ export default React.memo(styled(props => {
     const valueChangeHandler = e => {
         const { name, value } = e.target;
 
-        // console.warn('Parent Value changed:', name, ':', value)
+        console.warn('Parent Value changed:', name, ':', value)
 
         let dependentFields = {}; // 連動欄位變動
 
@@ -95,6 +97,7 @@ export default React.memo(styled(props => {
         }
 
         let newFieldState = { ...newField, [name]: value, ...dependentFields };
+        console.log({newFieldState})
         setNewField(newFieldState);
 
         return newFieldState;
@@ -251,6 +254,14 @@ export default React.memo(styled(props => {
                     onBlur={saveProperties} />
             </Grid>
 
+            {/* 欄位 cols */}
+            <Grid item xs={12}>
+                <JsonField name='cols' label='佈局' size='small' fullWidth
+                    multiline minRows={3} maxRows={5}
+                    value={cols ?? ''} onChange={valueChangeHandler}
+                    onBlur={saveProperties} />
+            </Grid>
+
             {/* 唯讀 & 必填 */}
             <Grid item xs={12}>
                 <FormControlLabel name='disabled' label='唯讀'
@@ -259,6 +270,13 @@ export default React.memo(styled(props => {
 
                 <FormControlLabel name='required' label='必填'
                     control={<Checkbox size='small' checked={required ?? false}
+                        onChange={checkboxChangeHandler} />} />
+            </Grid>
+
+            {/* 是否後端 DB table column */}
+            <Grid item xs={12}>
+                <FormControlLabel name='isDbTableColumn' label='資料庫表格欄位'
+                    control={<Checkbox size='small' checked={isDbTableColumn ?? false}
                         onChange={checkboxChangeHandler} />} />
             </Grid>
 

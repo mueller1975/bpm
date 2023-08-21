@@ -2,7 +2,7 @@
  * 登入者 Context
  */
 import React, { createContext, useEffect, useReducer } from 'react'
-import { getStaff, getLoginUser } from 'API/authentication.jsx'
+import { getStaff, getLoginUser } from 'API/authentication'
 import { LOGIN_USER } from 'Config'
 
 export const RESET_USER = 0, SET_USER = 1, APPEND_USER = 2

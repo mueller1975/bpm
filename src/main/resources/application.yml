@@ -1,5 +1,5 @@
 server:
-  port: 85
+  port: 89
   servlet:
     context-path: /bpm
     session:
