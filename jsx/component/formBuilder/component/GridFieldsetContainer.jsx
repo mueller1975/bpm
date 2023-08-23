@@ -65,7 +65,7 @@ export default React.memo(styled(props => {
 
             {
                 fieldset.fields.map(field =>
-                    generateField({ cols, field, formId, hierarchy: [formUUID, fieldsetUUID, field.uuid] }))
+                    generateField({ fieldsetCols: cols, field, formId, hierarchy: [formUUID, fieldsetUUID, field.uuid] }))
             }
         </Grid>
     ), [fieldset.fields]);

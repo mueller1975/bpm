@@ -5,9 +5,9 @@ import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
+import ColsField from '../component/ColsField.jsx';
 import Fieldset from '../component/Fieldset.jsx';
 import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
-import JsonField from '../component/JsonField.jsx';
 import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
 import { fieldState } from '../context/FormStates';
 import { propsHierarchyState } from '../context/PropsHierarchyState.js';
@@ -20,9 +20,19 @@ const COMMON_FIELD_PROPERTIES = [
     'uuid', 'name', 'label', 'defaultValue', 'disabled', 'required', 'hidden', 'disabledWhen', 'requiredWhen'
 ];
 
+/* 移除 空字串/null/undefined 值的屬性 */
+const removeEmptyProps = obj => {
+    Object.entries(obj).forEach(([key, value]) => {
+        if (value === '' || value == null || value == undefined) {
+            delete obj[key];
+        }
+    });
+};
+
 // 欄位型態
 const FIELD_TYPES = [
     { code: 'text', name: '文字', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'textarea', name: '文字 (多行)', properties: [...COMMON_FIELD_PROPERTIES] },
     { code: 'number', name: '數字', properties: [...COMMON_FIELD_PROPERTIES] },
     { code: 'numberRange', name: '數字範圍', properties: [...COMMON_FIELD_PROPERTIES] },
     { code: 'yesOrNo', name: 'Y/N', properties: [...COMMON_FIELD_PROPERTIES] },
@@ -44,7 +54,7 @@ export default React.memo(styled(props => {
     const [field, updateField] = useRecoilState(fieldState(fieldHierarchy));
 
     const [newField, setNewField] = useState(field ?? {});
-    const { uuid, name, label, defaultValue, type, helper, disabled = false,
+    const { uuid, name, label, defaultValue, type, helper, disabled = false, hidden = false,
         configCode, source, isContextStateProp, isMappedStateProp, mappedStateProps,
         filterBy, computedBy, menuDependsOn, freeSolo = false, disabledWhenMenuIsEmpty = false,
         required, requiredWhen, disabledWhen, isDbTableColumn, cols } = newField;
@@ -70,17 +80,20 @@ export default React.memo(styled(props => {
     const saveProperties = useCallback(() => {
         console.log('SAVING field properties.....')
         console.log({ field, newField })
+
         if (!isEqual(field, newField)) {
+            removeEmptyProps(newField); // 清除 ''/null/undefined 的屬性
+
             console.log(`Field Properties SAVED [${name}]:`, JSON.stringify(newField));
             updateField({ field: newField });
         }
     }, [field, newField]);
 
     // 輸入 & 下拉欄位值變動
-    const valueChangeHandler = e => {
+    const valueChangeHandler = (e, updateOnChange = false) => {
         const { name, value } = e.target;
 
-        console.warn('Parent Value changed:', name, ':', value)
+        // console.log('VALUE changed:', name, '=>', value, { updateOnChange })
 
         let dependentFields = {}; // 連動欄位變動
 
@@ -97,8 +110,12 @@ export default React.memo(styled(props => {
         }
 
         let newFieldState = { ...newField, [name]: value, ...dependentFields };
-        console.log({newFieldState})
         setNewField(newFieldState);
+
+        if (updateOnChange) {
+            removeEmptyProps(newFieldState); // 清除 ''/null/undefined 的屬性
+            updateField({ field: newFieldState })
+        }
 
         return newFieldState;
     };
@@ -106,6 +123,8 @@ export default React.memo(styled(props => {
     // 映射欄位值變動
     const mappingChangeHandler = e => {
         let newFieldState = valueChangeHandler(e);
+
+        removeEmptyProps(newFieldState); // 清除 ''/null/undefined 的屬性
         updateField({ field: newFieldState }); // 更新 state
     }
 
@@ -136,6 +155,8 @@ export default React.memo(styled(props => {
 
         let newFieldState = { ...newField, [name]: checked, ...dependentFields };
         setNewField(newFieldState);
+
+        removeEmptyProps(newFieldState); // 清除 ''/null/undefined 的屬性
         updateField({ field: newFieldState }); // 更新 state
     };
 
@@ -256,13 +277,12 @@ export default React.memo(styled(props => {
 
             {/* 欄位 cols */}
             <Grid item xs={12}>
-                <JsonField name='cols' label='佈局' size='small' fullWidth
-                    multiline minRows={3} maxRows={5}
-                    value={cols ?? ''} onChange={valueChangeHandler}
-                    onBlur={saveProperties} />
+                <ColsField name='cols' label='佈局' size='small' fullWidth
+                    multiline minRows={3} maxRows={5} value={cols ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
 
-            {/* 唯讀 & 必填 */}
+            {/* 唯讀 & 必填 & 隱藏 */}
             <Grid item xs={12}>
                 <FormControlLabel name='disabled' label='唯讀'
                     control={<Checkbox size='small' checked={disabled ?? false}
@@ -270,6 +290,10 @@ export default React.memo(styled(props => {
 
                 <FormControlLabel name='required' label='必填'
                     control={<Checkbox size='small' checked={required ?? false}
+                        onChange={checkboxChangeHandler} />} />
+
+                <FormControlLabel name='hidden' label='隱藏'
+                    control={<Checkbox size='small' checked={hidden ?? false}
                         onChange={checkboxChangeHandler} />} />
             </Grid>
 

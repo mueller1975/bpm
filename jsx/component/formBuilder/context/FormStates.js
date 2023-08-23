@@ -175,7 +175,7 @@ export const fieldState = selectorFamily({
 
         if (fieldUUID) { // 既有的 field 以 partial update 更新
             let idx = fields.findIndex(({ uuid }) => uuid === fieldUUID);
-            field = { ...fields[idx], ...field };
+            // field = { ...fields[idx], ...field }; // 取消 partial update, 直接取代
             fields = [...fields];
             fields[idx] = field;
         } else { // 無 fieldUUID 值, 代表新增 field

@@ -6,7 +6,8 @@ import InnerEditorRow from '../component/InnerEditorRow.jsx';
 import FileSelector from '../component/FileSelector.jsx';
 import {
     GridAutocomplete, GridCheckbox, GridDropdown, GridFileUploader,
-    GridInlineEditor, GridNumberRange, GridRemoteAutocomplete, GridTableSelect, GridTextField
+    GridInlineEditor, GridNumberRange, GridRemoteAutocomplete, GridTableSelect,
+    GridTextField, GridJsonField
 } from './formComponents.jsx';
 import NumberRangeField from '../component/NumberRangeField.jsx';
 import TableSelect from '../component/TableSelect.jsx';
@@ -30,8 +31,9 @@ export const getIconComponent = iconName => {
  * @param {*} param0 
  * @returns 
  */
-export const generateField = ({ cols, field, formId, hierarchy }) => {
-    const props = { cols, type: 'text', ...field, formId, hierarchy };
+export const generateField = ({ fieldsetCols, field, formId, hierarchy }) => {
+    const cols = field.cols ?? fieldsetCols;
+    const props = { type: 'text', ...field, cols, formId, hierarchy };
 
     // const type = props.type ?? 'text';
     const { uuid, type } = props;
@@ -82,6 +84,10 @@ export const generateField = ({ cols, field, formId, hierarchy }) => {
             break;
         case 'textarea':
             FieldComponent = GridTextField;
+            props.multiline = true;
+            break;
+        case 'json':
+            FieldComponent = GridJsonField;
             props.multiline = true;
             break;
         default:

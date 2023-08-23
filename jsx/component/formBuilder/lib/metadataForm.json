@@ -1,0 +1,219 @@
+{
+    "title": "表單資訊",
+    "uuid": "81794f69-d520-43f0-b956-cf2a86e496de",
+    "icon": "InfoIcon",
+    "components": [
+        {
+            "uuid": "aedf74b9-ebf0-459a-8028-c5a63e62fa49",
+            "type": "fieldset",
+            "cols": {
+                "xs": 12,
+                "sm": 6,
+                "md": 4,
+                "lg": 3
+            },
+            "fields": [
+                {
+                    "label": "建立者",
+                    "uuid": "20e12a48-001f-4ef1-84ae-74f5a07ea1f9",
+                    "name": "creatorName",
+                    "disabled": true,
+                    "isDbTableColumn": false,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "label": "建立者工號",
+                    "uuid": "2bdcdab8-990b-4233-94c0-8c6d034927aa",
+                    "name": "creator",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "uuid": "e2ba0134-668f-4cb8-8696-428e2c198b44",
+                    "name": "creatorDeptName",
+                    "label": "建立者部門",
+                    "disabled": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "label": "建立者部門代碼",
+                    "uuid": "aedf00fd-c55a-43a7-b8f5-cf4be4ffd8c3",
+                    "name": "creatorDept",
+                    "disabled": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "label": "建立者",
+                    "uuid": "d7e3fc09-5bee-477c-8512-40bd00230f38",
+                    "name": "creatorInfo",
+                    "defaultValue": {
+                        "computedBy": "_$.creatorName + ' ' + _$.creator "
+                    },
+                    "disabled": true,
+                    "isMappedStateProp": false,
+                    "isContextStateProp": false,
+                    "cols": {
+                        "xs": 12,
+                        "sm": 12,
+                        "md": 3,
+                        "lg": 2
+                    }
+                },
+                {
+                    "label": "建立者部門",
+                    "uuid": "1e7c94e1-f183-43f9-a117-b6b3e7af5f63",
+                    "name": "creatorDeptInfo",
+                    "disabled": true,
+                    "isDbTableColumn": false,
+                    "isContextStateProp": false,
+                    "isMappedStateProp": true,
+                    "required": false,
+                    "cols": {
+                        "xs": 12,
+                        "sm": 12,
+                        "md": 3,
+                        "lg": 4
+                    },
+                    "defaultValue": {
+                        "computedBy": "_$.creatorDeptName + ' ' + _$.creatorDept"
+                    }
+                },
+                {
+                    "label": "申請人",
+                    "uuid": "8a072e3a-b013-48ee-a188-82707e543727",
+                    "name": "applicantName",
+                    "disabled": true,
+                    "isDbTableColumn": false,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "label": "申請人工號",
+                    "uuid": "fe2dc43d-a807-4c4a-8a2c-37a769aab2b1",
+                    "name": "applicant",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "label": "申請人部門",
+                    "uuid": "08880841-09fd-4f94-873d-71221f8b7cd3",
+                    "name": "applicantDeptName",
+                    "disabled": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "label": "申請人部門代碼",
+                    "uuid": "894a3218-4ad1-426d-92a3-25674f90a927",
+                    "name": "applicantDept",
+                    "disabled": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false,
+                    "hidden": true
+                },
+                {
+                    "label": "申請人",
+                    "uuid": "a51c66af-b782-4c8c-9fd9-1b5341a882b0",
+                    "name": "applicantInfo",
+                    "defaultValue": {
+                        "computedBy": " _$.applicantName + ' ' + _$.applicant"
+                    },
+                    "disabled": true,
+                    "cols": {
+                        "xs": 12,
+                        "sm": 12,
+                        "md": 3,
+                        "lg": 2
+                    }
+                },
+                {
+                    "label": "申請人部門",
+                    "uuid": "ab87f7a8-28cf-48e1-9a9b-7b1444c6624e",
+                    "cols": {
+                        "xs": 12,
+                        "sm": 12,
+                        "md": 3,
+                        "lg": 4
+                    },
+                    "disabled": true,
+                    "name": "creatorDeptInfo",
+                    "defaultValue": {
+                        "computedBy": "_$.applicantDeptName + ' ' + _$.applicantDept"
+                    }
+                },
+                {
+                    "label": "建立時間",
+                    "uuid": "1eeec4a7-3d33-4c58-b3c0-ef152f502905",
+                    "name": "createTime",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false
+                },
+                {
+                    "label": "異動時間",
+                    "uuid": "1e0dc64b-601f-448a-b243-a117b8db4320",
+                    "name": "modifyTime",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false
+                },
+                {
+                    "label": "申請時間",
+                    "uuid": "8f104729-9a63-4def-b45b-3c7153b6e6f0",
+                    "name": "applyTime",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false
+                },
+                {
+                    "label": "審批完成時間",
+                    "uuid": "b94a40d7-372b-49f8-a1dd-66f5371c223e",
+                    "name": "closeTime",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false
+                },
+                {
+                    "label": "表單組態代碼",
+                    "uuid": "e957de9b-f0b0-4d84-8750-ada61803039a",
+                    "name": "formCode",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false
+                },
+                {
+                    "label": "表單狀態",
+                    "uuid": "76efa52b-ee0a-438c-9e64-d0bd96c432e2",
+                    "name": "formStatus",
+                    "disabled": true,
+                    "isDbTableColumn": true,
+                    "type": "dropdown",
+                    "configCode": "FORM_STATUS",
+                    "isContextStateProp": true,
+                    "isMappedStateProp": false
+                }
+            ]
+        }
+    ],
+    "id": "_$",
+    "editableWhen": "false"
+}

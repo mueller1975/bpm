@@ -12,7 +12,7 @@ export default React.memo(styled(props => {
     const { onEdit, className } = props;
     const formHierarchy = useRecoilValue(propsHierarchyState('FORM'));
     const resetFormHierarchy = useResetRecoilState(propsHierarchyState('FORM'));
-    const [form, updateFormState] = useRecoilState(formState(formHierarchy));
+    const [form, updateForm] = useRecoilState(formState(formHierarchy));
     const newlyDeletedUUID = useRecoilValue(newlyDeletedUUIDState);
 
     const [newForm, setNewForm] = useState(form ?? {});
@@ -47,13 +47,22 @@ export default React.memo(styled(props => {
         console.log("Saving form properties...")
 
         if (!isEqual(form, newForm)) {
-            updateFormState({ form: { ...newForm } });
+            // updateFormState({ form: { ...newForm } });
+            updateForm({ form: newForm });
         }
     }, [form, newForm]);
 
     const valueChangeHandler = e => {
         const { name, value: v } = e.target;
         setNewForm({ ...newForm, [name]: v });
+    };
+
+    const selectChangeHandler = e => {
+        const { name, value: v } = e.target;
+        let newFormState = { ...newForm, [name]: v };
+
+        setNewForm(newFormState);
+        updateForm({ form: newFormState }); // 立即更新 state
     };
 
     return (
@@ -79,7 +88,7 @@ export default React.memo(styled(props => {
             <Grid item xs={12}>
                 <TextField name="icon" label="圖示" size="small" fullWidth
                     value={icon ?? ''} select
-                    onChange={valueChangeHandler} onBlur={saveProperties}>
+                    onChange={selectChangeHandler} onBlur={saveProperties}>
 
                     {ICON_MENU}
                 </TextField>

@@ -1,30 +1,32 @@
+import { TextField, Fab } from '@mui/material';
+import React, { useCallback, useState, useEffect } from 'react';
+import GridColsEditor from '../dialog/GridColsEditor.jsx';
 import EditIcon from '@mui/icons-material/Edit';
-import { Fab, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useCallback, useEffect, useState } from 'react';
-import MappingDialog from './MappingDialog.jsx';
 
 export default React.memo(styled(props => {
-    const { name, value, className, disabled = false, onChange, ...others } = props;
+    const { name, value, onChange, onBlur, disabled = false, className, ...others } = props;
+
     const [dlgOpen, setDlgOpen] = useState(false);
     const [valueDisplay, setValueDisplay] = useState('');
+
+    const openDialog = useCallback(() => setDlgOpen(true), []);
+    const closeDialog = useCallback(() => setDlgOpen(false), []);
+
+    const valueChangeHandler = useCallback(newValue => {
+        setValueDisplay(JSON.stringify(newValue))
+        onChange({ target: { name, value: newValue } }, true);
+    }, []);
 
     useEffect(() => {
         setValueDisplay(value ? JSON.stringify(value) : '');
     }, [value]);
 
-    const openDialog = useCallback(() => setDlgOpen(true), []);
-    const closeDialog = useCallback(() => setDlgOpen(false), []);
-
-    const mappingConfirmHandler = useCallback(mappings => {
-        onChange({ target: { name, value: mappings } })
-    }, []);
-
     return (
-        <div className={`MT-PropertiesMappingField ${className}`}>
+        <div className={`MT-ColsField ${className}`}>
             {/* dialog */}
-            <MappingDialog open={dlgOpen} onClose={closeDialog} maxWidth="md" fullWidth
-                onConfirm={mappingConfirmHandler} />
+            <GridColsEditor open={dlgOpen} onClose={closeDialog} maxWidth="sm" fullWidth
+                value={value} onConfirm={valueChangeHandler} />
 
             {/* 編輯按鈕 */}
             <Fab className="edit-btn" size="medium" color="primary" disabled={disabled}
@@ -33,12 +35,11 @@ export default React.memo(styled(props => {
                 <EditIcon fontSize="small" />
             </Fab>
 
-            {/* 欄位 */}
-            <TextField {...others} name={name} value={valueDisplay} fullWidth disabled />
+            <TextField disabled value={valueDisplay} {...others} />
         </div>
     );
 })`
-    &.MT-PropertiesMappingField {
+    &.MT-ColsField {
         position: relative;
 
         >.edit-btn {
