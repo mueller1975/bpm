@@ -3,7 +3,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useConfirmDialog } from 'Context/ConfirmDialogContext.jsx';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import AddComponentButton from '../AddComponentButton.jsx';
 import { fieldState, fieldsetState, formState } from '../context/FormStates';
@@ -11,6 +11,8 @@ import { propsHierarchyState } from '../context/PropsHierarchyState.js';
 import { generateField } from '../lib/formUI.jsx';
 import Fieldset from './Fieldset.jsx';
 import { newlyDeletedUUIDState } from "../context/BuilderStates";
+import TransformIcon from '@mui/icons-material/Transform';
+import FieldsImporter from "../dialog/FieldsImporter.jsx";
 
 const FIELDSET_GRID_SPACING = 1.5;
 
@@ -18,6 +20,7 @@ export default React.memo(styled(props => {
     const { formUUID, uuid: fieldsetUUID, noBorder = false, title = '無標題', formId,
         cols, className } = props;
 
+    const [importerOpen, setImporterOpen] = useState(false);
     const { setDialog: setConfirmDialog, closeDialog: closeConfirmDialog } = useConfirmDialog();
 
     const [form, updateForm] = useRecoilState(formState([formUUID]));
@@ -70,16 +73,29 @@ export default React.memo(styled(props => {
         </Grid>
     ), [fieldset.fields]);
 
+    // 開啟匯入欄位 dialog
+    const openImporter = useCallback(() => setImporterOpen(true), []);
+
+    // 關閉匯入欄位 dialog
+    const closeImporter = useCallback(() => setImporterOpen(false), []);
+
+    // 動作按鈕
     const actions = useMemo(() => [
         { action: confirmDeleteFieldset, icon: <DeleteIcon color="error" /> },
+        { action: openImporter, icon: <TransformIcon color="success" /> },
         { action: editProperties, icon: <EditIcon color="warning" /> },
     ], [confirmDeleteFieldset]);
 
     return (
-        <Fieldset title={title} noBorder={noBorder} actions={actions}
-            className={`MT-GridFieldsetContainer ${className} ${fieldsetUUID === propsHierarchy[1] ? 'editing' : ''}`}>
-            {gridContainer}
-        </Fieldset>
+        <>
+            <FieldsImporter maxWidth="xl" fullWidth open={importerOpen} onClose={closeImporter}
+                formUUID={formUUID} fieldsetUUID={fieldsetUUID} />
+
+            <Fieldset title={title} noBorder={noBorder} actions={actions}
+                className={`MT-GridFieldsetContainer ${className} ${fieldsetUUID === propsHierarchy[1] ? 'editing' : ''}`}>
+                {gridContainer}
+            </Fieldset>
+        </>
     );
 })`
     &.MT-GridFieldsetContainer {

@@ -16,7 +16,6 @@ import { newlyDeletedUUIDState } from "./context/BuilderStates";
 import { allFormsState } from "./context/FormStates";
 import { propsHierarchyState } from "./context/PropsHierarchyState";
 import { getIconComponent } from './lib/formUI.jsx';
-import TransformIcon from '@mui/icons-material/Transform';
 
 const AnimatedAccordion = animated(Accordion);
 
@@ -67,10 +66,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
         });
     }, [doDeleteForm]);
 
-    const importFields = () => {
-        console.log('importing...')
-    };
-
     return (
         <AnimatedAccordion key={id} ref={ref} style={animProps} onChange={formToggleHandler} expanded={expanded}
             className={`MT-AccordionForm ${className} ${selected ? 'selected' : ''} ${uuid === propsHierarchy[0] ? 'editing' : ''}`}>
@@ -92,7 +87,6 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 {/* Form 動作列按鈕 */}
                 <div className="formActions">
                     <Fab size="small" color="error" onClick={confirmDeleteForm}><DeleteIcon /></Fab>
-                    <Fab size="small" color="success" onClick={importFields}><TransformIcon /></Fab>
                     <Fab size="small" color="warning" onClick={editForm}><EditIcon /></Fab>
                 </div>
             </AccordionSummary>

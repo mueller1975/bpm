@@ -138,16 +138,16 @@ export default React.memo(styled(props => {
         if (checked) {
             switch (name) {
                 case 'disabled':
-                    dependentFields['disabledWhen'] = '';
+                    dependentFields['disabledWhen'] = undefined;
                     break;
                 case 'required':
-                    dependentFields['requiredWhen'] = '';
+                    dependentFields['requiredWhen'] = undefined;
                     break;
                 case 'isContextStateProp':
-                    dependentFields['isMappedStateProp'] = false;
+                    dependentFields['isMappedStateProp'] = undefined;
                     break;
                 case 'isMappedStateProp':
-                    dependentFields['isContextStateProp'] = false;
+                    dependentFields['isContextStateProp'] = undefined;
                     break;
                 default:
             }

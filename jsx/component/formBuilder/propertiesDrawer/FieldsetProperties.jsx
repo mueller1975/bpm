@@ -1,4 +1,4 @@
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
@@ -15,7 +15,7 @@ export default React.memo(styled(props => {
     const newlyDeletedUUID = useRecoilValue(newlyDeletedUUIDState);
 
     const [newFieldset, setNewFieldset] = useState(fieldset ?? {});
-    const { uuid, title, availableWhen, editableWhen } = newFieldset;
+    const { uuid, title, availableWhen, editableWhen, } = newFieldset;
 
     const inputRef = useRef();
 
@@ -48,6 +48,16 @@ export default React.memo(styled(props => {
     const valueChangeHandler = e => {
         const { name, value: v } = e.target;
         setNewFieldset({ ...newFieldset, [name]: v });
+    };
+
+    // 勾選欄位值變動
+    const checkboxChangeHandler = e => {
+        const { name, checked } = e.target;
+        console.log({ name, checked });
+
+        let newFieldsetState = { ...newFieldset, [name]: checked };
+        setNewFieldset(newFieldsetState);
+        updateFieldset({ fieldset: newFieldsetState });
     };
 
     return (

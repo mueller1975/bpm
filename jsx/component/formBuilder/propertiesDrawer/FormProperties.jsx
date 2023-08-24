@@ -1,4 +1,4 @@
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
@@ -16,7 +16,7 @@ export default React.memo(styled(props => {
     const newlyDeletedUUID = useRecoilValue(newlyDeletedUUIDState);
 
     const [newForm, setNewForm] = useState(form ?? {});
-    const { uuid, id, title, icon, editableWhen } = newForm;
+    const { uuid, id, title, icon, editableWhen, collapsedWhenNotEditable } = newForm;
 
     const inputRef = useRef();
 
@@ -65,6 +65,16 @@ export default React.memo(styled(props => {
         updateForm({ form: newFormState }); // 立即更新 state
     };
 
+    // 勾選欄位值變動
+    const checkboxChangeHandler = e => {
+        const { name, checked } = e.target;
+        console.log({ name, checked });
+
+        let newFormState = { ...newForm, [name]: checked };
+        setNewForm(newFormState);
+        updateForm({ form: newFormState }); // 立即更新 state
+    };
+
     return (
         // 藉由指定 key 值, 達到切換表單時自動 reset 元件
         <Grid key={uuid} container spacing={2} className={`MT-FormProperties ${className}`}>
@@ -99,6 +109,12 @@ export default React.memo(styled(props => {
                     multiline minRows={5} maxRows={8}
                     value={editableWhen ?? ''}
                     onChange={valueChangeHandler} onBlur={saveProperties} />
+            </Grid>
+
+            <Grid item xs={12}>
+                <FormControlLabel name='collapsedWhenNotEditable' label='不可編輯時強制縮合'
+                    control={<Checkbox size='small' checked={collapsedWhenNotEditable ?? false}
+                        onChange={checkboxChangeHandler} />} />
             </Grid>
         </Grid>
     );
