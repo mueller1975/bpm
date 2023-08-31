@@ -15,7 +15,7 @@ export default React.memo(styled(props => {
     const newlyDeletedUUID = useRecoilValue(newlyDeletedUUIDState);
 
     const [newFieldset, setNewFieldset] = useState(fieldset ?? {});
-    const { uuid, title, availableWhen, editableWhen, } = newFieldset;
+    const { uuid, title, availableWhen, readOnly, editableWhen, } = newFieldset;
 
     const inputRef = useRef();
 
@@ -75,16 +75,24 @@ export default React.memo(styled(props => {
             </Grid>
 
             <Grid item xs={12}>
+                <FormControlLabel name='readOnly' label='唯讀'
+                    control={<Checkbox size='small' checked={readOnly ?? false}
+                        onChange={checkboxChangeHandler} />} />
+            </Grid>
+
+            <Grid item xs={12}>
+                <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
+                    disabled={readOnly}
+                    multiline minRows={5} maxRows={8} value={editableWhen ?? ''}
+                    onChange={valueChangeHandler} onBlur={saveProperties} />
+            </Grid>
+
+            <Grid item xs={12}>
                 <TextField name="availableWhen" label="可見條件" size="small" fullWidth
                     multiline minRows={5} maxRows={8} value={availableWhen ?? ''}
                     onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
 
-            <Grid item xs={12}>
-                <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
-                    multiline minRows={5} maxRows={8} value={editableWhen ?? ''}
-                    onChange={valueChangeHandler} onBlur={saveProperties} />
-            </Grid>
         </Grid>
     );
 })`

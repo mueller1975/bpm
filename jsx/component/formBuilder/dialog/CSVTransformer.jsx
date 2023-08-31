@@ -2,7 +2,8 @@ import { TextField, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDebounce } from 'Hook/useTools.jsx';
 import React, { useEffect, useState } from 'react';
-import { rawDataToJson } from './lib/jsonConverter';
+import { buildCodesFromTemplate, VIEW_COLUMNS_TEMPLATE, SQL_CREATE_DDL_TEMPLATE } from './lib/codeTemplates';
+import { rawDataToCodes } from './lib/codeConverters';
 import ResizableBlocks from 'Component/ResizableBlocks.jsx';
 
 export default styled(props => {
@@ -10,7 +11,10 @@ export default styled(props => {
 
     const [rawData, setRawData] = useState('');
     const [jsonString, setJsonString] = useState('');
-    const [javaCode, setJavaCode] = useState('');
+    const [viewColumns, setViewColumns] = useState('');
+    const [javaEntities, setJavaEntities] = useState('');
+    const [javaDTOs, setJavaDTOs] = useState('');
+    const [sqlDDL, setSqlDDL] = useState('');
 
     const [fieldCount, setFieldCount] = useState(0);
     const [error, setError] = useState();
@@ -19,11 +23,14 @@ export default styled(props => {
 
     useEffect(() => {
         try {
-            const [jsonObject, javaVars, count] = rawDataToJson(rawData, category);
+            const [{ jsonObject, columns, javaEntityFields, javaDTOFields, sqlColumns }, count] = rawDataToCodes(rawData, category);
 
             setFieldCount(count);
             setJsonString(JSON.stringify(jsonObject, null, 2));
-            setJavaCode(javaVars.join(''));
+            setViewColumns(buildCodesFromTemplate(VIEW_COLUMNS_TEMPLATE, [columns.join('\n')]));
+            setJavaEntities(javaEntityFields.join(''));
+            setJavaDTOs(javaDTOFields.join(''));
+            setSqlDDL(buildCodesFromTemplate(SQL_CREATE_DDL_TEMPLATE, ['ym_design_product', sqlColumns.join('\n'), '品名碼明細檔']));
             onTransform(jsonObject);
 
             setError();
@@ -48,20 +55,38 @@ export default styled(props => {
     };
 
     return (
-        <ResizableBlocks>
-            <div className={`${className} block`}>
-                <TextField label="CSV 資料" autoFocus multiline rows={15} fullWidth value={rawData}
-                    error={Boolean(error)} onChange={rawDataChangeHandler} onKeyDown={keyDownHandler}
-                    helperText={error} />
-            </div>
+        <ResizableBlocks resizable={false} orientation="horizontal">
+            <ResizableBlocks resizable={false} orientation="vertical">
+                <div className={`${className} block`}>
+                    <TextField label="CSV 資料" autoFocus multiline rows={12} fullWidth value={rawData}
+                        error={Boolean(error)} onChange={rawDataChangeHandler} onKeyDown={keyDownHandler}
+                        helperText={error} />
+                </div>
 
-            <div className={`${className} block`}>
-                <TextField label={`JSON 格式（${fieldCount} 筆）`} multiline rows={15} fullWidth value={jsonString} />
-            </div>
+                <div className={`${className} block`}>
+                    <TextField label={`SQL CREATE DDL（${fieldCount} 筆）`} multiline rows={12} fullWidth value={sqlDDL} />
+                </div>
+            </ResizableBlocks>
 
-            <div className={`${className} block`}>
-                <TextField label={`JAVA Code（${fieldCount} 筆）`} multiline rows={15} fullWidth value={javaCode} />
-            </div>
+            <ResizableBlocks resizable orientation="vertical">
+                <div className={`${className} block`}>
+                    <TextField label={`JSON 欄位（${fieldCount} 筆）`} multiline rows={12} fullWidth value={jsonString} />
+                </div>
+
+                <div className={`${className} block`}>
+                    <TextField label={`VIEW COLUMNS（${fieldCount} 筆）`} multiline rows={12} fullWidth value={viewColumns} />
+                </div>
+            </ResizableBlocks>
+
+            <ResizableBlocks resizable={false} orientation="vertical">
+                <div className={`${className} block`}>
+                    <TextField label={`JAVA Entity 欄位 ${fieldCount} 筆）`} multiline rows={12} fullWidth value={javaEntities} />
+                </div>
+
+                <div className={`${className} block`}>
+                    <TextField label={`JAVA DTO 欄位 ${fieldCount} 筆）`} multiline rows={12} fullWidth value={javaDTOs} />
+                </div>
+            </ResizableBlocks>
         </ResizableBlocks>
 
         // <Grid container spacing={2} className={className}>

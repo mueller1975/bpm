@@ -31,36 +31,36 @@ const ResizableBlock = React.memo(styled(React.forwardRef(({ className, collapse
  */
 const Splitter = styled(({ className, resizable, orientation, ...others }) => <div className={`${className} resizable-splitter`} {...others} />)`
     z-index: 99;
-    width: ${({ orientation }) => orientation == 'horizontal' ? '10px' : '2px'};
-    height: ${({ orientation }) => orientation == 'horizontal' ? '2px' : '10px'};
+    width: ${({ orientation }) => orientation == 'horizontal' ? '2px' : '10px'};
+    height: ${({ orientation }) => orientation == 'horizontal' ? '10px' : '2px'};
     position: relative;
     border-radius: 1px;
     transform: scale(5,5);
     user-select: none;
     border: 0;
     background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#9dde93' : '#d8a924'};
-    cursor: ${({ orientation }) => orientation == 'horizontal' ? 'ns-resize' : 'ew-resize'};
+    cursor: ${({ orientation }) => orientation == 'horizontal' ? 'ew-resize' : 'ns-resize'};
 `;
 
 /**
  * 可調大小區塊容器元件
  */
 export default React.memo(styled(React.forwardRef((props, ref) => {
-    const { className, orientation, collapsedBlocks = [], resizable = false, children } = props;
+    const { className, orientation = 'horizontal', collapsedBlocks = [], resizable = false, children } = props;
     const blockRefs = useRef([]); // 儲存每一 Block DOM
     const mouseDownInfo = useRef(); // 儲存 mouse down 時的 Splitter、前後區塊相關資訊
 
     /* expose functions to parent component */
     useImperativeHandle(ref, () => ({
-        expandBlockBackward, // 往前一區塊自動展開 Block
-        expandBlockForward, // 往後一區塊自動展開 Block
+        expandBlockBackwards, // 往前一區塊自動展開 Block
+        expandBlockforwards, // 往後一區塊自動展開 Block
     }))
 
     /**
      * 往前一區塊自動展開 Block
      * @param {*} blockIdx 
      */
-    const expandBlockBackward = blockIdx => {
+    const expandBlockBackwards = blockIdx => {
         let targetIdx = blockIdx - 1;
 
         if (targetIdx < 0) {
@@ -79,7 +79,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
      * 往後一區塊自動展開 Block
      * @param {*} blockIdx 
      */
-    const expandBlockForward = blockIdx => {
+    const expandBlockforwards = blockIdx => {
         let targetIdx = blockIdx + 1;
 
         if (targetIdx > blockRefs.current.length - 2) {
@@ -135,32 +135,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 
             let offset; // 目前滑鼠與點擊的 Splitter 之間距離
 
-            if (orientation == 'horizontal') { // 調整上下區塊高度
-                offset = e.pageY - splitterY;
-
-                // 滑鼠未移動時不處理
-                if (offset == lastOffset) {
-                    return;
-                }
-
-                let height = prevBlockHeight + offset; // 計算前區塊在滑鼠移動後應調整的高度
-
-                // 控制 offset 值使調整後的前區塊高度不得小於(預設區塊最小值)及大於(前後區塊高度和-預設區塊最小值)
-                if (height < MIN_BLOCK_HEIGHT) {
-                    offset = -prevBlockHeight + MIN_BLOCK_HEIGHT;
-                } else if (height > prevBlockHeight + nextBlockHeight - MIN_BLOCK_HEIGHT) {
-                    offset = nextBlockHeight - MIN_BLOCK_HEIGHT;
-                }
-
-                // 根據調整後前後區塊的高度計算前後區塊的 flex-grow 值
-                let flexGrowSum = prevBlockFlex + nextBlockFlex; // 前後區 flex-grow 值的和
-                let prevFlexGrow = flexGrowSum * (prevBlockHeight + offset) / (prevBlockHeight + nextBlockHeight); // 前區塊 flex-grow 值
-                let nextFlexGrow = flexGrowSum - prevFlexGrow; // 後區塊 flex-grow 值
-
-                // 指定前後區塊的 flex-grow 值
-                prevBlock.style.flexGrow = prevFlexGrow;
-                nextBlock.style.flexGrow = nextFlexGrow;
-            } else { // 調整左右區塊寬度
+            if (orientation == 'horizontal') { // 調整左、右區塊高度
                 let offset = e.pageX - splitterX;
 
                 // 滑鼠未移動時不處理
@@ -180,6 +155,31 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
                 // 根據調整後前後區塊的寬度計算前後區塊的 flex-grow 值
                 let flexGrowSum = prevBlockFlex + nextBlockFlex; // 前後區 flex-grow 值的和
                 let prevFlexGrow = flexGrowSum * (prevBlockWidth + offset) / (prevBlockWidth + nextBlockWidth); // 前區塊 flex-grow 值
+                let nextFlexGrow = flexGrowSum - prevFlexGrow; // 後區塊 flex-grow 值
+
+                // 指定前後區塊的 flex-grow 值
+                prevBlock.style.flexGrow = prevFlexGrow;
+                nextBlock.style.flexGrow = nextFlexGrow;
+            } else { // 調整上、下區塊寬度
+                offset = e.pageY - splitterY;
+
+                // 滑鼠未移動時不處理
+                if (offset == lastOffset) {
+                    return;
+                }
+
+                let height = prevBlockHeight + offset; // 計算前區塊在滑鼠移動後應調整的高度
+
+                // 控制 offset 值使調整後的前區塊高度不得小於(預設區塊最小值)及大於(前後區塊高度和-預設區塊最小值)
+                if (height < MIN_BLOCK_HEIGHT) {
+                    offset = -prevBlockHeight + MIN_BLOCK_HEIGHT;
+                } else if (height > prevBlockHeight + nextBlockHeight - MIN_BLOCK_HEIGHT) {
+                    offset = nextBlockHeight - MIN_BLOCK_HEIGHT;
+                }
+
+                // 根據調整後前後區塊的高度計算前後區塊的 flex-grow 值
+                let flexGrowSum = prevBlockFlex + nextBlockFlex; // 前後區 flex-grow 值的和
+                let prevFlexGrow = flexGrowSum * (prevBlockHeight + offset) / (prevBlockHeight + nextBlockHeight); // 前區塊 flex-grow 值
                 let nextFlexGrow = flexGrowSum - prevFlexGrow; // 後區塊 flex-grow 值
 
                 // 指定前後區塊的 flex-grow 值
@@ -282,7 +282,7 @@ export default React.memo(styled(React.forwardRef((props, ref) => {
 }))`
     height: 100%;
     display: flex;
-    flex-direction: ${({ orientation }) => orientation == 'horizontal' ? 'column' : 'row'};
+    flex-direction: ${({ orientation }) => orientation == 'horizontal' ? 'row' : 'column'};
     justify-content: center;
     align-items: center;
     background-color: ${({ theme: { palette: { mode } } }) => mode == 'light' ? '#d3f2f7' : '#604d14'};

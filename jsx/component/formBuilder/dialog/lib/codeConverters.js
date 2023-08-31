@@ -41,37 +41,60 @@ export const jsonToRawData = (value, category) => {
     }
 };
 
-export const createField = ({ name, label, type, description }) => {
+export const createField = ({ name, label, type, length, description }) => {
     const propName = camelCase(name);
-    let javaType;
+    let javaType, sqlType;
     const jsonField = { uuid: uuidv4(), name: propName, label };
 
     console.log(name, '=>', propName);
 
-    switch (type) {
+    switch (type?.toUpperCase()) {
         case '文字':
             if (description.includes('下拉式選單', '下拉選單')) {
                 jsonField.type = 'dropdown';
             }
 
             javaType = 'String';
+            sqlType = `varchar(${length || 40}) DEFAULT NULL`;
+
             break;
         case '數字':
             type = 'number';
-            javaType = 'Double';
+            [javaType, sqlType] = length?.includes('(', ')') ? ['Double', `decimal${length} DEFAULT NULL`] : ['Integer', 'int DEFAULT NULL'];
             break;
+        case 'Y/N':
+            type = 'yesOrNo';
+            javaType = 'String';
+            sqlType = `char(1) DEFAULT NULL`;
+            break;
+        default:
+            throw `未支援的欄位型態: ${type}`;
     }
 
     if (description.includes('必填')) {
         jsonField.required = true;
     }
 
-    let javaVarDec = `
-        @Column(name = "${name}")
-        private ${javaType} ${propName};
+    let column = `{ prop: "${propName}", name: "${label}", width: 150, noWrap: true },`
+
+    let entityField = `
+    /**
+     * ${label}
+     */
+    @Column(name = "${name}")
+    private ${javaType} ${propName};
     `;
 
-    return { jsonField, javaVarDec };
+    let dtoField = `
+    /**
+     * ${label}
+     */
+    private ${javaType} ${propName};
+    `;
+
+    let sqlColumn = `\t${name} ${sqlType} COMMENT '${label}',`;
+
+    return { jsonField, column, entityField, dtoField, sqlColumn };
 }
 
 /**
@@ -80,14 +103,17 @@ export const createField = ({ name, label, type, description }) => {
  * @param {*} category 
  * @returns 
  */
-export const rawDataToJson = (value, category) => {
-    let lines, jsonObject, javaCode,
+export const rawDataToCodes = (value, category) => {
+    let lines, jsonObject, columns, javaEntityFields, javaDTOFields, sqlColumns,
         count = 0; // 設定值筆數
 
     switch (category) {
         case 'FIELD': // 表單欄位
-            jsonObject = [];
-            javaCode = [];
+            jsonObject = []; // json 欄位屬性
+            javaEntityFields = []; // java Entity 欄位宣告
+            javaDTOFields = []; // java DTO 欄位宣告
+            sqlColumns = []; // SQL 欄位
+            columns = []; // view 欄位
 
             value.split('\n').forEach(line => {
                 if (Boolean(line)) {
@@ -96,22 +122,29 @@ export const rawDataToJson = (value, category) => {
                     name = name?.trim();
                     label = label?.trim();
                     type = type?.trim();
+                    length = length?.trim();
                     description = description?.trim();
 
-                    console.log(`${name}:${label}:${type}:${description}`);
+                    console.log(`${name}:${label}:${type}:${length}:${description}`);
 
                     if (!name || !label) {
                         console.error(`name/label 缺一不可 => label: ${label}, name:${name}`);
                     } else {
-                        const { jsonField, javaVarDec } = createField({ name, label, type, description });
+                        const { jsonField, column, entityField, dtoField, sqlColumn } =
+                            createField({ name, label, type, length: length, description });
+
                         jsonObject.push(jsonField);
-                        javaCode.push(javaVarDec);
+                        columns.push(column);
+                        javaEntityFields.push(entityField);
+                        javaDTOFields.push(dtoField);
+                        sqlColumns.push(sqlColumn);
                     }
                 }
             });
 
             count = jsonObject.length;
-            break;
+
+            return [{ jsonObject, columns, javaEntityFields, javaDTOFields, sqlColumns }, count];
         case 'DROPDOWN': // 下拉選單
             jsonObject = [];
 
@@ -130,12 +163,13 @@ export const rawDataToJson = (value, category) => {
             });
 
             count = jsonObject.length;
-            break;
+
+            return [jsonObject, count];
         case 'TABLE_SELECT': // 表格選取
             lines = value.split('\n');
 
             // 第一行: 欄位設定
-            let columns = lines[0].split('\t').map(str => {
+            columns = lines[0].split('\t').map(str => {
                 const [title, prop] = str.split('|');
                 return { title, prop: prop ?? title };
             });
@@ -156,7 +190,8 @@ export const rawDataToJson = (value, category) => {
 
             jsonObject = { columns, data };
             count = data.length;
-            break;
+
+            return [jsonObject, count];
         case 'HIERARCHICAL_DROPDOWN': // 階層下拉選單
             jsonObject = {};
             lines = value.split('\n');
@@ -192,10 +227,10 @@ export const rawDataToJson = (value, category) => {
             })
 
             count = Object.keys(jsonObject).length;
-            break;
+            return [jsonObject, count];
         default:
             throw `不支援的設定分類[${category}]`;
     }
 
-    return [jsonObject, javaCode, count];
+
 };

@@ -1,13 +1,13 @@
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import TransformIcon from '@mui/icons-material/Transform';
 import ClearIcon from '@mui/icons-material/Clear';
+import TransformIcon from '@mui/icons-material/Transform';
 import { Button, DialogContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DraggableDialog, ErrorBoundary, IconnedDialogTitle } from 'Components';
 import React, { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { fieldsetState } from '../context/FormStates';
 import CSVTransformer from './CSVTransformer.jsx';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { fieldState, fieldsetState, formState } from '../context/FormStates';
 
 export default styled(props => {
     const { formUUID, fieldsetUUID, onClose, ...others } = props;
