@@ -15,7 +15,7 @@ export default React.memo(styled(props => {
     const newlyDeletedUUID = useRecoilValue(newlyDeletedUUIDState);
 
     const [newFieldset, setNewFieldset] = useState(fieldset ?? {});
-    const { uuid, title, availableWhen, readOnly, editableWhen, } = newFieldset;
+    const { uuid, title, availableWhen, readOnly, disabledWhen, } = newFieldset;
 
     const inputRef = useRef();
 
@@ -75,15 +75,9 @@ export default React.memo(styled(props => {
             </Grid>
 
             <Grid item xs={12}>
-                <FormControlLabel name='readOnly' label='唯讀'
-                    control={<Checkbox size='small' checked={readOnly ?? false}
-                        onChange={checkboxChangeHandler} />} />
-            </Grid>
-
-            <Grid item xs={12}>
-                <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
+                <TextField name="disabledWhen" label="符合以下條件時不可編輯" size="small" fullWidth
                     disabled={readOnly}
-                    multiline minRows={5} maxRows={8} value={editableWhen ?? ''}
+                    multiline minRows={5} maxRows={8} value={disabledWhen ?? ''}
                     onChange={valueChangeHandler} onBlur={saveProperties} />
             </Grid>
 

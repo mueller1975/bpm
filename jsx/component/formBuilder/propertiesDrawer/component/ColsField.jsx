@@ -1,6 +1,6 @@
 import { TextField, Fab } from '@mui/material';
 import React, { useCallback, useState, useEffect } from 'react';
-import GridColsEditor from '../dialog/GridColsEditor.jsx';
+import GridColsEditor from './GridColsEditor.jsx';
 import EditIcon from '@mui/icons-material/Edit';
 import { styled } from '@mui/material/styles';
 

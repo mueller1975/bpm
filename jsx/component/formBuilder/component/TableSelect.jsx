@@ -20,10 +20,10 @@ const TableSelect = React.memo(styled(React.forwardRef((props, ref) => {
     const config = DATA_TABLE_SELECTS[source];
 
     if (!config) {
-        throw `source [${source}] 設定值不存在`;
+        // throw `source [${source}] 設定值不存在`;
     }
 
-    const [IconComponent, DialogComponent, dialogProps] = config;
+    const [IconComponent, DialogComponent, dialogProps] = config ?? [];
 
     const openDialog = useCallback(() => setDialogOpen(true), []);
     const closeDialog = useCallback(() => setDialogOpen(false), []);

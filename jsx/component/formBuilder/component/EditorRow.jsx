@@ -84,13 +84,13 @@ export default React.memo(styled(props => {
             {/* 設定的欄位 */
                 !columns ? null :
                     columns.map(({ uuid, name, label, type, configCode, source, filterBy, uiDependsOn, width, hidden = false,
-                        disabled = false, disabledWhen, disabledWhenMenuIsEmpty = false, freeSolo = true,
+                        disabled = false, disabledWhen, disabledWhenMenuIsEmpty = false, freeSolo = true, items,
                         menuDependsOn, menuDependsOnParent, mappedRowProps = [], availableWhen }) => {
 
                         const variant = disabled ? 'outlined' : 'filled';
 
                         let fieldComponent = generateRowField({
-                            name, label, type, configCode, source, filterBy, uiDependsOn, hidden, disabled, disabledWhenMenuIsEmpty,
+                            name, label, type, configCode, source, items, filterBy, uiDependsOn, hidden, disabled, disabledWhenMenuIsEmpty,
                             menuDependsOn, mappedRowProps, variant, row: value, uploaded, menuDependsOnParent, parentValue, freeSolo,
                             eventHandlers: { valueChangeHandler, optionChangeHandler, fileSelectHandler }
                         });

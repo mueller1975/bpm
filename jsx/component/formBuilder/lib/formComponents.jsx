@@ -10,8 +10,10 @@ import GridRemoteAutocomplete from '../component/GridRemoteAutocomplete.jsx';
 import GridTableSelect from '../component/GridTableSelect.jsx';
 import GridTextField from '../component/GridTextField.jsx';
 import GridJsonField from '../component/GridJsonField.jsx';
+import GridCustomComponent from '../component/GridCustomComponent.jsx';
 
 export {
     GridAutocomplete, GridRemoteAutocomplete, GridCheckbox, GridDropdown, GridFileUploader, GridInlineEditor,
-    GridNumberRange, GridTableSelect, GridTextField, ComponentGroup, GridFieldsetContainer, GridJsonField
+    GridNumberRange, GridTableSelect, GridTextField, ComponentGroup, GridFieldsetContainer, GridJsonField,
+    GridCustomComponent
 };

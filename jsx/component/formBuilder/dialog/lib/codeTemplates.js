@@ -7,6 +7,11 @@ export const viewColumns = [
 
     { prop: "formNo", name: "表單號碼", width: 160, noWrap: true },
     { prop: "formVer", name: "表單版號", width: 160, noWrap: true },
+    {
+        prop: "formStatus", name: "表單狀態", width: 100, noWrap: true,
+        value: (prop, row) => FORM_STATUS[row?.[prop]]?.text,
+        contentStyle: value => FORM_STATUS[value]?.style
+    },
     { prop: "createTime", name: "建立時間", width: 160, noWrap: true },
     { prop: "modifyTime", name: "異動時間", width: 160, noWrap: true },
     { prop: "creator", name: "建立者", width: 100, noWrap: true },

@@ -19,7 +19,9 @@ const createNewRow = columns => {
 }
 
 export default React.memo(styled(props => {
-    const { title, helper, options: { noBorder = false, columns }, defaultValue, onChange, disabled, required, error, className } = props;
+    const { title, helper, options: { noBorder = false, columns = [] } = {}
+        , defaultValue, onChange, disabled, required, error, className } = props;
+
     const [rows, setRows] = useState(!defaultValue || defaultValue.length == 0 ? [createNewRow(columns)] : defaultValue);
 
     // 清除未輸入任何資料的列

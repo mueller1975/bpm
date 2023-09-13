@@ -7,12 +7,14 @@ import FileSelector from '../component/FileSelector.jsx';
 import {
     GridAutocomplete, GridCheckbox, GridDropdown, GridFileUploader,
     GridInlineEditor, GridNumberRange, GridRemoteAutocomplete, GridTableSelect,
-    GridTextField, GridJsonField
+    GridTextField, GridJsonField, GridCustomComponent
 } from './formComponents.jsx';
 import NumberRangeField from '../component/NumberRangeField.jsx';
 import TableSelect from '../component/TableSelect.jsx';
 import { ErrorBoundary } from 'Components';
 import * as FormIcons from './formIcons';
+import CheckboxGroupField from '../component/CheckboxGroupField.jsx';
+import RadioGroupField from '../component/RadioGroupField.jsx';
 
 export const ICON_MENU = Object.entries(FormIcons).map(([key, value]) =>
     <MenuItem key={key} value={key}>{key}</MenuItem>);
@@ -90,6 +92,9 @@ export const generateField = ({ fieldsetCols, field, formId, hierarchy }) => {
             FieldComponent = GridJsonField;
             props.multiline = true;
             break;
+        case 'custom':
+            FieldComponent = GridCustomComponent;
+            break;
         default:
             console.warn(`generateField(): 不支援的元件型態 ${type}`);
             return <div style={{ color: 'red' }}>不支援的元件 type [{type}]</div>
@@ -105,7 +110,7 @@ export const generateField = ({ fieldsetCols, field, formId, hierarchy }) => {
  */
 export const generateRowField = ({ name, label, type, configCode, source, filterBy, uiDependsOn,
     disabled, disabledWhenMenuIsEmpty = false, variant, menuDependsOn, mappedRowProps = [], row,
-    parentValue, menuDependsOnParent, uploaded, freeSolo = false,
+    parentValue, menuDependsOnParent, uploaded, freeSolo = false, items,
     eventHandlers }) => {
 
     const { valueChangeHandler, optionChangeHandler, fileSelectHandler } = eventHandlers;
@@ -167,6 +172,12 @@ export const generateRowField = ({ name, label, type, configCode, source, filter
                 onChange={newValue => valueChangeHandler({ [name]: newValue })}
             // eventHandlers={eventHandlers} 
             />;
+        case 'checkboxGroup':
+            return <CheckboxGroupField label={label} row={row} value={fieldValue} items={items}
+                onChange={v => valueChangeHandler({ [name]: v })} />;
+        case 'radioGroup':
+            return <RadioGroupField label={label} row={row} value={fieldValue} items={items}
+                onChange={v => valueChangeHandler({ [name]: v })} />
         default:
             type = type == 'number' ? type : undefined; // 移除非 number 的 type
             return <TextField fullWidth size="small" label={label} type={type} variant={variant} disabled={disabled}

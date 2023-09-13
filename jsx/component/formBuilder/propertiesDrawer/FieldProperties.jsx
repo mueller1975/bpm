@@ -5,16 +5,13 @@ import { styled } from '@mui/material/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isEqual } from 'underscore';
-import ColsField from '../component/ColsField.jsx';
+import ColsField from './component/ColsField.jsx';
 import Fieldset from '../component/Fieldset.jsx';
-import MultiTypeTextField from '../component/MultiTypeTextField.jsx';
-import PropertiesMappingField from '../component/propertiesMapping/PropertiesMappingField.jsx';
+import MultiTypeTextField from './component/MultiTypeTextField.jsx';
+import PropertiesMappingField from './component/PropertiesMappingField.jsx';
 import { fieldState } from '../context/FormStates';
 import { propsHierarchyState } from '../context/PropsHierarchyState.js';
-
-// Popover 位置
-const anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
-    transformOrigin = { vertical: 'top', horizontal: 'right' };
+import JsonField from './component/JsonField.jsx';
 
 const COMMON_FIELD_PROPERTIES = [
     'uuid', 'name', 'label', 'defaultValue', 'disabled', 'required', 'hidden', 'disabledWhen', 'requiredWhen'
@@ -43,6 +40,7 @@ const FIELD_TYPES = [
     { code: 'inlineEditor', name: '子表多筆', properties: [...COMMON_FIELD_PROPERTIES] },
     { code: 'fileUploader', name: '附件', properties: [...COMMON_FIELD_PROPERTIES] },
     { code: 'json', name: 'JSON', properties: [...COMMON_FIELD_PROPERTIES] },
+    { code: 'custom', name: '自定義元件' },
 ];
 
 // 欄位型態 menu
@@ -55,7 +53,9 @@ export default React.memo(styled(props => {
 
     const [newField, setNewField] = useState(field ?? {});
     const { uuid, name, label, defaultValue, type, helper, disabled = false, hidden = false,
-        configCode, source, isContextStateProp, isMappedStateProp, mappedStateProps,
+        configCode, source, options,
+        customType, // 自定義元件 type name
+        isContextStateProp, isMappedStateProp, mappedStateProps,
         filterBy, computedBy, menuDependsOn, freeSolo = false, disabledWhenMenuIsEmpty = false,
         required, requiredWhen, disabledWhen, isDbTableColumn, cols } = newField;
 
@@ -172,27 +172,37 @@ export default React.memo(styled(props => {
 
             {/* 變數名稱 */}
             <Grid item xs={12}>
-                <TextField name='name' label='變數名稱' size='small' fullWidth
+                <TextField required name='name' label='變數名稱' size='small' fullWidth
                     inputRef={inputRef} value={name ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             {/* 標籤 */}
             <Grid item xs={12}>
-                <TextField name='label' label='標籤' size='small' fullWidth
+                <TextField required name='label' label='標籤' size='small' fullWidth
                     value={label ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
 
             {/* 型態 */}
             <Grid item xs={12}>
-                <TextField name='type' label='型態' size='small' fullWidth select
+                <TextField required name='type' label='型態' size='small' fullWidth select
                     value={type ?? 'text'} onChange={valueChangeHandler}
                     onBlur={saveProperties}>
 
                     {FIELD_TYPE_MENUS}
                 </TextField>
             </Grid>
+
+            {
+                ['custom'].includes(type) ?
+                    // /* 自定義元件型態名稱 */
+                    <Grid item xs={12}>
+                        <TextField required name='customType' label='自定義元件型態名稱'
+                            size='small' fullWidth value={customType ?? ''}
+                            onChange={valueChangeHandler} onBlur={saveProperties} />
+                    </Grid> : null
+            }
 
             {
                 ['dropdown', 'autocomplete'].includes(type) ?
@@ -213,7 +223,6 @@ export default React.memo(styled(props => {
                                         control={<Checkbox size='small' checked={freeSolo ?? false}
                                             onChange={checkboxChangeHandler} />} />
                                 </Grid>
-
 
                                 {/* 允許手動輸入非選單項目 */}
                                 <Grid item xs={12}>
@@ -258,12 +267,19 @@ export default React.memo(styled(props => {
                                     </Grid>
                                 </Grid>
                             </Fieldset>
-                        </Grid> : null
+                        </Grid> :
+                        type === 'inlineEditor' ?
+                            <Grid item xs={12}>
+                                <JsonField name='options' label='子筆屬性' size='small' fullWidth
+                                    multiline minRows={5} maxRows={8} value={options ?? ''}
+                                    disabled={disabled} onChange={valueChangeHandler} />
+                            </Grid> : null
             }
 
             {/* 預設值 */}
             <Grid item xs={12}>
                 <MultiTypeTextField name='defaultValue' label='預設值' size='small' fullWidth
+                    multiline minRows={3} maxRows={5}
                     value={defaultValue ?? ''} onChange={valueChangeHandler}
                     onBlur={saveProperties} />
             </Grid>
@@ -304,10 +320,10 @@ export default React.memo(styled(props => {
                         onChange={checkboxChangeHandler} />} />
             </Grid>
 
-            { /* 唯讀條件 */
+            { /* 符合以下條件時不可編輯 */
                 !disabled &&
                 <Grid item xs={12}>
-                    <TextField name='disabledWhen' label='唯讀條件' size='small' fullWidth
+                    <TextField name='disabledWhen' label='符合以下條件時不可編輯' size='small' fullWidth
                         multiline minRows={5} maxRows={8} value={disabledWhen ?? ''}
                         disabled={disabled}
                         onChange={valueChangeHandler} onBlur={saveProperties} />

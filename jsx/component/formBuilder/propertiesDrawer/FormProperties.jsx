@@ -105,7 +105,7 @@ export default React.memo(styled(props => {
             </Grid>
 
             <Grid item xs={12}>
-                <TextField name="editableWhen" label="可編輯條件" size="small" fullWidth
+                <TextField name="editableWhen" label="符合以下條件時可編輯" size="small" fullWidth
                     multiline minRows={5} maxRows={8}
                     value={editableWhen ?? ''}
                     onChange={valueChangeHandler} onBlur={saveProperties} />

@@ -17,7 +17,7 @@ const DEFAULT_GRID_COLS = {
 export const allFormsState = atom({
     key: "allFormsState",
     default: [],
-    effects: [
+    ___effects: [ // disabled
         ({ setSelf, onSet }) => {
             let promise = FETCH_FORM_API();
 
